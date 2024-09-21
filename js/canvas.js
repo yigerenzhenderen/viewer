@@ -482,7 +482,7 @@ function Canvas() {
 
   canvas.setMode = function (mode) {
     state.mode = mode;
-    timeline.setDisabled(mode != "time");
+    timeline.setDisabled(mode === "similarity");
     canvas.makeScales();
     canvas.project();
   };

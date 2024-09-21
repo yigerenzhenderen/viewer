@@ -37,6 +37,14 @@ var tags;
 var canvas;
 var search;
 var ping;
+var configFile = "data/config.json"
+
+const params = new URLSearchParams(window.location.search);
+const grid = params.get('grid');
+if(grid==='true'){
+    configFile = "data/config_no.json"
+}
+
 
 if (Modernizr.webgl && !utils.isMobile()) {
   init();
@@ -55,16 +63,14 @@ function init() {
 
   console.log(baseUrl);
 
-  d3.json(baseUrl.config || "data/config.json", function (config) {
+  d3.json(baseUrl.config || configFile, function (config) {
     config.baseUrl = baseUrl;
     utils.initConfig(config);
 
     Loader(makeUrl(baseUrl.path, config.loader.timeline)).finished(function (timeline) {
       Loader(makeUrl(baseUrl.path, config.loader.items)).finished(function (data) {
-        console.log(data);
-
         utils.clean(data, config.delimiter);
-
+        // console.log(timeline, data)
         tags.init(data, config);
         search.init();
         canvas.init(data, timeline, config);
@@ -138,6 +144,7 @@ function init() {
     console.log(config.loader.layouts);
 
     config.loader.layouts.forEach((d, i) => {
+        
       d.title = d.title.toLowerCase();
       if (d.title === "time") {
         canvas.setMode(d.title);
@@ -173,5 +180,7 @@ function init() {
     );
   }
 }
+
+
 
 d3.select(".browserInfo").classed("show", utils.isMobile());
