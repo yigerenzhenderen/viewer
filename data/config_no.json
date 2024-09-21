@@ -13,8 +13,7 @@
         },
         {
             "title": "Similarity",
-            "url": "data/projection.csv",
-            "scale": 1.1
+            "url": "data/projection.csv"
         }
     ],
     "textures": {
