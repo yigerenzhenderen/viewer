@@ -113,6 +113,7 @@ function LoaderSingleImage() {
 
   var pixiloader = new PIXI.loaders.Loader();
   pixiloader.on("progress", function (p, r) {
+    console.log("loading process", p.progress)
     indicator.style("height", p.progress + "%");
   });
 

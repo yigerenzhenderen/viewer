@@ -91,6 +91,7 @@ function Timeline() {
     var e = enter
       .append("div")
       .classed("entries", true)
+      .style("display", "none")
       .selectAll(".entry")
       .data(function (d) {
         return d.values;

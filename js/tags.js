@@ -14,6 +14,7 @@ function Tags() {
   var wordBackground;
   var keywordsNestGlobal;
   var sortKeywords = "alphabetical";
+  // var sortKeywords = "count";
 
   // var filterWords = ["Potsdam"];
   var filterWords = [];
@@ -171,8 +172,10 @@ function Tags() {
   };
 
   function getTranslateForList(data){
-    var w = _.last(data).x + 100;
-    return width/2 - w/2;
+    console.log('get_translate',data, _)
+    var w = _.last(data).x + 100; // _ 是loadsh.js
+    // return width/2 - w/2; 居中
+    return width - w; //靠右
   }
 
   tags.draw = function(words) {
