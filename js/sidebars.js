@@ -24,6 +24,7 @@ var detailVue = new Vue({
             return this.item[entry.source].join(', ')
           }
           if(entry.type === 'markdown') {
+            console.log(entry)
             return marked(this.item[entry.source], { breaks: true})
           }
           if(entry.type === 'function') {
