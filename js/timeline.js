@@ -1,18 +1,15 @@
 function Timeline() {
-  var fontScaleYear = d3.scale
-    .linear()
+  var fontScaleYear = d3.scaleLinear()
     .domain([1, 9])
     .range([9, 20])
     .clamp(true);
 
-  var timelineFontScale = d3.scale
-    .linear()
+  var timelineFontScale = d3.scaleLinear()
     .domain([40, 8])
     .range([2, 10])
     .clamp(true);
 
-  var timelineScale = d3.scale
-    .threshold()
+  var timelineScale = d3.scaleThreshold()
     .domain([3, 10, 20])
     .range(["none", "small", "middle", "large"]);
 
@@ -74,7 +71,7 @@ function Timeline() {
       .classed("container", true)
       .on("mouseenter", function (d) {
         timelineHover = true;
-        canvas.zoom.center(null);
+        // canvas.zoom.center(null);
         // canvas.selectedImage() = null;
       })
       .on("mouseleave", function (d) {

@@ -8,12 +8,12 @@ function Tags() {
       height = 400 - margin.top - margin.bottom;
 
   var container;
-  var keywordsScale = d3.scale.linear();
-  var keywordsOpacityScale = d3.scale.linear();
+  var keywordsScale = d3.scaleLinear();
+  var keywordsOpacityScale = d3.scaleLinear();
   var keywords = [];
   var wordBackground;
   var keywordsNestGlobal;
-  var sortKeywords = "alphabetical";
+  var sortKeywords = "count";
   // var sortKeywords = "count";
 
   // var filterWords = ["Potsdam"];
@@ -21,10 +21,10 @@ function Tags() {
   var data, filteredData;
   var activeWord;
 
-  var x = d3.scale.ordinal()
-    .rangeBands([0, width]);
+  var x = d3.scaleOrdinal()
+    .range([0, width]);
 
-  var sliceScale = d3.scale.linear().domain([1200,5000]).range([50, 200])
+  var sliceScale = d3.scaleLinear().domain([1200,5000]).range([50, 200])
 
   var lock = false;
   var state = { init: false, search: '' };
@@ -61,7 +61,7 @@ function Tags() {
       .style("width", width + margin.left + margin.right)
       .style("height", height + margin.top + margin.bottom)
 
-    x.rangeBands([0, width]);
+    x.range([0, width]);
 
     tags.update();
   }
@@ -93,21 +93,25 @@ function Tags() {
         })
       }
     });
+  
+    // keywordsNestGlobal =  d3.nest()
+    // .key(function(d) { return d.keyword; })
+    // .rollup(function(d){
+    //   return d.map(function(d){ return d.data; });
+    // })
+    // .entries(keywords)
+    // .sort(function(a,b){
+    //   return b.values.length - a.values.length;
+    // })
 
-  keywordsNestGlobal =  d3.nest()
-      .key(function(d) { return d.keyword; })
-      .rollup(function(d){
-        return d.map(function(d){ return d.data; });
-      })
-      .entries(keywords)
-      .sort(function(a,b){
-        return b.values.length - a.values.length;
-      })
+  keywordsNestGlobal =  d3.groups(keywords,d => d.keyword)
+                          .map(ele => { return {key: ele[0], values: ele[1].map(_=>_.data)} })
+                          .sort((a,b) =>  b.values.length - a.values.length)
 
   var sliceNum = parseInt(sliceScale(width));
 
   // c("num",sliceNum)
-
+  // console.log(keywordsNestGlobal)
    var keywordsNest = keywordsNestGlobal
       .slice(0,sliceNum);
 
@@ -172,10 +176,9 @@ function Tags() {
   };
 
   function getTranslateForList(data){
-    console.log('get_translate',data, _)
     var w = _.last(data).x + 100; // _ 是loadsh.js
     // return width/2 - w/2; 居中
-    return width - w; //靠右
+    return width - w; //靠右 
   }
 
   tags.draw = function(words) {
@@ -258,7 +261,7 @@ function Tags() {
     // canvas.project()
   }
 
-  tags.mouseclick = function (d) {
+  tags.mouseclick = function (e, d) {
     lock = true;
 
     if(filterWords.indexOf(d.key)>-1){
@@ -278,7 +281,7 @@ function Tags() {
     lock = false
   }
 
-  tags.mouseleave = function (d) {
+  tags.mouseleave = function (e, d) {
     if(lock) return;
 
     container
@@ -290,10 +293,9 @@ function Tags() {
     canvas.highlight();
   }
 
-  tags.mouseenter = function (d1) {
+  tags.mouseenter = function (e, d1) {
     if(lock) return;
-
-
+  
     var tempFilterWords = _.clone(filterWords);
     tempFilterWords.push(d1.key)
 
@@ -327,7 +329,7 @@ function Tags() {
   }
 
   tags.search = function(query){
-
+    // console.log(query)
     state.search = query
     
     tags.filter(filterWords, true);

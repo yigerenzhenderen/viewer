@@ -30,13 +30,16 @@
 // @chrispiecom
 // 2015-2018
 
-utils.welcome();
+// utils.welcome();
+
 
 var data;
 var tags;
 var canvas;
 var search;
 var ping;
+var map;
+
 var configFile = "data/config.json"
 
 const params = new URLSearchParams(window.location.search);
@@ -56,49 +59,51 @@ function init() {
   canvas = Canvas();
   search = Search();
   timeline = Timeline();
+  map = MapLayer();
+
   ping = utils.ping();
 
   var baseUrl = utils.getDataBaseUrl();
   var makeUrl = utils.makeUrl;
 
-  console.log(baseUrl);
+  // console.log(baseUrl);
 
-  d3.json(baseUrl.config || configFile, function (config) {
+  d3.json(baseUrl.config || configFile).then(async (config) => {
+
     config.baseUrl = baseUrl;
     utils.initConfig(config);
 
-    Loader(makeUrl(baseUrl.path, config.loader.timeline)).finished(function (timeline) {
-      Loader(makeUrl(baseUrl.path, config.loader.items)).finished(function (data) {
-        utils.clean(data, config.delimiter);
-        // console.log(timeline, data)
-        tags.init(data, config);
-        search.init();
-        canvas.init(data, timeline, config);
+    let _timeline = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.timeline));
+    let _mapData = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.map));
+    data = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.items));
 
-        if (config.loader.layouts) {
-          initLayouts(config);
-        } else {
-          canvas.setMode("time");
-        }
+    utils.clean(data, config.delimiter);
+    tags.init(data, config);
+    search.init();
+    canvas.init(data, _timeline, config, _mapData);
 
-        LoaderSprites()
-          .progress(function (textures) {
-            Object.keys(textures).forEach(function (id) {
-              data
-                .filter(function (d) {
-                  return d.id === id;
-                })
-                .forEach(function (d) {
-                  d.sprite.texture = textures[id];
-                });
+    if (config.loader.layouts) {
+      initLayouts(config);
+    } else {
+      canvas.setMode("time");
+    }
+    LoaderSprites()
+      .progress(function (textures) {
+        Object.keys(textures).forEach(function (id) {
+          data
+            .filter(function (d) {
+              return d.id === id;
+            })
+            .forEach(function (d) {
+              d.sprite.texture = textures[id];
             });
-            canvas.wakeup();
-          })
-          //.finished() recalculate sizes
-          .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
-      });
-    });
+        });
+        canvas.wakeup();
+      })
+      //.finished() recalculate sizes
+      .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
   });
+
 
   d3.select(window)
     .on("resize", function () {
@@ -111,7 +116,7 @@ function init() {
       }
     })
     .on("keydown", function (e) {
-      if (d3.event.keyCode != 27) return;
+      if (e.keyCode != 27) return;
       search.reset();
       tags.reset();
       canvas.split();
@@ -126,8 +131,8 @@ function init() {
     var s = !d3.select(".infobar").classed("sneak");
     d3.select(".infobar").classed("sneak", s);
   });
-
-  d3.selectAll(".navi .button").on("click", function () {
+  
+  d3.select(".navi .button").on("click", function (event) {
     var that = this;
     var mode = d3.select(this).attr("data");
     canvas.setMode(mode);
@@ -141,18 +146,28 @@ function init() {
   function initLayouts(config) {
     d3.select(".navi").classed("hide", false);
 
-    console.log(config.loader.layouts);
+    // console.log(config.loader.layouts);
 
     config.loader.layouts.forEach((d, i) => {
         
       d.title = d.title.toLowerCase();
       if (d.title === "time") {
         canvas.setMode(d.title);
-      } else {
-        d3.csv(utils.makeUrl(baseUrl.path, d.url), function (tsne) {
+      } 
+      else if (d.title === "similarity"){
+        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then(tsne => {
           canvas.addTsneData(d.title, tsne, d.scale);
           if (i == 0) canvas.setMode(d.title);
         });
+      } else if(d.title === "location") {
+        // d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (tsne)  => {
+          // canvas.addTsneData("similarity", tsne, d.scale);
+          // if (i == 0) canvas.setMode("similarity");
+        // });
+        // d3.csv(utils.makeUrl(baseUrl.path, d.url), function (geo) {
+        //   canvas.addGeoData(d.title, geo, d.scale);
+        //   if (i == 0) canvas.setMode(d.title);
+        // });
       }
     });
 
@@ -165,15 +180,15 @@ function init() {
       .append("div")
       .classed("button", true)
       .classed("space", (d) => d.space)
-      .text((d) => d.title);
+      .text((d) => d.title)
+      .on("click", function (e, d) {
+        canvas.setMode(d.title);
+        d3.selectAll(".navi .button").classed(
+          "active",
+          (d) => d.title == canvas.getMode()
+        );
+      });
 
-    s.on("click", function (d) {
-      canvas.setMode(d.title);
-      d3.selectAll(".navi .button").classed(
-        "active",
-        (d) => d.title == canvas.getMode()
-      );
-    });
     d3.selectAll(".navi .button").classed(
       "active",
       (d) => d.title == config.loader.layouts[0].title

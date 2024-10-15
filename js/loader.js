@@ -5,10 +5,11 @@
 
 // need to refactor & clean this
 
-function Loader(url) {
+function Loader(url) { // only available in before d3.v5.js
   var progress = 0,
     loaded = 0,
     total = 0;
+    fileType = url.endsWith("csv") ? 'csv' : 'json';
 
   var container, indicator;
 
@@ -24,10 +25,9 @@ function Loader(url) {
     total = d3.event.total == 0 ? 80333701 : d3.event.total;
     loaded = d3.event.loaded;
     progress = parseInt((loaded / total) * 100);
-
     indicator.style("height", progress + "%");
-
   };
+  
   loader.load = function () {
     container = d3.select(".detailLoader");
     container.selectAll("div").remove();
@@ -35,8 +35,9 @@ function Loader(url) {
     container.append("div").classed("label", true).text("loading");
 
     indicator = container.append("div").classed("indicator", true);
-
-    d3.csv(url)
+    
+    if (fileType == "csv"){
+      d3.csv(url)
       .on("progress", loader.progress)
       .on("load", function (data) {
         finished(data);
@@ -47,6 +48,19 @@ function Loader(url) {
         finished([])
       })
       .get();
+    }else if (fileType == "json"){
+      d3.json(url)
+      .on("progress", loader.progress)
+      .on("load", function (data) {
+        finished(data);
+        container.selectAll("div"); //.remove();
+      })
+      .on("error", function (err) {
+        console.warn("error loading", url)
+        finished([])
+      })
+      .get();
+    }
   };
 
   if (url) loader.load(url);
@@ -54,6 +68,14 @@ function Loader(url) {
 
   return loader;
 }
+
+async function LoaderByPromise(url){
+  var fileType = url.endsWith("csv") ? 'csv' : 'json';
+  if (fileType == "csv") return await d3.csv(url);
+  else if (fileType == "json") return await d3.json(url);
+}
+
+
 
 function LoaderSprites() {
   var progress = 0,
@@ -113,7 +135,6 @@ function LoaderSingleImage() {
 
   var pixiloader = new PIXI.loaders.Loader();
   pixiloader.on("progress", function (p, r) {
-    console.log("loading process", p.progress)
     indicator.style("height", p.progress + "%");
   });
 

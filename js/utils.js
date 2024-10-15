@@ -23,7 +23,7 @@ utils.makeUrl = function makeUrl(path, url) {
 	if (url && url.startsWith("http")) {
 		return url;
 	}
-    console.log("make", path + url);
+    // console.log("make", path + url);
 	return path + url;
 }
 utils.isMobile = function () {
@@ -38,9 +38,9 @@ utils.isSafari = function () {
 
 utils.welcome = function () {
 	// who needs this fancy console styles
-	if (window.console) {
-		window.console.log('\n _   ________ ____  ______ \n| | / /  _/ //_/ / / / __/ \n| |/ // // ,< / /_/ /\ \ \n|___/___/_/|_|\____/___/_______ \n| | / /  _/ __/ | /| / / __/ _ \ \n| |/ // // _/ | |/ |/ / _// , _/ \n|___/___/___/ |__/|__/___/_/|_| \n')
-	}
+	// if (window.console) {
+	// 	window.console.log('\n _   ________ ____  ______ \n| | / /  _/ //_/ / / / __/ \n| |/ // // ,< / /_/ /\ \ \n|___/___/_/|_|\____/___/_______ \n| | / /  _/ __/ | /| / / __/ _ \ \n| |/ // // _/ | |/ |/ / _// , _/ \n|___/___/___/ |__/|__/___/_/|_| \n')
+	// }
 }
 
 utils.initConfig = function (config) {
@@ -125,7 +125,6 @@ utils.fullscreen = function () {
 }
 
 utils.clean = function (data, separator) {
-
 	data.forEach(function (d, i) {
 		d.search = Object.keys(d).map(function (e) { return d[e] }).join(' - ').toUpperCase()
 		d.i = i;
