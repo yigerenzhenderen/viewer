@@ -14,6 +14,9 @@ function Canvas() {
   var widthOuter = window.innerWidth;
   var height = window.innerHeight < minHeight ? minHeight : window.innerHeight;
 
+
+  var map = new MapLayer();
+  
   var scale1 = 1;
   var scale2 = 1;
   var scale3 = 1;
@@ -164,10 +167,11 @@ function Canvas() {
       (0.8 / (x.bandwidth() / collumns / width)) *
       (state.mode == "time" ? 1 : 0.5);
   };
-
-  canvas.init = function (_data, _timeline, _config, _map) {
+  
+  canvas.init = function (_data, _timeline, _map, _config) {
     data = _data;
     config = _config;
+    map.init(_map, [width, height])
     container = d3.select(".page")
       .append("div")
       .classed("viz", true)
@@ -191,9 +195,10 @@ function Canvas() {
     );
     var renderOptions = {
       resolution: 1,
-      antialiasing: false,
+      antialiasing: true,
       width: width + margin.left + margin.right,
       height: height,
+      antialias: true
     };
     renderer = new PIXI.Renderer(renderOptions);
     renderer.backgroundColor = parseInt(
@@ -205,23 +210,22 @@ function Canvas() {
     var renderElem = d3.select(container.node().appendChild(renderer.view));
 
 
-    stage = new PIXI.Container();
-    stage2 = new PIXI.Container(); // 图片
+    root = new PIXI.Container();
+    imageStage = new PIXI.Container(); // 图片stage
     stage3 = new PIXI.Container();
     stage4 = new PIXI.Container();
     stage5 = new PIXI.Container();
-    // mapContainer = map.init(_map) // 地图
-    // console.log('pixijs',mapContainer)
+    mapContainer = map.container();
 
-    stage.addChild(stage2); 
-    // stage2.addChild(mapContainer)
-    stage2.addChild(stage3);
-    stage2.addChild(stage4);
-    stage2.addChild(stage5);
+    imageStage.addChild(stage3);
+    imageStage.addChild(stage4);
+    imageStage.addChild(stage5);
+    root.addChild(imageStage); 
 
     _timeline.forEach(function (d) {
       d.type = "timeline";
     });
+
 
     var canvasDomain = d3.groups(_data.concat(_timeline), d => d.year).sort((a,b)=> a[0] - b[0]).map(d=>d[0])
 
@@ -453,8 +457,8 @@ function Canvas() {
   canvas.setMode = function (mode) {
     state.mode = mode;
     timeline.setDisabled(mode !== "time"); // 不为timeline情况下就不显示时间轴
+    mode === "location" ? root.addChild(mapContainer) : root.removeChild(mapContainer);
     canvas.makeScales();
-    // map.setDisabled(mode !== "location"); // 
     canvas.project();
   };
 
@@ -467,7 +471,7 @@ function Canvas() {
     loadImages();
     if (sleep) return;
     sleep = imageAnimation();
-    renderer.render(stage);
+    renderer.render(root);
   }
 
   // function zoomToYear(d) {
@@ -627,10 +631,10 @@ function Canvas() {
       d3.select(".searchbar").classed("hide", false);
     }
 
-    stage2.scale.x = scale;
-    stage2.scale.y = scale;
-    stage2.x = translate[0];
-    stage2.y = translate[1];
+    root.scale.x = scale;
+    root.scale.y = scale;
+    root.x = translate[0];
+    root.y = translate[1];
     sleep = false;
   }
 
@@ -717,10 +721,11 @@ function Canvas() {
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
-    console.log(tsneIndex);
+
     active.forEach(function (d) {
       var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];
+      // var tsneEntry = tsneIndex.similarity[d.id]; // only for test 
       if (tsneEntry) {
         d.x =
           tsneEntry[0] * dimension + width / 2 - dimension / 2 + margin.left;
@@ -774,7 +779,7 @@ function Canvas() {
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
-
+    console.log(tsneIndex[state.mode], tsneIndex)
     active.forEach(function (d) {
       var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];

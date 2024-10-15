@@ -93,16 +93,7 @@ function Tags() {
         })
       }
     });
-  
-    // keywordsNestGlobal =  d3.nest()
-    // .key(function(d) { return d.keyword; })
-    // .rollup(function(d){
-    //   return d.map(function(d){ return d.data; });
-    // })
-    // .entries(keywords)
-    // .sort(function(a,b){
-    //   return b.values.length - a.values.length;
-    // })
+
 
   keywordsNestGlobal =  d3.groups(keywords,d => d.keyword)
                           .map(ele => { return {key: ele[0], values: ele[1].map(_=>_.data)} })

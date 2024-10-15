@@ -1,37 +1,4 @@
-//                            ,--.
-//                ,---,   ,--/  /|               .--.--.
-//        ,---.,`--.' |,---,': / '         ,--, /  /    '.
-//       /__./||   :  ::   : '/ /        ,'_ /||  :  /`. /
-//  ,---.;  ; |:   |  '|   '   ,    .--. |  | :;  |  |--`
-// /___/ \  | ||   :  |'   |  /   ,'_ /| :  . ||  :  ;_
-// \   ;  \ ' |'   '  ;|   ;  ;   |  ' | |  . . \  \    `.
-//  \   \  \: ||   |  |:   '   \  |  | ' |  | |  `----.   \
-//   ;   \  ' .'   :  ;|   |    ' :  | | :  ' ;  __ \  \  |
-//    \   \   '|   |  ''   : |.  \|  ; ' |  | ' /  /`--'  /
-//     \   `  ;'   :  ||   | '_\.':  | : ;  ; |'--'.     /
-//      :   \ |;   |.' '   : |    '  :  `--'   \ `--'---'
-//       '---" '---'   ;   |,'    :  ,      .-./
-//                     '---'       `--`----'
-//                ,---,    ,---,.           .---.    ,---,.,-.----.
-//        ,---.,`--.' |  ,'  .' |          /. ./|  ,'  .' |\    /  \
-//       /__./||   :  :,---.'   |      .--'.  ' ;,---.'   |;   :    \
-//  ,---.;  ; |:   |  '|   |   .'     /__./ \ : ||   |   .'|   | .\ :
-// /___/ \  | ||   :  |:   :  |-, .--'.  '   \' .:   :  |-,.   : |: |
-// \   ;  \ ' |'   '  ;:   |  ;/|/___/ \ |    ' ':   |  ;/||   |  \ :
-//  \   \  \: ||   |  ||   :   .';   \  \;      :|   :   .'|   : .  /
-//   ;   \  ' .'   :  ;|   |  |-, \   ;  `      ||   |  |-,;   | |  \
-//    \   \   '|   |  ''   :  ;/|  .   \    .\  ;'   :  ;/||   | ;\  \
-//     \   `  ;'   :  ||   |    \   \   \   ' \ ||   |    \:   ' | \.'
-//      :   \ |;   |.' |   :   .'    :   '  |--" |   :   .':   : :-'
-//       '---" '---'   |   | ,'       \   \ ;    |   | ,'  |   |.'
-//                     `----'          '---"     `----'    `---'
-
-// christopher pietsch
-// @chrispiecom
-// 2015-2018
-
 // utils.welcome();
-
 
 var data;
 var tags;
@@ -80,7 +47,7 @@ function init() {
     utils.clean(data, config.delimiter);
     tags.init(data, config);
     search.init();
-    canvas.init(data, _timeline, config, _mapData);
+    canvas.init(data, _timeline, _mapData, config);
 
     if (config.loader.layouts) {
       initLayouts(config);
@@ -136,7 +103,6 @@ function init() {
     var that = this;
     var mode = d3.select(this).attr("data");
     canvas.setMode(mode);
-    timeline.setDisabled(mode != "time");
 
     d3.selectAll(".navi .button").classed("active", function () {
       return that === this;
@@ -160,14 +126,10 @@ function init() {
           if (i == 0) canvas.setMode(d.title);
         });
       } else if(d.title === "location") {
-        // d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (tsne)  => {
-          // canvas.addTsneData("similarity", tsne, d.scale);
-          // if (i == 0) canvas.setMode("similarity");
-        // });
-        // d3.csv(utils.makeUrl(baseUrl.path, d.url), function (geo) {
-        //   canvas.addGeoData(d.title, geo, d.scale);
-        //   if (i == 0) canvas.setMode(d.title);
-        // });
+        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (tsne)  => {
+          canvas.addTsneData(d.title, tsne, d.scale);
+          if (i == 0) canvas.setMode("location");
+        });
       }
     });
 

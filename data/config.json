@@ -19,7 +19,7 @@
         },
         {
           "title": "Location",
-          "url": "data/geo.json",
+          "url": "data/projection.csv",
           "scale": 0.8
       }
     ],
@@ -54,7 +54,7 @@
     "searchbarBackground": "#295b71"
   },
   "projection": {
-    "columns": 6
+    "columns": 10
   },
   "detail": {
     "structure": [      
