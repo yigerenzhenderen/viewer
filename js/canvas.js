@@ -138,7 +138,7 @@ function Canvas() {
   };
 
   canvas.makeScales = function () {
-    x.range([margin.left, width + margin.left]).padding(0.2);
+    x.range([margin.left, width + margin.left]).padding(0.1);
     rangeBand = x.bandwidth();
     rangeBandImage = x.bandwidth() / collumns;
 
@@ -291,10 +291,8 @@ function Canvas() {
         if (timelineHover) return;
 
         if (Math.abs(zoomedToImageScale - scale) < 0.1) {
-          console.log("now to reset", "zoomedToImageScale:", zoomedToImageScale, "scale:", scale)
           canvas.resetZoom();
         } else {
-          console.log("zoom to image", "zoomedToImageScale:", zoomedToImageScale, "scale:", scale,"duration:", 1400 / Math.sqrt(Math.sqrt(scale)))
           zoomToImage(selectedImage, 1400 / Math.sqrt(Math.sqrt(scale)));
         }
       });
@@ -329,6 +327,13 @@ function Canvas() {
 
     d.forEach(function (d) {
       tsneIndex[name][d.id] = [x(d.x), y(d.y)];
+    });
+  };
+
+  canvas.addLocationData = function (name, d) {
+    tsneIndex[name] = {};
+    d.forEach(function (d) {
+      tsneIndex[name][d.id] = [parseFloat(d.x),parseFloat(d.y)];
     });
   };
 
@@ -700,7 +705,8 @@ function Canvas() {
       (state.mode == "time" ? 1 : 0.5);
   };
 
-  canvas.projectLocation = function () {
+
+  canvas.projectTSNE = function () {
     var marginBottom = -height / 2.5;
 
     var inactive = data.filter(function (d) {
@@ -721,14 +727,12 @@ function Canvas() {
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
-
+    // console.log(tsneIndex[state.mode], tsneIndex)
     active.forEach(function (d) {
       var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];
-      // var tsneEntry = tsneIndex.similarity[d.id]; // only for test 
       if (tsneEntry) {
-        d.x =
-          tsneEntry[0] * dimension + width / 2 - dimension / 2 + margin.left;
+        d.x = tsneEntry[0] * dimension + width / 2 - dimension / 2 + margin.left;
         d.y = tsneEntry[1] * dimension - dimension / 2 + marginBottom;
       } else {
         // console.log("not found", d)
@@ -758,7 +762,8 @@ function Canvas() {
     //chart.resetZoom();
   };
 
-  canvas.projectTSNE = function () {
+
+  canvas.projectLocation = function () {
     var marginBottom = -height / 2.5;
 
     var inactive = data.filter(function (d) {
@@ -779,14 +784,16 @@ function Canvas() {
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
-    console.log(tsneIndex[state.mode], tsneIndex)
+
     active.forEach(function (d) {
-      var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];
+      console.log(tsneEntry)
       if (tsneEntry) {
-        d.x =
-          tsneEntry[0] * dimension + width / 2 - dimension / 2 + margin.left;
-        d.y = tsneEntry[1] * dimension - dimension / 2 + marginBottom;
+        _ = map._projection(...tsneEntry)
+        console.log(_)
+        d.x = _[0]; 
+        d.y = _[1];
+        // d.y = map._projection(tsneEntry[1])
       } else {
         // console.log("not found", d)
         d.alpha = 0;

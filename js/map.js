@@ -1,9 +1,9 @@
 function MapLayer() {
-    var margin = {
-        top: 0.15,
-        bottom: 0.05,
-        left: 0,
-        right: 0,
+    var outerMargin = { //same as canvas
+        top: 20,
+        bottom: 50,
+        left: 50,
+        right: 50,
     }
     var disabled = false;
     var stage = new PIXI.Container();
@@ -40,13 +40,31 @@ function MapLayer() {
     map.init = function (_mapData, _size) {
         // 设置stage的大小 和地图的大小
         mapData = _mapData;
+        let w = _size[0], h = _size[1];
+        let marginBottom = h/2.5;
+        let dim = Math.min(w, h) * 0.8;
+        // fitExtent = [
+        //     [_size[0] * margin.left, _size[1] * margin.top], 
+        //     [_size[0] * (1 - margin.right), _size[1] * (1 - margin.bottom)]
+        // ]
         fitExtent = [
-                [_size[0] * margin.left, _size[1] * margin.top], 
-                [_size[0] * (1 - margin.right), _size[1] * (1 - margin.bottom)]
-        ];
+            [outerMargin.left + (w - dim) / 2,  h - dim - outerMargin.bottom], 
+            [outerMargin.left + w / 2 + dim / 2, h - outerMargin.bottom]
+        ]
         projection = d3.geoMercator().fitExtent(fitExtent, _mapData);
         pathGenerator = d3.geoPath(projection, mapPath);    
     };
+
+    map._projection = function(x , y){
+        let _x = x, _y = y;
+        if(x<=1 && y<= 1){ // input relative position
+            _x = fitExtent[0][0] + (fitExtent[1][0]- fitExtent[0][0]) * x;
+            _y = fitExtent[0][1] + (fitExtent[1][1] - fitExtent[0][1]) * y;
+        }
+        // console.log(projection())
+        return projection([_x, _y]);
+    };
+
 
     map.container = function(){
         // iterate data, for each city, draw line and city name

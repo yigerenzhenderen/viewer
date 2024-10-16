@@ -19,13 +19,13 @@
         },
         {
           "title": "Location",
-          "url": "data/projection.csv",
+          "url": "data/location.csv",
           "scale": 0.8
       }
     ],
     "textures": {
       "medium": {
-        "size": 128,
+        "size": 90,
         "url": "data/sprites/spritesheet.json"
       },
       "detail": {
