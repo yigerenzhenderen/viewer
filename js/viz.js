@@ -127,7 +127,8 @@ function init() {
         });
       } else if(d.title === "location") {
         d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (tsne)  => {
-          canvas.addTsneData(d.title, tsne);
+          canvas.addLocationData(d.title, tsne, d.scale);
+          // canvas.addTsneData(d.title, tsne, d.scale);
           if (i == 0) canvas.setMode(d.title);
         });
       }

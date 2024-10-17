@@ -5,6 +5,12 @@ function MapLayer() {
         left: 50,
         right: 50,
     }
+    var margin = {
+        top: 0.17,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    }
     var disabled = false;
     var stage = new PIXI.Container();
     var mapPath = new PIXI.Graphics();
@@ -48,9 +54,13 @@ function MapLayer() {
         //     [_size[0] * (1 - margin.right), _size[1] * (1 - margin.bottom)]
         // ]
         fitExtent = [
-            [outerMargin.left + (w - dim) / 2,  h - dim - outerMargin.bottom], 
-            [outerMargin.left + w / 2 + dim / 2, h - outerMargin.bottom]
+            [_size[0] * margin.left, _size[1] * margin.top], 
+            [_size[0] * (1 - margin.right), _size[1] * (1 - margin.bottom)]
         ]
+        // fitExtent = [
+        //     [outerMargin.left + (w - dim) / 2,  h - dim - outerMargin.bottom], 
+        //     [outerMargin.left + w / 2 + dim / 2, h - outerMargin.bottom]
+        // ]
         projection = d3.geoMercator().fitExtent(fitExtent, _mapData);
         pathGenerator = d3.geoPath(projection, mapPath);    
     };

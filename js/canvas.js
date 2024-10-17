@@ -330,10 +330,30 @@ function Canvas() {
     });
   };
 
-  canvas.addLocationData = function (name, d) {
+  canvas.addLocationData = function (name, d, scale) {
     tsneIndex[name] = {};
-    d.forEach(function (d) {
-      tsneIndex[name][d.id] = [parseFloat(d.x),parseFloat(d.y)];
+    tsneScale[name] = scale;
+    var clean = d.map(function (d) {
+      let _pos = map._projection(parseFloat(d.x), parseFloat(d.y))
+      // console.log(d, _pos)
+      return {
+        id: d.id,
+        x: _pos[0],
+        y: _pos[1],
+      };
+    });
+    var xExtent = d3.extent(clean, function (d) {
+      return d.x;
+    });
+    var yExtent = d3.extent(clean, function (d) {
+      return d.y;
+    });
+
+    var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
+    var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
+
+    clean.forEach(function (d) {
+      tsneIndex[name][d.id] = [x(d.x), y(d.y)];
     });
   };
 
@@ -677,6 +697,7 @@ function Canvas() {
   canvas.project = function () {
     sleep = false;
     var scaleFactor = state.mode == "time" ? 0.9 : tsneScale[state.mode] || 0.5;
+    if (state.mode == "location") scaleFactor = 1
     data.forEach(function (d) {
       d.scaleFactor = scaleFactor;
       d.sprite.scale.x = d.scaleFactor;
@@ -708,6 +729,7 @@ function Canvas() {
 
   canvas.projectTSNE = function () {
     var marginBottom = -height / 2.5;
+    // var marginBottom = 0;
 
     var inactive = data.filter(function (d) {
       return !d.active;
@@ -727,7 +749,7 @@ function Canvas() {
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
-    // console.log(tsneIndex[state.mode], tsneIndex)
+
     active.forEach(function (d) {
       var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];
@@ -744,6 +766,7 @@ function Canvas() {
     });
 
     data.forEach(function (d) {
+      // console.log()
       d.x1 = d.x * scale1 + imageSize / 2;
       d.y1 = d.y * scale1 + imageSize / 2;
 
@@ -787,10 +810,9 @@ function Canvas() {
 
     active.forEach(function (d) {
       var tsneEntry = tsneIndex[state.mode][d.id];
-      console.log(tsneEntry)
+      // console.log(tsneEntry)
       if (tsneEntry) {
         _ = map._projection(...tsneEntry)
-        console.log(_)
         d.x = _[0]; 
         d.y = _[1];
         // d.y = map._projection(tsneEntry[1])
@@ -806,17 +828,21 @@ function Canvas() {
     data.forEach(function (d) {
       d.x1 = d.x * scale1 + imageSize / 2;
       d.y1 = d.y * scale1 + imageSize / 2;
-
+      // console.log(scale1, imageSize)
       if (d.sprite.position.x == 0) {
         d.sprite.position.x = d.x1;
         d.sprite.position.y = d.y1;
       }
 
       if (d.sprite2) {
+        
         d.sprite2.position.x = d.x * scale2 + imageSize2 / 2;
         d.sprite2.position.y = d.y * scale2 + imageSize2 / 2;
       }
+
+      // console.log(d.sprite.position, d.sprite.position2)
     });
+
 
     quadtree = Quadtree.addAll(data);
     //chart.resetZoom();
