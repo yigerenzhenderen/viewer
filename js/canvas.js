@@ -283,7 +283,6 @@ function Canvas() {
           spriteClick = false;
           return;
         }
-
         if (selectedImage && !selectedImage.id) return;
         if (drag) return;
         if (selectedImageDistance > cursorCutoff) return;
@@ -540,7 +539,6 @@ function Canvas() {
       .transition()
       .duration(duration)
       .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]))
-
       .call(zoom.transform, d3.zoomIdentity.translate(translateNow[0], translateNow[1]).scale(scale))
       .on("end", function () {
         zoomedToImage = true;
