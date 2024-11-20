@@ -2,64 +2,42 @@
     <div class="u-div">
         <div class="u-header">
             <div class="title-container"><span class="title">湖南影像档案馆</span></div>
-            <div class="avatar">
-                <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 100%;">
-            </div>
+            <Avatar :url="'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg'" style="margin-right: 10px;"></Avatar>
         </div>
         <div class="u-container">
             <div class="u-controll">
                 <div class="uploader">
                     <div class="wrapper">
-                        <div class="upload-icon" @click="upload">添加图片</div>
-                        <input accept="image/bmp,image/gif,image/jpeg,image/png,image/tiff,image/webp,video/mp4,video/x-m4v,video/quicktime" 
-                                aria-label="上传文件" 
-                                data-test-id="storyboard-upload-input" 
-                                id="storyboard-upload-input" 
-                                multiple="" 
-                                tabindex="0" 
-                                type="file" 
-                                style="cursor: pointer; height: 100%; opacity: 0; position: absolute; width: 100%; left: 0px; top: 0px; font-size: 0px;">
+                        <div class="upload-icon" @click="buttonUpload">添加图片</div>
                     </div>
                     <div class="upload-text"><span>每次最多上传5张照片</span></div>
                 </div>
-                <div style="overflow-y: scroll; overflow-x: hidden;">
+                <div style="overflow-y: scroll; overflow-x: hidden; flex: 1;">
                     <div class="border" v-for="img in imgs" 
                         :key="img.id"
-                        :class="{ showborder : img.id === focusId,}"
-                        @click="focusId=img.id">
-                        <Checkbox :id="img.id" :choose="img.choose" :name="img.name" @chooseChange="changeHandler"/>
+                        :class="{ showborder : img.id === focusImg.id}"
+                        @click="refreshFocusImg(img)">
+                        <div class="u-checkbox-container">
+                            <Checkbox :id="img.id" v-model:choose="img.choose" :name="img.name"/>
+                            <div class="u-img-container">
+                                <img :src="img.file.url" alt="" style="width: 100%; height: 100%;">
+                            </div>  
+                        </div>
                     </div>
                 </div>
                 <div class="submit-container">   
                     <div v-if="numChoose" class="submit" style="margin-left: 0; margin-right: 0; margin-bottom: 10px;" @click="submit">提交</div>
                 </div>
                 <div v-if="imgs.length" class="bottom">
-                    <div class="u-check-wrapper" style="margin: 10px; margin-left: 30px;">
-                        <div class="u-check" style="box-sizing: border-box; width: 20px; height: 20px; position: relative;cursor: pointer;">
-                            <svg style="pointer-events: none;" v-if="numChoose === imgs.length" width="100%" height="100%" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="black"/>
-                                <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke="white"/>
-                                <path d="M12 5L6.5 10.5L4 8" stroke="white" stroke-width="1.6666" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <img :src="selectSome_url" style="pointer-events: none; width: 20px; height: 20px;" v-else-if="numChoose" ></img>
-                            <svg style="pointer-events: none;" v-else width="100%" height="100%" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="white"/>
-                                <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke="#757575"/>
-                            </svg>
-                        </div>
-                        <input type="checkbox" class="i-ch" @change="selectAllChange">
-                    </div>
-                    <div style="margin: 8px;"><span>全选</span></div>
+                    <Checkbox3 :total="imgs.length" :selected="numChoose" @selectAllChange="selectAllChange"></Checkbox3>
+                    <div style="margin: 8px;"><span>{{(imgs.length == numChoose) || (!numChoose) ? "全选" : `${numChoose} / ${imgs.length}`}}</span></div>
                     <div style="width: 24px; height: 24px; margin-right: 40px; margin-left: auto; margin-top: 7px; position: relative; cursor: pointer; margin-bottom: 8px;"
-                        @click="remove">
-                        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20.7245 5.27519H16.0345V4.38519C16.0307 3.75501 15.7793 3.15157 15.3345 2.70519C15.1128 2.48282 14.8494 2.30648 14.5594 2.18634C14.2693 2.06621 13.9584 2.00464 13.6445 2.00519H10.3845C10.0705 2.00464 9.75956 2.06621 9.46952 2.18634C9.17947 2.30648 8.91606 2.48282 8.69445 2.70519C8.25326 3.15319 8.0055 3.75643 8.00445 4.38519V5.27519H3.31445C3.11554 5.27519 2.92478 5.35421 2.78412 5.49486C2.64347 5.63551 2.56445 5.82628 2.56445 6.02519C2.56445 6.2241 2.64347 6.41487 2.78412 6.55552C2.92478 6.69617 3.11554 6.77519 3.31445 6.77519H4.73445V18.5352C4.73037 18.991 4.81665 19.443 4.98829 19.8653C5.15993 20.2875 5.41353 20.6715 5.73445 20.9952C6.38878 21.6363 7.26839 21.9953 8.18445 21.9952H15.8045C16.7205 21.9953 17.6001 21.6363 18.2544 20.9952C18.5754 20.6715 18.829 20.2875 19.0006 19.8653C19.1723 19.443 19.2585 18.991 19.2544 18.5352V6.77519H20.6845C20.8834 6.77519 21.0741 6.69617 21.2148 6.55552C21.3554 6.41487 21.4345 6.2241 21.4345 6.02519C21.4345 5.82628 21.3554 5.63551 21.2148 5.49486C21.0741 5.35421 20.8834 5.27519 20.6845 5.27519H20.7245ZM9.52445 4.38519C9.52449 4.26977 9.5475 4.15551 9.59214 4.04906C9.63678 3.94262 9.70215 3.84612 9.78445 3.76519C9.94977 3.60169 10.172 3.50852 10.4045 3.50519H13.6645C13.7815 3.50446 13.8975 3.52708 14.0056 3.57173C14.1138 3.61637 14.212 3.68214 14.2945 3.76519C14.458 3.93051 14.5511 4.1527 14.5545 4.38519V5.27519H9.55445L9.52445 4.38519ZM10.8545 16.9952C10.8545 17.2604 10.7491 17.5148 10.5616 17.7023C10.374 17.8898 10.1197 17.9952 9.85445 17.9952C9.58924 17.9952 9.33488 17.8898 9.14735 17.7023C8.95981 17.5148 8.85445 17.2604 8.85445 16.9952V11.5652C8.85445 11.3 8.95981 11.0456 9.14735 10.8581C9.33488 10.6705 9.58924 10.5652 9.85445 10.5652C10.1197 10.5652 10.374 10.6705 10.5616 10.8581C10.7491 11.0456 10.8545 11.3 10.8545 11.5652V16.9952ZM15.2145 16.9952C15.2145 17.2604 15.1091 17.5148 14.9216 17.7023C14.734 17.8898 14.4797 17.9952 14.2145 17.9952C13.9492 17.9952 13.6949 17.8898 13.5073 17.7023C13.3198 17.5148 13.2145 17.2604 13.2145 16.9952V11.5652C13.2145 11.3 13.3198 11.0456 13.5073 10.8581C13.6949 10.6705 13.9492 10.5652 14.2145 10.5652C14.4797 10.5652 14.734 10.6705 14.9216 10.8581C15.1091 11.0456 15.2145 11.3 15.2145 11.5652V16.9952Z" 
-                            :fill="numChoose ? '#000000' : '#A6A6A6'"/>
-                        </svg>
+                        @click="askRemove">
+                        <Remove :selected="!!numChoose" active-color="#000"></Remove>
                     </div>
                 </div>
             </div>
-            <div class="u-content">
+            <div class="u-content" style="flex-direction: column; margin-top: 10px;">
                 <div class="content-h">
                     <div>上传图片及信息</div>
                     <div class="submit" @click="submit">提交</div>
@@ -67,11 +45,21 @@
                 <div class="content-b">
                     <div class="content-img">
                         <el-upload
+                            ref="uploader"
                             drag
                             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
                             multiple
-                            :limit="4"
+                            list-type="picture"
+                            v-model:file-list="fileList"
+                            :limit="capacity"
+                            :on-success="handleSuccess"
+                            :on-exceed="handleExceed"
+                            :on-change="handleChange"
+                            :http-request="customRequest"
+                            :auto-upload="false"
+                            :show-file-list="false"
                             style="width: 100%; height: 100%;"
+                            :class="{'uploaded': isFocusImg}"
                         >
                             <div class="upload-default">
                                 <div style="width: 50px; height: 50px;">
@@ -84,25 +72,27 @@
                                 <div class="upload-info2">上传文件最大不超过5MB，格式为.png或.jpg</div>
                             </div>   
                         </el-upload>
+
+                        <img v-if="isFocusImg" :src="focusImg.file.url" alt="" style="width: 100%; height: auto;">
                     </div>
                     <div class="content-info">
                         <el-form
                             :inline="true" 
-                            :model="form" 
+                            :model="focusImg.form" 
                             label-width="auto" 
                             label-position="top" 
                             style="max-width: 80%"
                         >
                             <el-form-item label="照片名称（必填）" style="width: 100%;" :required="true">
-                                <el-input v-model="form.name" />
+                                <el-input v-model="focusImg.form.name" />
                             </el-form-item>
                             <el-form-item label="照片说明（必填）" style="width: 100%;" :required="true">
-                                <el-input v-model="form.desc" type="textarea" :rows="4" resize="none"/>
+                                <el-input v-model="focusImg.form.desc" type="textarea" :rows="4" resize="none"/>
                             </el-form-item>
                             <el-col :span="12">
                                 <el-form-item label="拍摄时间（选填）" style="width: 100%;">
                                     <el-date-picker
-                                        v-model="form.shotTime"
+                                        v-model="focusImg.form.shotTime"
                                         type="date"
                                         placeholder="请选择拍摄时间"
                                         style="width: 90%"
@@ -112,33 +102,42 @@
                             <el-col :span="12"></el-col>
                             <el-col :span="12">
                                 <el-form-item label="拍摄者（选填）" style="width: 90%;">
-                                    <el-input v-model="form.shoter"/>
+                                    <el-input v-model="focusImg.form.shoter"/>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="拍摄者（选填）" style="width: 90%;">
-                                    <el-input v-model="form.shoter" />
+                                <el-form-item label="拍摄点（选填）" style="width: 90%;">
+                                    <el-cascader
+                                        style="width: 100%;"
+                                        v-model="focusImg.form.place"
+                                        :options="hunan_district"
+                                        :props="{
+                                            value: 'code',
+                                            label: 'name',
+                                            children: 'children',
+                                        }"
+                                    />
                                 </el-form-item>
                             </el-col>
                             <el-form-item label="关键词（选填）" style="width: 100%;">
                                 <div style="display: flex; flex-direction: column; width: 100%;">
                                     <el-select
-                                    v-model="form.kws"
-                                    filterable
-                                    placeholder="Select"
-                                    style="width: 100%; margin-bottom: 10px;"
+                                        v-model="focusImg.form.kws"
+                                        filterable
+                                        placeholder="Select"
+                                        style="width: 100%; margin-bottom: 10px;"
                                     >
                                     </el-select>
                                     <div class="tag-container1">
                                         <el-check-tag 
-                                            v-for="tag in form.kws" 
-                                            :key="tag.label"
-                                            :checked="tag.choose" 
-                                            type="primary" 
-                                            @change="checkTag(event, tag)"
-                                            class="tags"
-                                            closable
-                                            :disable-transitions="true"
+                                            v-for="tag in focusImg.form.kws" 
+                                                :key="tag.label"
+                                                :checked="tag.choose" 
+                                                type="primary" 
+                                                @change="checkTag($event, tag)"
+                                                class="tags"
+                                                closable
+                                                :disable-transitions="true"
                                             >
                                             <template #>
                                                 <div style="display: flex; display: flex; align-items: center; justify-content: center;">
@@ -153,15 +152,16 @@
                                             </template>
                                         </el-check-tag>
                                     </div>
-                                    <div v-if="form.kws.length" style="width: 100%; height: 0.5px; background-color: #949494; margin-top: 16px; margin-bottom: 16px;"></div>
+                                    <div v-if="focusImg.form.kws.length" style="width: 100%; height: 0.5px; background-color: #949494; margin-top: 16px; margin-bottom: 16px;"></div>
                                     <div class="tag-container2">
                                         <el-check-tag 
                                             v-for="tag in often_tags" 
-                                            :checked="tag.choose" 
-                                            type="primary" 
-                                            @change="checkTag($event, tag)"
-                                            class="tags"
-                                            :key="tag.label"
+                                                :checked="tag.choose"
+                                                :style="{'display': tag.choose ? 'none' : ''}"
+                                                type="primary" 
+                                                @change="checkTag($event, tag)"
+                                                class="tags"
+                                                :key="tag.label"
                                             >
                                             {{ tag.label}}
                                         </el-check-tag>
@@ -174,75 +174,70 @@
                 </div>
             </div>
         </div>
+        <el-dialog
+            v-model="askRemoveData.dialogVisible"
+            title=""
+            width="400"
+            :align-center="true"
+            :show-close="false"
+            style="padding: 30px"
+        >
+            <span style="font-size: 28px; margin-left: auto;">
+                确认删除
+                <span style="color: #F93232;">{{ this.askRemoveData.numRemove }}</span>
+                张图片?
+            </span>
+            <div style="height: 30px;"></div>
+            <template #header>
+                <div></div> 
+            </template>
+            <template #footer>
+                <div class="dialog-footer" style="display: flex; justify-content: center;">
+                    <el-button class="dialog-button" style="background-color: #F3F3F3; border-color: #F3F3F3; color: #000;" @click="askRemoveData.dialogVisible = false">继续编辑</el-button>
+                    <el-button class="dialog-button" type="primary" style="background-color: #F93232; border-color: #F93232;" @click="remove">删除</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
   
   
 <script>
 import Checkbox from "./upload/checkbox.vue"
-import selectSome from "/src/assets/selectSome.svg"
-// import UploadDetail from "./upload/uploadDetail.vue"
+import Avatar  from "./utils/avatar.vue";
+import Remove  from "./utils/remove.vue";
+import Checkbox3  from "./utils/checkbox3.vue";
+import fetch from "../js/fetch";
+import { ElMessage } from 'element-plus';
+import hunan_district from '/src/assets/hunan.json';
 
 export default{
     data(){
         return {
-            selectSome_url: selectSome,
+            hunan_district: hunan_district,
+            fileList: [],
             selectAll:false,
-            focusId: 0,
-            form:{
-                name: '',
-                desc: '',
-                shotTime: '',
-                shoter: '',
-                place: '',
-                kws: [],
+            defaultFocusImg: {
+                form:{
+                    name: '',
+                    desc: '',
+                    shotTime: '',
+                    shoter: '',
+                    place: '',
+                    kws: [],
+                }
             },
-            imgs: [{
-                name: "img1",
-                id: 0,
-                choose: false,
-                isFocus: true,
-                form:{}
-            },{
-                name: "img2",
-                id: 1,
-                choose: false,
-                isFocus: false,
-                form:{}
-            },{
-                name: "img2",
-                id: 2,
-                choose: false,
-                isFocus: false,
-                form:{}
-            },
-            {
-                name: "img3",
-                id: 3,
-                choose: false,
-                isFocus: false,
-                form:{}
-            },{
-                name: "img4",
-                id: 4,
-                choose: false,
-                isFocus: false,
-                form:{}
-            },{
-                name: "img5",
-                id: 5,
-                choose: false,
-                isFocus: false,
-                form:{}
-            },
-            {
-                name: "img6",
-                id: 6,
-                choose: false,
-                isFocus: false,
-                form:{}
-            }
-            ],
+            focusImg:{
+                form:{
+                    name: '',
+                    desc: '',
+                    shotTime: '',
+                    shoter: '',
+                    place: '',
+                    kws: [],
+                }},
+            capacity: 5,
+            imgs: [],
             often_tags:[
                 {
                     label: 'Tag 1',
@@ -260,33 +255,40 @@ export default{
                     choose: false,
                 }
             ],
+            askRemoveData: {
+                dialogVisible: false,
+                numRemove: 0,
+            },
         }
     },
     computed: {
         numChoose(){
+            // if(!this.imgs.length){return 0;}
             return this.imgs.filter(i=>i.choose).length;
+        },
+        isFocusImg(){
+            return Object.keys(this.focusImg).length !== 1;
+        },
+        imgsLength(){
+            return this.imgs.length;
         }
     },
     components: {
-        Checkbox
+        Checkbox, Avatar, Checkbox3, Remove
     },
     methods: {
-        changeHandler(id, newState){
-            this.imgs.forEach(d=>{
-                if(d.id == id){
-                    d.choose = newState;
-                }
-            })
-        },
         checkTag(event, tag){
             tag.choose = !tag.choose;
             if(tag.choose){
-                this.form.kws.push(tag);
-                this.often_tags = this.often_tags.filter(t=>t.label !== tag.label);
+                this.focusImg.form.kws.push(tag);
             }else{
-                this.often_tags.push(tag);
-                this.form.kws = this.form.kws.filter(t=>t.label !== tag.label);
+                this.focusImg.form.kws = this.focusImg.form.kws.filter(t=>t.label !== tag.label);
             }
+            this.often_tags.forEach(t => {
+                if(t.label === tag.label){
+                    t.choose = tag.choose;
+                }
+            });
         },
         selectAllChange(){
             this.selectAll = !this.selectAll;
@@ -294,11 +296,82 @@ export default{
                 i.choose = this.selectAll;
             });
         },
+        askRemove(){
+            const toRemove = this.imgs.filter(i=>i.choose);
+            if(!toRemove.length) return;
+            this.askRemoveData.dialogVisible = true;
+            this.askRemoveData.numRemove = toRemove.length;
+        },
         remove(){
+            this.askRemoveData.dialogVisible = false;
+            const toRemove = this.imgs.filter(i=>i.choose);
+            toRemove.forEach(i =>{
+                this.$refs.uploader.handleRemove(i.file.raw);
+            })
             this.imgs = this.imgs.filter(i=>!i.choose);
         },
         submit(){
             console.log(this.form);
+        },
+        handleChange(currentFile, uploadFiles){
+            if(currentFile.status == "ready"){
+                this.imgs.push({
+                    id: currentFile.uid,
+                    name: currentFile.name,
+                    choose: false,
+                    isFocus: false,
+                    form:{
+                        name: '',
+                        desc: '',
+                        shotTime: '',
+                        shoter: '',
+                        place: '',
+                        kws: []
+                    },
+                    file: currentFile
+                })
+            }
+        },
+        handleExceed(files, uploadedFiles){
+            const currentFilesNumber = uploadedFiles.length;
+            const toupload = Math.max(0,(this.capacity - currentFilesNumber));
+            ElMessage({
+                // plain: true,
+                message: toupload ? `超出数量限制，只有${toupload}个图片被上传` : "超出数量限制",
+            })
+            files.slice(0, toupload).forEach(f => {
+                this.$refs.uploader.handleStart(f);
+            })
+        },
+        customRequest(){
+            return fetch.uploadFile(this.fileList[0].raw)
+        },
+        handleSuccess(response, uploadedFile, uploadedFiles){
+            // console.log('success',response, uploadedFile, uploadedFiles)
+        },
+        buttonUpload(){
+            d3.select(".el-upload__input").node().click();
+        },
+        refreshFocusImg(newFocus){
+            this.focusImg.isFocus = false;
+            newFocus.isFocus = true;
+            // tag被display: none的要还原
+            const newKwsSet = new Set(newFocus.form.kws.map(d=>d.label));
+            this.often_tags.forEach(tag => {
+                tag.choose = newKwsSet.has(tag.label);
+            });
+            this.focusImg = newFocus;
+        }
+    },
+    watch:{
+        imgsLength(newLength){
+            if(!newLength){
+                // this.focusImg = this.defaultFocusImg;
+                this.refreshFocusImg(this.defaultFocusImg);
+            }
+            if(newLength){
+                this.refreshFocusImg(this.imgs[0]);
+            }
         }
     },
     mounted(){ 
@@ -308,7 +381,7 @@ export default{
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
 
 
 :deep(.el-form-item__label){
@@ -363,6 +436,15 @@ export default{
     height: 100%;
 
 }
+
+:deep(.el-dialog__body){
+    text-align: center;
+}
+.dialog-button{
+    width: 160px; 
+    height: 44px;
+}
+
 
 .submit{
     width: 200px;
@@ -432,5 +514,29 @@ export default{
 .tags{
     margin: 5px;
 }
+
+.u-checkbox-container{
+    box-sizing: border-box;
+    width: calc(100% - 1px);
+    height: 194px;
+    display: flex;
+    padding: 20px;
+
+    .u-img-container{
+        width: 80%;
+        height: 100%;
+        // background-color: lightgreen;
+    }
+  
+}
+
+.uploaded{
+    display: none;
+    // pointer-events: none;
+    // opacity: 0;
+    // position: absolute;
+}
+
+
 </style>
   

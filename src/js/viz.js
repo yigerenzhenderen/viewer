@@ -8,12 +8,12 @@ var ping;
 var map;
 var timeline;
 
-var configFile = "data/config.json"
+var configFile = "/data/config.json"
 
 const params = new URLSearchParams(window.location.search);
 const grid = params.get('grid');
 if(grid==='true'){
-    configFile = "data/config_no.json"
+    configFile = "/data/config_no.json"
 }
 
 

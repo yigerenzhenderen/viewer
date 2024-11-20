@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let baseurl = "http://47.113.146.46/rasterInterface"
+let baseurl = "https://vaip.arts-press.com/rasterInterface"
 
 const api = axios.create({
     baseURL: baseurl
@@ -153,11 +153,14 @@ export default {
     },
 
     async uploadFile(file) {
-        const str_info = JSON.stringify({
-            "file": file
-        })
-        const response = await api.post("/common/common/webAliyunUpload", str_info);
-        return response.data;
+        // const str_info = JSON.stringify({
+        //     "file": file
+        // })
+        const formData = new FormData();
+        formData.append('file', file);
+        return api.post("/common/common/webAliyunUpload", formData);
+        // const response = await api.post("/common/common/webAliyunUpload", formData);
+        // return response.data;
     },
     async addUserUploadLog(userId, imgName, time="", position="", intro="", holder="", type="", url="") {
         let inputData = {

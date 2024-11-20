@@ -6,9 +6,7 @@
 
     <div class="info-container">
       <div class="icon">
-        <div class="avatar" style="width: 300px; height: 300px;">
-          <img :src="globalStore.userInfo.avatar" alt="" style="width:100%;height:100%;" />
-        </div>
+        <Avatar :url="globalStore.userInfo.avatar" :size="300"></Avatar>
       </div>
       <div class="info">
         <el-form :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
@@ -44,10 +42,14 @@
 <script>
 import { useGlobalStore } from '../../store/global.js';
 import { mapState, mapStores } from 'pinia';
+import Avatar from '../utils/avatar.vue';
 
 export default{
   computed:{
     ...mapStores(useGlobalStore)
+  },
+  components: {
+    Avatar
   },
   methods: {
   },

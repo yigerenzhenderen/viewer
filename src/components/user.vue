@@ -2,9 +2,7 @@
     <div class="u-div">
         <div class="u-header">
             <div class="title-container"><span class="title">湖南影像档案馆</span></div>
-            <div class="avatar">
-                <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 100%;">
-            </div>
+            <Avatar :size="53" :url="'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg'" style="margin-right: 10px;"/>
         </div>
         <div class="u-container" style="">
             <div class="u-controll" style="border-right: 10px; margin-top: 50px;">
@@ -53,11 +51,11 @@
                     </span>
                     <span class="enter">
                         上传记录
-                        <router-link to="/user/editHistory" class="link"></router-link>
+                        <router-link to="/user/uploadHistory" class="link"></router-link>
                     </span>
                     <span class="enter">
                         修订记录
-                        <router-link to="/user/uploadHistory" class="link"></router-link>
+                        <router-link to="/user/editHistory" class="link"></router-link>
                     </span>
                    
                 </div>
@@ -71,10 +69,15 @@
   
   
 <script>
+import Avatar from "./utils/avatar.vue";
+
 export default{
     data(){
         return {
         }
+    },
+    components:{
+        Avatar
     },
     mounted(){
         d3.selectAll(".enter").on("click", function(e){
@@ -92,7 +95,7 @@ export default{
     flex-direction: column;
     justify-content: space-between;
     padding: 10px;
-    margin-left: 100px;
+    margin-left: 70px;
 
     .h-item{
         cursor: default;

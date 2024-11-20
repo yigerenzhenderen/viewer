@@ -50,7 +50,7 @@
           <router-link to="/upload" class="link"></router-link>
         </div>
         <div class="user">
-          <router-link to="/user" class="link"></router-link>
+          <router-link to="/user/info" class="link"></router-link>
         </div>
       </div>
     </div>
