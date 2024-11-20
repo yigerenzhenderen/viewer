@@ -1,0 +1,159 @@
+:root{
+    --u-font-color: #767676;
+    --u-segline-color: #838383;
+}
+
+.u-div{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+
+.u-header{
+    width: 100%;
+    min-height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 10px rgba(94, 90, 90, 0.3); /* 设置阴影 */
+}
+
+.title-container{
+    height: 100%;
+}
+
+.title{
+    font-size: 24px;
+    cursor: default;
+    color: #837D7D;
+    display: flex;
+    margin-left: 20px;
+}
+.avatar{
+    width: 53px;
+    height: 53px;
+    margin-right: 10px;
+    border-radius: 50%; /* 将边框半径设置为 50% */
+    overflow: hidden; /* 隐藏溢出的部分 */
+}
+
+.u-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.u-controll{
+    box-sizing: border-box;
+    width: 280px;
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    border-width: 0 1px 0 0;
+    border-style: solid;
+    border-color: var(--u-segline-color);
+    position: relative;
+
+    .uploader{
+        margin: 28px 20px 30px 20px;
+        width: calc(280px - 20 * 2px);
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+
+        .wrapper{
+            width: 100%;
+            height: 50%;
+            position: relative;
+            min-height: 52px;
+        }
+
+        .upload-icon {
+            width: 100%;
+            height: 100%;
+            background-color: #E5E5E5;
+            font-size: 20px;
+            font-weight: bolder;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-text{
+            margin-top: 10px;
+            width: 100%;
+            height: 20%;
+            font-size: 14px;
+            text-align: center;
+            color: var(--u-font-color);
+        }
+    }
+
+    .bottom{
+        display: flex;
+        align-items: center;
+        min-height: 64px;
+        width: 100%;
+        margin-top: auto;
+
+    }
+
+    .select-container {
+        height: 100%;
+        // flex: 1;
+        // position: relative;
+        background-color: rebeccapurple;
+    }
+
+    // .overflow-scroll{
+    //     overflow: scroll;
+    // }
+
+    .submit-container{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+
+.u-content{
+    margin-top: 28px;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-h{
+    font-size: 24px;
+    font-weight: bold;
+    width: 100%;
+    height: calc(150px/ 2);
+    display: flex;
+    align-items: center;
+    margin-left: 40px;
+}
+
+.content-b{
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    .content-img{
+        margin: 20px;
+        margin-left: 40px;
+        width: 50%;
+        height: 80%;
+    }
+
+    .content-info{
+        width: 100%;
+        height: 100%;
+        margin: 20px;
+    }
+
+}

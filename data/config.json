@@ -15,17 +15,17 @@
         {
             "title": "Similarity",
             "url": "data/projection.csv",
-            "scale": 0.8
+            "scale": 0.1
         },
         {
           "title": "Location",
-          "url": "data/location.csv",
+          "url": "data/projection.csv",
           "scale": 0.8
       }
     ],
     "textures": {
       "medium": {
-        "size": 90,
+        "size": 128,
         "url": "data/sprites/spritesheet.json"
       },
       "detail": {
@@ -54,7 +54,7 @@
     "searchbarBackground": "#295b71"
   },
   "projection": {
-    "columns": 15
+    "columns": 6
   },
   "detail": {
     "structure": [      

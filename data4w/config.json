@@ -1,0 +1,105 @@
+{
+  "project": {
+    "name": "湖南",
+    "quality": 1
+ },
+  "loader": {
+    "info": "data/info.md",
+    "timeline": "data/timeline.csv",
+    "items": "data/data.csv",
+    "map": "data/geo.json",
+    "layouts": [
+        {
+            "title": "Time"
+        },
+        {
+            "title": "Similarity",
+            "url": "data/projection.csv",
+            "scale": 0.8
+        },
+        {
+          "title": "Location",
+          "url": "data/location.csv",
+          "scale": 0.8
+      }
+    ],
+    "textures": {
+      "medium": {
+        "size": 90,
+        "url": "data/sprites/spritesheet.json"
+      },
+      "detail": {
+        "size": 1024,
+        "url": "data/1024/"
+      },
+      "big": {
+        "size": 4096,
+        "url": "data/4096/"
+      }
+    }
+  },
+  "style": {
+    "fontColor": "#2d3b43",
+    "fontColorActive": "#eae2cb",
+    "fontBackground": "#295b71",
+    "textShadow": "1px 1px 0px #f8f4e9",
+    "canvasBackground": "#eae2cb",
+    "timelineBackground": "#fff9eb",
+    "timelineFontColor": "#000",
+    "backgroundHeader": "#035151",
+    "fontColorHeader": "#f8774f",
+    "detailBackground": "#EEE",
+    "infoBackground": "#33444c",
+    "infoFontColor": "#fff",
+    "searchbarBackground": "#295b71"
+  },
+  "projection": {
+    "columns": 15
+  },
+  "detail": {
+    "structure": [      
+      {
+        "name": "作品说明",
+        "source": "_description",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "历史背景",
+        "source": "_background",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "作品名称",
+        "source": "_title",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "拍摄日期",
+        "source": "_date",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "拍摄地点",
+        "source": "_location",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "作品尺寸",
+        "source": "_size",
+        "display": "column",
+        "type": "text"
+      },
+      {
+        "name": "关键词",
+        "source": "_keywords",
+        "display": "column",
+        "type": "array"
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    // 'primary': ('base': #000),
+    // "success": ("base": #16BA3A),
+    // "warning": ("base": #FF771C),
+    // "danger": ("base": #ff3030),
+    // "error": ("base": #ff3030),
+    // "info": ("base": #411c03),
+  ),
+  // $text-color:(
+  //   'primary': #411c03,
+  //   'regular': #411c03,
+  //   'placeholder': #855b3f,
+  // ),
+  $border-radius:(
+    'base': 0px
+  ),
+  // $box-shadow: (
+  //   'lighter': 0px 0px 6px rgba(133, 91, 63, 0.3)
+  // ),
+  // $fill-color: (
+  //   'light': #f2f3f5,
+  //   'lighter': #f2f3f5
+  // ),
+  // $border-color: (
+  //   'light': #ece8e6,
+  //   'lighter': #7a604f
+  // )
+);

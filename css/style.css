@@ -47,7 +47,10 @@ body {
   -o-user-select:none;*/
 }
 
-
+:root{
+  --searchbar-height: 49px;
+  --el-border-color: #000; /* 修改主色 */
+}
 
 canvas {
   position: absolute;
@@ -57,7 +60,7 @@ canvas {
 .detailLoader {
    /* box-shadow: 0 0px 56px rgba(0, 0, 0, 0.66), 0 0px 6px rgba(0, 0, 0, 0.23); */
    opacity: 1;
-   color: #CCCBC8;
+   /* color: #CCCBC8; */
    z-index: 100;
    position: absolute;
    right: 0;
@@ -87,10 +90,10 @@ canvas {
     transform-origin: left bottom;
 }
 
-.sideLoader {//
-   box-shadow: 0 0px 56px rgba(0, 0, 0, 0.66), 0 0px 6px rgba(0, 0, 0, 0.23);
+.sideLoader {
+   /* box-shadow: 0 0px 56px rgba(0, 0, 0, 0.66), 0 0px 6px rgba(0, 0, 0, 0.23); */
    opacity: 1;
-   color: #C1C1C1;
+   /* color: #C1C1C1; */
    z-index: 900;
    position: absolute;
    right: 0;
@@ -103,7 +106,7 @@ canvas {
 }
 .sideLoader .indicator{
   background: rgba(0, 0, 0, 0.24);
-  // background: #C1C1C1;
+  /* background: #C1C1C1; */
   width: 100%;
   position: relative;
   transition: height 1s;
@@ -235,7 +238,7 @@ canvas {
 }
 
 .language-container div {
-    text-transform: uppercase;*/;
+    text-transform: uppercase;
     padding-left: 7px;
     float: left;
     padding-right: 6px;
@@ -501,9 +504,10 @@ svg {
   opacity: 0.2;
 }
 
-.tagcloud.open {
-  transform: translate(0px,32px);
+.header.open {
+  transform: translate(0px, var(--searchbar-height));
 }
+
 .tagcloud.show {
   opacity: 1!important;
   display: visible;
@@ -518,16 +522,17 @@ svg {
   pointer-events:none !important;
 }
 
+
 .tagcloud {
     /* background: linear-gradient(to bottom, rgba(28, 30, 31, 0.78) 14%,rgba(28,30,31,0) 80%); */
-    width: 100%;
+    width: 78%;
     height: 300px;
     pointer-events: none;
     transition: transform 0.3s ease-in-out;
-    left: 0;
+    /* left: 0; */
     font-weight: 900;
-    position: absolute;
-    z-index: 50;
+    /* position: absolute; */
+    /* z-index: 50; */
     color: rgb(247, 239, 205);
     transform: translate(0px,-18px);
 }
@@ -602,7 +607,7 @@ svg {
   content: ' ';
   height: 100%;
   width: 3px;
-  // background-color: #000;
+  /* background-color: #000; */
 }
 .close:before {
   transform: rotate(45deg);
@@ -889,7 +894,7 @@ svg {
 
 .searchbar {
   width: 100%;
-  height: 49px;
+  height: var(--searchbar-height);
   position: absolute;
   z-index: 300;
   background: #583700;
@@ -916,30 +921,124 @@ svg {
   text-transform: uppercase;
 }
 
-.searchbar .openbutton {
+.icons .openbutton {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   width: 28px;
   height: 26px;
-  opacity: 0.5;
+  /* opacity: 0.5; */
   background-image: url("../img/search.svg");
   /* opacity: 0.33; */
   cursor: pointer;
 }
 
-.searchbar.open .openbutton {
+.icons.open .openbutton {
   background-image: url("../img/close.svg");
 }
 
-.searchbar.open .button {
+.icons .openbutton {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 28px;
+  height: 26px;
+  /* opacity: 0.5; */
+  background-image: url("../img/search.svg");
+  /* opacity: 0.33; */
+  cursor: pointer;
+}
+
+.icons.open .openbutton {
+  background-image: url("../img/close.svg");
+}
+
+.header {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 300px;
+  z-index: 50;
+  pointer-events: none;
+  transition: transform 0.3s ease-in-out;
+}
+
+.header.hide {
+  transform: translate(0px,-370px);
+  /* opacity: 0; */
+  /* visibility: hidden; */
+}
+
+.line{
+  width: 2px; 
+  height: 43px; 
+  background-color: #A1A1A1; 
+  margin-left: 10px; 
+  margin-right: 10px; 
+  transform: translate(0, 12px);
+}
+
+.title{
+  width: 200px;
+  text-align: center;
+  transform: translate(0px, 20px);
+}
+
+.title span{
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  color: #837D7D;
+  font-weight: 900;
+}
+
+.icons{
+  display: flex;
+  width: 140px;
+  justify-content: flex-start;
+  gap: 18px;
+  transform: translate(0, 20px);
+  height: fit-content;
+  pointer-events: all;
+}
+
+.upload {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 28px;
+  height: 26px;
+  /* opacity: 0.5; */
+  background-image: url("../img/upload.svg");
+  /* opacity: 0.33; */
+  cursor: pointer;
+}
+
+.user {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 28px;
+  height: 26px;
+  /* opacity: 0.5; */
+  background-image: url("../img/user.svg");
+  /* opacity: 0.33; */
+  cursor: pointer;
+}
+
+.close{
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 28px;
+  height: 26px;
+  cursor: pointer;
+  background-image: url("../img/close.svg");
+}
+
+.searchbar.open .close {
   top: 7px;
   background: none;
 }
 
-.searchbar .button {
-  background: rgba(0,0,0,0.2);
+.searchbar .close {
+  /* background: rgba(0,0,0,0.2); */
   padding: 5px;
-  position: absolute;
+  position: relative;
   right:25px;
 }
 
