@@ -12,7 +12,7 @@ export default{
     props:{
         url:{
             type:String,
-            required:false,
+            required: false,
             default: cat
         },
         size:{
