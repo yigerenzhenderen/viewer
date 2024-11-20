@@ -162,28 +162,37 @@ export default {
         // const response = await api.post("/common/common/webAliyunUpload", formData);
         // return response.data;
     },
-    async addUserUploadLog(userId, imgName, time="", position="", intro="", holder="", type="", url="") {
-        let inputData = {
-            "memberId": userId,
-            "submitimgName": imgName
+    // async addUserUploadLog(memberId, submitimgName, originalFileName, {submitimgTime="", submitimgUrl="", tagsIds="", submitimgPosition="", submitimgIntro="", submitimgHolder="", fileSize="", submitimgUrl=""} = {}) {
+    async addUserUploadLog(memberId, submitimgName, originalFileName, {...rest} = {}) {
+        let requestData = {
+            "memberId": memberId,
+            "submitimgName": submitimgName,
+            "originalFileName": originalFileName,
         }
-        if(time.length){Object.assign(inputData, {"submitimgTime": time})}
-        if(position.length){Object.assign(inputData, {"submitimgPosition": position})}
-        if(intro.length){Object.assign(inputData, {"submitimgIntro": intro})}
-        if(holder.length){Object.assign(inputData, {"submitimgHolder": holder})}
-        if(type.length){Object.assign(inputData, {"submitimgType": type})}
-        if(url.length){Object.assign(inputData, {"submitimgUrl": url})}
-        // const str_info = JSON.stringify({
-        //     "memberId": userId,
-        //     "submitimgName": imgName,
-        //     "submitimgTime": time,
-        //     "submitimgPosition": position,
-        //     "submitimgIntro": intro,
-        //     "submitimgHolder": holder,
-        //     "submitimgType": type,
-        //     "submitimgUrl": url,
-        // })
-        const response = await api.post("/interface/imageEntrySubmit/addImageEntrySubmit", JSON.stringify(inputData));
+        if (Object.keys(rest).length){
+            Object.assign(requestData, rest)
+        }
+
+        // {
+        //     "memberId": 用户id  
+        //     "submitimgName": "照片名称",
+        //     "originalFileName": "源文件名称.jpg",
+        //     "submitimgTime": 1,
+        //     "submitimgPosition": 1,
+        //     "submitimgIntro": "背景描述",
+        //     "submitimgHolder": "照片作者",
+        //     "submitimgType": "照片类别",
+        //     "submitimgUrl": "照片url",
+        //     "fileSize": response.fileSize,
+        //     "tagsIds": "1,2"
+        // }
+        // if(time.length){Object.assign(inputData, {"submitimgTime": time})}
+        // if(position.length){Object.assign(inputData, {"submitimgPosition": position})}
+        // if(intro.length){Object.assign(inputData, {"submitimgIntro": intro})}
+        // if(holder.length){Object.assign(inputData, {"submitimgHolder": holder})}
+        // if(type.length){Object.assign(inputData, {"submitimgType": type})}
+        // if(url.length){Object.assign(inputData, {"submitimgUrl": url})}
+        const response = await api.post("/interface/imageEntrySubmit/addImageEntrySubmit", JSON.stringify(requestData));
         return response.data;
     },
     async addRevisionLog(userId, imgId) {

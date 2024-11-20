@@ -9,6 +9,9 @@ export const useDetailStore = defineStore('detail', {
             id: null,
             hide: true,
             sneak: false,
+            x: 100,
+            y: 100,
+            maniShow: false,
         }
     }
 })

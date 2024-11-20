@@ -38,6 +38,10 @@
               </div>
           </div>
       </div>
+      <div class="inner">
+        <div></div>
+      </div>
+      <div class="inner">Comment</div>
     </div>
   </div>
 

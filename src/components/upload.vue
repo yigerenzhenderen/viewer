@@ -47,7 +47,7 @@
                         <el-upload
                             ref="uploader"
                             drag
-                            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+                            action="https://vaip.arts-press.com/rasterInterface/common/common/webAliyunUpload"
                             multiple
                             list-type="picture"
                             v-model:file-list="fileList"
@@ -55,7 +55,6 @@
                             :on-success="handleSuccess"
                             :on-exceed="handleExceed"
                             :on-change="handleChange"
-                            :http-request="customRequest"
                             :auto-upload="false"
                             :show-file-list="false"
                             style="width: 100%; height: 100%;"
@@ -112,7 +111,7 @@
                                         v-model="focusImg.form.place"
                                         :options="hunan_district"
                                         :props="{
-                                            value: 'code',
+                                            value: 'name',
                                             label: 'name',
                                             children: 'children',
                                         }"
@@ -269,7 +268,6 @@ export default{
     },
     computed: {
         numChoose(){
-            // if(!this.imgs.length){return 0;}
             return this.imgs.filter(i=>i.choose).length;
         },
         isFocusImg(){
@@ -317,7 +315,11 @@ export default{
             this.imgs = this.imgs.filter(i=>!i.choose);
         },
         submit(){
-            console.log(this.form);
+            const toSubmit = this.imgs.filter(i=>i.choose);
+            console.log(toSubmit);
+            toSubmit.forEach(img => {
+                this.$refs.uploader.submit(img);
+            })
         },
         handleChange(currentFile, uploadFiles){
             if(currentFile.status == "ready"){
@@ -349,11 +351,21 @@ export default{
                 this.$refs.uploader.handleStart(f);
             })
         },
-        customRequest(){
-            return fetch.uploadFile(this.fileList[0].raw)
-        },
         handleSuccess(response, uploadedFile, uploadedFiles){
-            // console.log('success',response, uploadedFile, uploadedFiles)
+            const successImg = this.imgs.find(img => img.id == uploadedFile.uid);
+            console.log('success',response, uploadedFile, uploadedFiles)
+            const extras = {
+                "submitimgTime": successImg.form.showTime,
+                "submitimgPosition": successImg.form.place,
+                "submitimgIntro": successImg.form.desc,
+                "submitimgHolder": successImg.form.shoter,
+                "submitimgUrl": response.data.submitimgUrl,
+                "memberId": "1",
+                "fileSize": uploadedFile.size,
+                "tagsIds": successImg.form.kws.join(',')
+            }
+            console.log(extras)
+            // fetch.addUserUploadLog(1, uploadedFile.uid, uploadedFile.name, extras)
         },
         buttonUpload(){
             d3.select(".el-upload__input").node().click();
@@ -375,6 +387,9 @@ export default{
             if(newLength){
                 this.refreshFocusImg(this.imgs[0]);
             }
+        },
+        focusImg(newFocus){
+            console.log(newFocus)
         }
     },
     mounted(){ 

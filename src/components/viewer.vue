@@ -15,45 +15,45 @@
     <div class="search"></div>
     
     <div class="page">
-    <div class="detailLoader"></div>
-    <div class="sideLoader"></div>
+      <div class="detailLoader"></div>
+      <div class="sideLoader"></div>
 
-    <!-- <div class="sidebar detail hide">
-      <div class="slidebutton"></div>
 
-      <div class="outer">
-        <DetailView />
+      <DetailView />
+
+      <div class="navi">
       </div>
-    </div> -->
-    <DetailView />
-
-    <div class="navi">
-    </div>
 
 
-    <InfoView />
-    
-    <div class="searchbar">
-      <input type="input" name="suche" />
-      <!-- <div class="close"></div> -->
-    </div>
-
-    <div class="header">
-      <div class="title">
-        <span>湖南影像档案馆</span>
+      <InfoView />
+      
+      <div class="searchbar">
+        <input type="input" name="suche" />
+        <!-- <div class="close"></div> -->
       </div>
-      <div class="tagcloud"></div>
-      <div class="line"></div>
-      <div class="icons">
-        <div class="openbutton"></div>
-        <div class="upload">
-          <router-link to="/upload" class="link"></router-link>
+
+      <div class="header">
+        <div class="title">
+          <span>湖南影像档案馆</span>
         </div>
-        <div class="user">
-          <router-link to="/user/info" class="link"></router-link>
+        <div class="tagcloud"></div>
+        <div class="line"></div>
+        <div class="icons">
+          <div class="openbutton"></div>
+          <div class="upload">
+            <router-link to="/upload" class="link"></router-link>
+          </div>
+          <div class="user">
+            <router-link to="/user/info" class="link"></router-link>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="viz">
+        <div class="overlay">
+          <ManiIcon/>
+        </div>
+      </div>
     </div>
   
 </div>
@@ -65,7 +65,9 @@
 import { marked } from "marked"
 import InfoView from "./sidebars/info.vue";
 import DetailView from "./sidebars/detail.vue";
+import ManiIcon from "./utils/mani.vue";
 import { init } from "../js/viz.js";
+
 
 export default{
     data(){
@@ -75,7 +77,8 @@ export default{
     },
     components: {
         InfoView,
-        DetailView
+        DetailView,
+        ManiIcon
     },
     methods: {
     },
@@ -97,5 +100,12 @@ export default{
   height: 100%;
   opacity: 0;
   display: block;
+}
+
+.overlay{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  z-index: 100;
 }
 </style>
