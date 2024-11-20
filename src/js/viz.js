@@ -16,6 +16,9 @@ if(grid==='true'){
     configFile = "/data/config_no.json"
 }
 
+if (import.meta.env.MODE === 'production') {
+  configFile = "/viewer" + configFile;
+}
 
 // if (Modernizr.webgl && !utils.isMobile()) {
 //   init();
