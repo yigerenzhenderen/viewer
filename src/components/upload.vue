@@ -2,7 +2,7 @@
     <div class="u-div">
         <div class="u-header">
             <div class="title-container"><span class="title">湖南影像档案馆</span></div>
-            <Avatar :url="'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg'" style="margin-right: 10px;"></Avatar>
+            <Avatar url="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" style="margin-right: 10px;"></Avatar>
         </div>
         <div class="u-container">
             <div class="u-controll">
@@ -218,6 +218,9 @@ export default{
             fileList: [],
             selectAll:false,
             defaultFocusImg: {
+                file:{
+                    url: ""
+                },
                 form:{
                     name: '',
                     desc: '',
@@ -228,6 +231,9 @@ export default{
                 }
             },
             focusImg:{
+                file:{
+                    url: ""
+                },
                 form:{
                     name: '',
                     desc: '',
@@ -267,7 +273,7 @@ export default{
             return this.imgs.filter(i=>i.choose).length;
         },
         isFocusImg(){
-            return Object.keys(this.focusImg).length !== 1;
+            return Object.keys(this.focusImg).length !== 2;
         },
         imgsLength(){
             return this.imgs.length;
@@ -353,8 +359,6 @@ export default{
             d3.select(".el-upload__input").node().click();
         },
         refreshFocusImg(newFocus){
-            this.focusImg.isFocus = false;
-            newFocus.isFocus = true;
             // tag被display: none的要还原
             const newKwsSet = new Set(newFocus.form.kws.map(d=>d.label));
             this.often_tags.forEach(tag => {
@@ -366,7 +370,6 @@ export default{
     watch:{
         imgsLength(newLength){
             if(!newLength){
-                // this.focusImg = this.defaultFocusImg;
                 this.refreshFocusImg(this.defaultFocusImg);
             }
             if(newLength){

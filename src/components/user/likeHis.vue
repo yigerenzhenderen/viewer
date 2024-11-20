@@ -6,7 +6,7 @@
                 <div v-for="img in imgs" class="img-container" 
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false">
-                    <img :src="temporaryUrl" alt="" style="width: 100%; height: 200px;">
+                    <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 200px;">
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                     <div v-if="img.hoverImg" class="delete" 
                         @mouseover="img.hoverRemove=true"
@@ -42,7 +42,6 @@ export default{
     data(){
         return {
             selectAll: false,
-            temporaryUrl: "https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg",
             imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]
         }
     },

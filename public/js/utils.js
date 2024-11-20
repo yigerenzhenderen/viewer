@@ -6,6 +6,7 @@
 
 window.utils = {};
 
+
 utils.getDataBaseUrl = function () {
 	var params = new URLSearchParams(window.location.search)
 	var config = params.get('config')

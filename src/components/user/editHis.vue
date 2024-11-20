@@ -12,7 +12,7 @@
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false"
                 >
-                    <img :src="temporaryUrl" alt="" style="width: 100%; height: 200px;">
+                    <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 200px;">
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                     <!-- <div v-if="type===0" class="icon-group">
                         <div class="icon">
@@ -70,7 +70,6 @@ export default{
             comment_url: commentSvg,
             type: 0,
             selectAll: false,
-            temporaryUrl: "https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg",
             dataList: [
                 {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称1", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
                 {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称2", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
