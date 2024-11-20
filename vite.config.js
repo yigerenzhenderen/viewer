@@ -5,8 +5,8 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vite.dev/config/
 
-export default defineConfig({
-  base: process.env.VITE_BASE_URL || '/',
+export default defineConfig( ({mode}) => ({
+  base: mode === 'development' ? '/' : '/viewer/',
   css: {
       preprocessorOptions: {
         scss: {
@@ -31,4 +31,4 @@ export default defineConfig({
         ],
     }),
   ]
-})
+}))
