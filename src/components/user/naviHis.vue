@@ -12,7 +12,7 @@
                         <div v-for="img in data.imgs" class="img-container" 
                             @mouseenter="img.hoverImg=true"
                             @mouseleave="img.hoverImg=false">
-                            <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 200px;">
+                            <img :src="cat" alt="" style="width: 100%; height: 200px; object-fit: cover;">
                             <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                             <div v-if="img.hoverImg" class="delete" 
                                 @mouseover="img.hoverRemove=true"
@@ -43,13 +43,14 @@
 
 <script>
 import Checkbox from "../upload/checkbox.vue";
-import Avatar from "../utils/avatar.vue";
 import Remove from "../utils/remove.vue";
 import Checkbox3  from "../utils/checkbox3.vue";
+import cat from "/src/assets/temp.jpg";
 
 export default{
     data(){
         return {
+            cat: cat,
             selectAll: false,
             dataList: [
                 {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
@@ -63,7 +64,7 @@ export default{
         }
     },
     components: {
-        Checkbox, Avatar, Remove, Checkbox3
+        Checkbox, Remove, Checkbox3
     },
     computed:{
     },

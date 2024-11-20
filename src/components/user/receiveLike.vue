@@ -6,7 +6,7 @@
                 <div v-for="like in receiveLikeList" class="like-item">
                     <div class="left">
                         <Checkbox v-model:choose="like.choose" style="margin-right: 20px;"/>
-                        <Avatar :size="80" url="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" />
+                        <Avatar :size="80" />
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
                                 <span class="name-font">{{ like.name }}</span>&emsp;

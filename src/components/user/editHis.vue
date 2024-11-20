@@ -12,7 +12,7 @@
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false"
                 >
-                    <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 200px;">
+                    <img :src="tempSrc" alt="" style="width: 100%; height: 200px;">
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                     <!-- <div v-if="type===0" class="icon-group">
                         <div class="icon">
@@ -60,10 +60,12 @@ import viewSvg from "/src/assets/view.svg"
 import forwardSvg from "/src/assets/forward.svg"
 import likeSvg from "/src/assets/like.svg"
 import commentSvg from "/src/assets/comment.svg"
+import tempSrc from "/src/assets/temp.jpg"
 
 export default{
     data(){
         return {
+            tempSrc: tempSrc,
             view_url: viewSvg,
             forward_url: forwardSvg,
             like_url: likeSvg,

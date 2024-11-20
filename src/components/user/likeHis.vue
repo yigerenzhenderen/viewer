@@ -6,7 +6,7 @@
                 <div v-for="img in imgs" class="img-container" 
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false">
-                    <img src="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" alt="" style="width: 100%; height: 200px;">
+                    <img :src="tempSrc" alt="" style="width: 100%; height: 200px; object-fit: cover;">
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                     <div v-if="img.hoverImg" class="delete" 
                         @mouseover="img.hoverRemove=true"
@@ -37,10 +37,12 @@ import Checkbox from "../upload/checkbox.vue";
 import Avatar from "../utils/avatar.vue";
 import Remove from "../utils/remove.vue";
 import Checkbox3  from "../utils/checkbox3.vue";
+import tempSrc from "/src/assets/temp.jpg"
 
 export default{
     data(){
         return {
+            tempSrc: tempSrc,
             selectAll: false,
             imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]
         }

@@ -6,7 +6,7 @@
 
     <div class="info-container">
       <div class="icon">
-        <Avatar :url="globalStore.userInfo.avatar" :size="300"></Avatar>
+        <Avatar :size="300"></Avatar>
       </div>
       <div class="info">
         <el-form :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">

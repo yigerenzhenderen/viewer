@@ -1,16 +1,19 @@
 <template>
     <div class="avatar" :style="{width: size + 'px', height : size + 'px'}">
-        <img :src="url" alt="" style="width: 100%; height: 100%;">
+        <img :src="url" alt="" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
 </template>
 
 
 <script>
+import cat from "/src/assets/cat.jpeg";
+
 export default{
     props:{
         url:{
             type:String,
-            required:true
+            required:false,
+            default: cat
         },
         size:{
             type: Number,
