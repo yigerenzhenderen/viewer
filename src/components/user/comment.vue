@@ -6,7 +6,7 @@
                 <div v-for="comment in dataList" class="like-item">
                     <div v-if="comment.type=='comment'" class="left">
                         <Checkbox v-model:choose="comment.choose" style="margin-right: 20px;"/>
-                        <Avatar :size="80" :url="'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg'" style="min-width: 80px;"/>
+                        <Avatar :size="80" style="min-width: 80px;"/>
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
                                 <span class="name-font">{{ comment.name }}</span>&emsp;
@@ -23,7 +23,7 @@
                     </div>
                     <div v-else-if="comment.type=='reply'" class="left">
                         <Checkbox v-model:choose="comment.choose" style="margin-right: 20px;"/>
-                        <Avatar :size="80" :url="'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg'" style="min-width: 80px;"/>
+                        <Avatar :size="80" style="min-width: 80px;"/>
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
                                 <span class="name-font">{{ comment.name }}</span>&emsp;

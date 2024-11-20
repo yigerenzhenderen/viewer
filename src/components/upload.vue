@@ -2,7 +2,7 @@
     <div class="u-div">
         <div class="u-header">
             <div class="title-container"><span class="title">湖南影像档案馆</span></div>
-            <Avatar url="https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg" style="margin-right: 10px;"></Avatar>
+            <Avatar style="margin-right: 10px;"></Avatar>
         </div>
         <div class="u-container">
             <div class="u-controll">
