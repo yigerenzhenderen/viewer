@@ -74,104 +74,10 @@
                                 <div class="upload-info2">上传文件最大不超过5MB，格式为.png或.jpg</div>
                             </div>   
                         </el-upload>
-
                         <img v-if="isFocusImg" :src="focusImg.file.url" alt="" style="width: 100%; height: auto;">
                     </div>
                     <div class="content-info">
-                        <el-form
-                            :inline="true" 
-                            :model="focusImg.form" 
-                            label-width="auto" 
-                            label-position="top" 
-                            style="max-width: 80%"
-                        >
-                            <el-form-item label="照片名称（必填）" style="width: 100%;" :required="true">
-                                <el-input v-model="focusImg.form.name" />
-                            </el-form-item>
-                            <el-form-item label="照片说明（必填）" style="width: 100%;" :required="true">
-                                <el-input v-model="focusImg.form.desc" type="textarea" :rows="4" resize="none"/>
-                            </el-form-item>
-                            <el-col :span="12">
-                                <el-form-item label="拍摄时间（选填）" style="width: 100%;">
-                                    <el-date-picker
-                                        v-model="focusImg.form.shotTime"
-                                        type="date"
-                                        placeholder="请选择拍摄时间"
-                                        style="width: 90%"
-                                    />                                
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12"></el-col>
-                            <el-col :span="12">
-                                <el-form-item label="拍摄者（选填）" style="width: 90%;">
-                                    <el-input v-model="focusImg.form.shoter"/>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="拍摄点（选填）" style="width: 90%;">
-                                    <el-cascader
-                                        style="width: 100%;"
-                                        v-model="focusImg.form.place"
-                                        :options="hunan_district"
-                                        :props="{
-                                            value: 'name',
-                                            label: 'name',
-                                            children: 'children',
-                                        }"
-                                    />
-                                </el-form-item>
-                            </el-col>
-                            <el-form-item label="关键词（选填）" style="width: 100%;">
-                                <div style="display: flex; flex-direction: column; width: 100%;">
-                                    <el-select
-                                        v-model="focusImg.form.kws"
-                                        filterable
-                                        placeholder="Select"
-                                        style="width: 100%; margin-bottom: 10px;"
-                                    >
-                                    </el-select>
-                                    <div class="tag-container1">
-                                        <el-check-tag 
-                                            v-for="tag in focusImg.form.kws" 
-                                                :key="tag.label"
-                                                :checked="tag.choose" 
-                                                type="primary" 
-                                                @change="checkTag($event, tag)"
-                                                class="tags"
-                                                closable
-                                                :disable-transitions="true"
-                                            >
-                                            <template #>
-                                                <div style="display: flex; display: flex; align-items: center; justify-content: center;">
-                                                    <span>{{ tag.label}}</span>
-                                                    <div style="width: 10px;"></div>
-                                                    <div style="height: 10px; width: 10px; position: relative;">
-                                                        <svg style="left: 0; top: 0.5;" width="100%" height="100%" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M0.5 8.9989L8.5 1.00116M0.5 1.00116L8.5 8.9989" stroke="white" stroke-linecap="round"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </el-check-tag>
-                                    </div>
-                                    <div v-if="focusImg.form.kws.length" style="width: 100%; height: 0.5px; background-color: #949494; margin-top: 16px; margin-bottom: 16px;"></div>
-                                    <div class="tag-container2">
-                                        <el-check-tag 
-                                            v-for="tag in often_tags" 
-                                                :checked="tag.choose"
-                                                :style="{'display': tag.choose ? 'none' : ''}"
-                                                type="primary" 
-                                                @change="checkTag($event, tag)"
-                                                class="tags"
-                                                :key="tag.label"
-                                            >
-                                            {{ tag.label}}
-                                        </el-check-tag>
-                                        <div style="font-size: 14px; color: #767676; text-decoration: underline; cursor: default; margin-left: 5px;">每张照片最多三个关键词</div>
-                                    </div>
-                                </div>
-                            </el-form-item>
-                    </el-form>
+                        <editInfo ref="form" v-model:form-data="focusImg.form" />
                     </div>
                 </div>
             </div>
@@ -209,14 +115,13 @@ import Checkbox from "./upload/checkbox.vue"
 import Avatar  from "./utils/avatar.vue";
 import Remove  from "./utils/remove.vue";
 import Checkbox3  from "./utils/checkbox3.vue";
+import editInfo  from "./utils/editInfo.vue";
 import fetch from "../js/fetch";
 import { ElMessage } from 'element-plus';
-import hunan_district from '/src/assets/hunan.json';
 
 export default{
     data(){
         return {
-            hunan_district: hunan_district,
             fileList: [],
             selectAll:false,
             defaultFocusImg: {
@@ -224,6 +129,7 @@ export default{
                     url: ""
                 },
                 form:{
+                    id: 0,
                     name: '',
                     desc: '',
                     shotTime: '',
@@ -237,32 +143,17 @@ export default{
                     url: ""
                 },
                 form:{
+                    id: 0,
                     name: '',
                     desc: '',
                     shotTime: '',
                     shoter: '',
                     place: '',
                     kws: [],
-                }},
+                }
+            },
             capacity: 5,
             imgs: [],
-            often_tags:[
-                {
-                    label: 'Tag 1',
-                    value: 'tag1',
-                    choose: false,
-                },
-                {
-                    label: 'Tag 2',
-                    value: 'tag2',
-                    choose: false,
-                },
-                {
-                    label: 'Tag 3',
-                    value: 'tag1',
-                    choose: false,
-                }
-            ],
             askRemoveData: {
                 dialogVisible: false,
                 numRemove: 0,
@@ -281,7 +172,7 @@ export default{
         }
     },
     components: {
-        Checkbox, Avatar, Checkbox3, Remove
+        Checkbox, Avatar, Checkbox3, Remove, editInfo
     },
     methods: {
         checkTag(event, tag){
@@ -332,6 +223,7 @@ export default{
                     choose: false,
                     isFocus: false,
                     form:{
+                        id: crypto.randomUUID(),
                         name: '',
                         desc: '',
                         shotTime: '',
@@ -374,12 +266,8 @@ export default{
             d3.select(".el-upload__input").node().click();
         },
         refreshFocusImg(newFocus){
-            // tag被display: none的要还原
-            const newKwsSet = new Set(newFocus.form.kws.map(d=>d.label));
-            this.often_tags.forEach(tag => {
-                tag.choose = newKwsSet.has(tag.label);
-            });
             this.focusImg = newFocus;
+            // this.$refs.form.refreshFocusImg(newFocus); //告诉子组件需要更新tag 直接调用子组件方法
         }
     },
     watch:{
@@ -390,10 +278,13 @@ export default{
             if(newLength){
                 this.refreshFocusImg(this.imgs[0]);
             }
-        },
-        focusImg(newFocus){
-            console.log(newFocus)
         }
+        // imgs:{
+        //     deep: true,
+        //     handler(v){
+        //         console.log(v)
+        //     }
+        // }
     },
     mounted(){ 
         
@@ -405,34 +296,34 @@ export default{
 <style scoped lang="scss">
 
 
-:deep(.el-form-item__label){
-    color: #000;
-}
+// :deep(.el-form-item__label){
+//     color: #000;
+// }
 
-:deep(.el-check-tag){
-    border-radius: 0px;
-    padding: 4px 8px;
-    /* width: 48px;
-    height: 32px; */
-    color: #555555;
-    background-color: #F2F2F2;
-    text-align: center;
-    font-weight: normal;
-    line-height: normal;
-}
+// :deep(.el-check-tag){
+//     border-radius: 0px;
+//     padding: 4px 8px;
+//     /* width: 48px;
+//     height: 32px; */
+//     color: #555555;
+//     background-color: #F2F2F2;
+//     text-align: center;
+//     font-weight: normal;
+//     line-height: normal;
+// }
 
-:deep(.el-check-tag.el-check-tag--primary.is-checked){
-    background-color: black;
-    color: #FFFFFF;
-}
-:deep(.el-check-tag.el-check-tag--primary.is-checked:hover) {
-    background-color: black;
-    color: #FFFFFF;
-}
+// :deep(.el-check-tag.el-check-tag--primary.is-checked){
+//     background-color: black;
+//     color: #FFFFFF;
+// }
+// :deep(.el-check-tag.el-check-tag--primary.is-checked:hover) {
+//     background-color: black;
+//     color: #FFFFFF;
+// }
 
-:deep(.el-form-item){
-    margin-bottom: 40px;
-}
+// :deep(.el-form-item){
+//     margin-bottom: 40px;
+// }
 
 :deep(.el-upload){
   width: 100%;
@@ -461,34 +352,12 @@ export default{
 :deep(.el-dialog__body){
     text-align: center;
 }
+
 .dialog-button{
     width: 160px; 
     height: 44px;
 }
 
-
-.submit{
-    width: 200px;
-    height: 50px;
-    background-color: #F34C4F;
-    color: #FFF;
-    border: 3px solid #FBBBBC;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: underline;
-    cursor: pointer;
-}
-:deep(.el-textarea__inner){
-    border-radius: 0px;
-}
-
-:deep(.el-input__wrapper){
-    border-radius: 0px;
-}
 
 .border{
     /* box-sizing: border-box; */
@@ -519,22 +388,22 @@ export default{
     border-right-color: white;
 }
 
-.tag-container1{
-    width: 90%;
-    height: fit-content;
-    margin-left: -5px;
-}
+// .tag-container1{
+//     width: 90%;
+//     height: fit-content;
+//     margin-left: -5px;
+// }
 
-.tag-container2{
-    width: 90%;
-    height: 100px;
-    overflow-y: scroll;
-    margin-left: -5px;
-}
+// .tag-container2{
+//     width: 90%;
+//     height: 100px;
+//     overflow-y: scroll;
+//     margin-left: -5px;
+// }
 
-.tags{
-    margin: 5px;
-}
+// .tags{
+//     margin: 5px;
+// }
 
 .u-checkbox-container{
     box-sizing: border-box;
