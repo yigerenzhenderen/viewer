@@ -554,11 +554,7 @@ function Canvas() {
         showDetail(d);
         loadBigImage(d, "click");
         changeMani(d.sprite)
-        // TODO 
-        // const pos = d.sprite.getGlobalPosition();
-        // const box = d.sprite.getBounds();
-        // detailStore.x = pos.x + box.width / 2;
-        // detailStore.y = pos.y + box.height / 2;
+
         state.zoomingToImage = false;
       });
   }
@@ -571,9 +567,11 @@ function Canvas() {
     detailStore.y = pos.y + box.height / 2;
   }
 
-  function hideMani(sprite){
+  function hideMani(){
     detailStore.maniShow = false;
   }
+
+  
 
   function showDetail(d) {
     var detailContainer = d3.select(".sidebar");
@@ -598,6 +596,16 @@ function Canvas() {
     // detailVue.item = detailData;
     // detailVue.id = d.id;
     // detailVue.page = d.page;
+    // TODO: 接入后端 点击某个图像后更新右侧detail信息
+    detailStore.form = {
+      id: selectedImage.id,
+      name: "哈哈哈",
+      desc: detailData['_desc'],
+      shotTime: detailData['_year'],
+      shoter: detailData['_year'],
+      place: detailData['_year'],
+      kws: [],
+    };
     detailStore.item = detailData;
     detailStore.id = d.id;
     detailStore.page = d.page;
@@ -666,6 +674,7 @@ function Canvas() {
       zoomedToImageScale = scale;
       hideTheRest(selectedImage);
       showDetail(selectedImage);
+      // console.log(selectedImage)
       detailStore.maniShow = true;
     }
 
@@ -675,10 +684,11 @@ function Canvas() {
       state.lastZoomed = 0;
       showAllImages();
       clearBigImages();
-      detailStore.maniShow = false;
-      changeMani(selectedImage.sprite)
+      detailStore.maniShow = false; // 隐藏mani icon
+      detailStore.editing = false; // 结束修改
+      // changeMani(selectedImage.sprite)
       // d3.select(".sidebar").classed("hide", true);
-      detailStore.hide = true;
+      detailStore.hide = true; // 隐藏右侧detail
     }
 
     timeline.update(x1, x2, scale, translate, scale1);
