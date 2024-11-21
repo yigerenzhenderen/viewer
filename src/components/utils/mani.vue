@@ -88,6 +88,7 @@ export default{
     width: 120px;
     height: 25px;
     transform-origin: 100% 0%;
+    z-index: 100;
 
     .item{
         width: 20px;

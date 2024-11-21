@@ -16,19 +16,19 @@ function Canvas() {
 
 
   var map = new MapLayer();
-  
+
   var scale1 = 1;
   var scale2 = 1;
   var scale3 = 1;
   var allData = [];
-  
+
   var translate = [0, 0];
   var scale = 1;
   var timeDomain = [];
   var loadImagesCue = [];
 
 
-  var zoomCenter = [width/2, height/2];
+  var zoomCenter = [width / 2, height / 2];
 
   var x = d3.scaleBand()
     .range([margin.left, width + margin.left]);
@@ -55,6 +55,7 @@ function Canvas() {
   var canvas;
   var config;
   var container;
+  var overlay;
   var entries;
   var years;
   var data;
@@ -166,14 +167,13 @@ function Canvas() {
       (0.8 / (x.bandwidth() / collumns / width)) *
       (state.mode == "time" ? 1 : 0.5);
   };
-  
+
   canvas.init = function (_data, _timeline, _map, _config) {
     data = _data;
     config = _config;
     map.init(_map, [width, height])
     container = d3.select(".page")
-      .append("div")
-      .classed("viz", true)
+      .select(".viz")
       .style("width", `${width}px`)
       .style("height", `${height}px`);
 
@@ -209,6 +209,11 @@ function Canvas() {
     globalThis.__PIXI_RENDERER__ = renderer;
     var renderElem = d3.select(container.node().appendChild(renderer.view));
 
+    // overlay = container.append("svg")
+    //   .classed("overlay", true)
+    //   .attr("width", `${width + margin.left + margin.right}px`)
+    //   .attr("height", `${height}px`);
+
 
     root = new PIXI.Container();
     imageStage = new PIXI.Container(); // 图片stage
@@ -220,14 +225,14 @@ function Canvas() {
     imageStage.addChild(stage3);
     imageStage.addChild(stage4);
     imageStage.addChild(stage5);
-    root.addChild(imageStage); 
+    root.addChild(imageStage);
     globalThis.__PIXI_STAGE__ = root;
     _timeline.forEach(function (d) {
       d.type = "timeline";
     });
 
 
-    var canvasDomain = d3.groups(_data.concat(_timeline), d => d.year).sort((a,b)=> a[0] - b[0]).map(d=>d[0])
+    var canvasDomain = d3.groups(_data.concat(_timeline), d => d.year).sort((a, b) => a[0] - b[0]).map(d => d[0])
 
     timeDomain = canvasDomain.map(function (d) {
       return {
@@ -283,6 +288,7 @@ function Canvas() {
           spriteClick = false;
           return;
         }
+
         if (selectedImage && !selectedImage.id) return;
         if (drag) return;
         if (selectedImageDistance > cursorCutoff) return;
@@ -361,7 +367,7 @@ function Canvas() {
     var mouse = d3.pointer(event, vizContainer.node());
     var p = toScreenPoint(mouse);
 
-    var found = quadtree.find(p[0]- imgPadding, p[1] - imgPadding, cursorCutoff)
+    var found = quadtree.find(p[0] - imgPadding, p[1] - imgPadding, cursorCutoff)
     selectedImageDistance = found !== undefined ? 0 : 1000;
 
 
@@ -384,7 +390,7 @@ function Canvas() {
   }
 
   function stackLayout(data, invert) {
-    var years = d3.groups(data, d=>d.year)
+    var years = d3.groups(data, d => d.year)
 
     years.forEach(function (year) {
       var startX = x(year[0]);
@@ -515,13 +521,14 @@ function Canvas() {
     state.zoomingToImage = true;
     loadMiddleImage(d);
 
+    // console.log(root.getGlobalPosition(), thisSprite.getGlobalPosition());
     // d3.select(".tagcloud").classed("hide", true);
     // d3.select(".button").classed("hide", true);
 
     var padding = rangeBandImage / 2;
-    var scale = 1 / (rangeBandImage / (width*0.8));
+    var scale = 1 / (rangeBandImage / (width * 0.8));
     var translateNow = [
-      -scale * (d.x - padding) - (width*0.8) / 2 + margin.left,
+      -scale * (d.x - padding) - (width * 0.8) / 2 + margin.left,
       -scale * (height + d.y + padding) - margin.top + height / 2,
     ];
 
@@ -531,9 +538,9 @@ function Canvas() {
       hideTheRest(d);
     }, duration / 2);
 
-    if(translateNow[0]==translate[0] && translateNow[1]==translate[1]){
+    if (translateNow[0] == translate[0] && translateNow[1] == translate[1]) {
       return
-    } 
+    }
 
     vizContainer
       .transition()
@@ -546,8 +553,26 @@ function Canvas() {
         hideTheRest(d);
         showDetail(d);
         loadBigImage(d, "click");
+        changeMani(d.sprite)
+        // TODO 
+        // const pos = d.sprite.getGlobalPosition();
+        // const box = d.sprite.getBounds();
+        // detailStore.x = pos.x + box.width / 2;
+        // detailStore.y = pos.y + box.height / 2;
         state.zoomingToImage = false;
       });
+  }
+
+
+  function changeMani(sprite){
+    const pos = sprite.getGlobalPosition();
+    const box = sprite.getBounds();
+    detailStore.x = pos.x - box.width / 2;
+    detailStore.y = pos.y + box.height / 2;
+  }
+
+  function hideMani(sprite){
+    detailStore.maniShow = false;
   }
 
   function showDetail(d) {
@@ -641,6 +666,7 @@ function Canvas() {
       zoomedToImageScale = scale;
       hideTheRest(selectedImage);
       showDetail(selectedImage);
+      detailStore.maniShow = true;
     }
 
     if (zoomedToImage && zoomedToImageScale * 0.8 > scale) {
@@ -649,7 +675,8 @@ function Canvas() {
       state.lastZoomed = 0;
       showAllImages();
       clearBigImages();
-
+      detailStore.maniShow = false;
+      changeMani(selectedImage.sprite)
       // d3.select(".sidebar").classed("hide", true);
       detailStore.hide = true;
     }
@@ -671,6 +698,8 @@ function Canvas() {
     root.x = translate[0];
     root.y = translate[1];
     sleep = false;
+    if(selectedImage)changeMani(selectedImage.sprite)
+
   }
 
   function zoomstart(event) {
@@ -721,10 +750,10 @@ function Canvas() {
     if (state.mode == "time") {
       canvas.split();
       cursorCutoff = (1 / scale1) * imageSize * 0.48;
-    } else if (state.mode == "similarity"){
+    } else if (state.mode == "similarity") {
       canvas.projectTSNE();
       cursorCutoff = (1 / scale1) * imageSize * 1;
-    } else if (state.mode == "location"){
+    } else if (state.mode == "location") {
       canvas.projectTSNE();
       cursorCutoff = (1 / scale1) * imageSize * 1;
     }
@@ -825,7 +854,7 @@ function Canvas() {
       // console.log(tsneEntry)
       if (tsneEntry) {
         _ = map._projection(...tsneEntry)
-        d.x = _[0]; 
+        d.x = _[0];
         d.y = _[1];
         // d.y = map._projection(tsneEntry[1])
       } else {
@@ -847,7 +876,7 @@ function Canvas() {
       }
 
       if (d.sprite2) {
-        
+
         d.sprite2.position.x = d.x * scale2 + imageSize2 / 2;
         d.sprite2.position.y = d.y * scale2 + imageSize2 / 2;
       }
@@ -872,14 +901,14 @@ function Canvas() {
     y = extent[1] / -3 - bottomPadding;
     // this needs a major cleanup
     y = Math.max(y, -bottomPadding);
-    
+
 
     vizContainer
       .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
       .transition()
       .duration(duration)
       .call(zoom.transform, d3.zoomIdentity.translate(0, y).scale(1))
-    
+
   };
 
   canvas.split = function () {
@@ -942,9 +971,9 @@ function Canvas() {
     if (config.loader.textures.detail.csv) {
       url = d[config.loader.textures.detail.csv];
     } else {
-    //   console.log(d.id.split("_")[0])
-    //   url = config.loader.textures.detail.url + d.id + ".jpg";
-    // 相同图像的load
+      //   console.log(d.id.split("_")[0])
+      //   url = config.loader.textures.detail.url + d.id + ".jpg";
+      // 相同图像的load
       url = config.loader.textures.detail.url + d.id.split("_")[0] + ".jpg";
     }
 
@@ -979,14 +1008,13 @@ function Canvas() {
       loadMiddleImage(d);
       return;
     }
-
     state.lastZoomed = d.id;
     var page = d.page ? "_" + d.page : "";
     var url = "";
     if (config.loader.textures.big.csv) {
       url = d[config.loader.textures.big.csv];
     } else {
-    //   url = config.loader.textures.big.url + d.id + page + ".jpg";
+      //   url = config.loader.textures.big.url + d.id + page + ".jpg";
       url = config.loader.textures.big.url + d.id.split("_")[0] + page + ".jpg";
     }
 
@@ -1009,7 +1037,6 @@ function Canvas() {
 
     // console.log("Loading big image", d, d.imagenum)
     if (d.imagenum) {
-
       sprite.on("mousemove", function (s) {
         var pos = s.data.getLocalPosition(s.currentTarget);
         s.currentTarget.cursor = pos.x > 0 ? "e-resize" : "w-resize";
@@ -1039,6 +1066,7 @@ function Canvas() {
     sprite._data = d;
     d.big = true;
     stage5.addChild(sprite);
+    console.log(sprite)
     sleep = false;
   }
 
