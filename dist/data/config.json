@@ -10,15 +10,18 @@
     "map": "data/geo.json",
     "layouts": [
         {
-            "title": "Time"
+            "title": "Time",
+            "label": "时间"
         },
         {
             "title": "Similarity",
+            "label": "相似度",
             "url": "data/projection.csv",
             "scale": 0.8
         },
         {
           "title": "Location",
+          "label": "地理位置",
           "url": "data/projection.csv",
           "scale": 0.8
       }
