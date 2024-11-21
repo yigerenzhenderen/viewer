@@ -38,10 +38,13 @@
               </div>
           </div>
       </div>
-      <div class="inner">
+      <!-- <div class="inner">
         <div></div>
+      </div> -->
+      <div class="inner">
+        <Discussion />
+        <Input />
       </div>
-      <div class="inner">Comment</div>
     </div>
   </div>
 
@@ -51,8 +54,11 @@
 <script>
 import { useDetailStore } from '../../store/detail';
 import { mapState, mapStores } from 'pinia';
+import Discussion from "./discuss.vue";
+import Input from "./input.vue";
 
 export default {
+  components: {Discussion, Input},
   computed:{
     ...mapStores(useDetailStore)
   },

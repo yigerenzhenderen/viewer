@@ -26,6 +26,7 @@ export default{
 
 <style scoped>
 .avatar{
+    flex-shrink: 0;
     /* width: 53px;
     height: 53px; */
     border-radius: 50%; /* 将边框半径设置为 50% */

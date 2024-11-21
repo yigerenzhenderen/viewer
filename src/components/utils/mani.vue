@@ -1,27 +1,31 @@
 <template>
-    <div v-show="detailStore.maniShow" class="option" :style="{left: detailStore.x - 100 +'px', top: detailStore.y + 20 + 'px'}">
-        <div class="item">
-            <img class="i" :src="view" alt="" />
+    <div v-show="detailStore.maniShow" class="option" :style="{left: detailStore.x +'px', top: detailStore.y + 15 + 'px'}">
+        <div class="item" @mouseenter="active.view = true" @mouseleave="active.view = false">
+            <!-- <img class="i" :src="view" alt="" /> -->
+            <viewIcon :active-color="'#2A2A2A'" :active="active.view"></viewIcon>
             <span class="t">{{ 1125 }}</span>
         </div>
-        <div class="item">
-            <img class="i" :src="forward" alt=""/>
+        <div class="item" @mouseenter="active.forward = true" @mouseleave="active.forward = false">
+            <!-- <img class="i" :src="forward" alt=""/> -->
+            <forwardIcon :active-color="'#2A2A2A'" :active="active.forward"></forwardIcon>
             <span class="t">{{ 22 }}</span>
         </div>
-        <div class="item">
-            <img class="i" :src="like" alt="like"/>
-            <span class="t">点赞</span>
+        <div class="item" @mouseenter="active.like = true" @mouseleave="active.like = false" @click="likeClick">
+            <!-- <img class="i" :src="like" alt="like"/> -->
+            <likeIcon :active-color="'#F34C4F'" :active="active.like" :clicked="clicked.like"></likeIcon>
+            <span class="t" :style="{color : clicked.like ? '#F34C4F' : '#808080'}">点赞</span>
         </div>
     </div>
 </template>
 
 
 <script>
-import view from "/src/assets/view.svg"
-import forward from "/src/assets/forward.svg"
-import like from "/src/assets/like.svg";
 import { useDetailStore } from '/src/store/detail';
 import { mapStores } from 'pinia';
+import forwardIcon from "./forward.vue";
+import likeIcon from "./like.vue";
+import viewIcon from "./view.vue";
+
 
 export default{
     props:{
@@ -41,12 +45,32 @@ export default{
         //     default: 500
         // }
     },
+    components:{
+        forwardIcon,
+        likeIcon,
+        viewIcon,
+    },
     data(){
         return {
-            view: view,
-            forward: forward,
-            like: like,
-
+            active:{
+                forward: false,
+                like: false,
+                view: false
+            },
+            clicked:{
+                forward: false,
+                like: false,
+                view: false
+            }
+        }
+    },
+    methods:{
+        likeClick(e){
+            e.preventDefault();
+            this.clicked.like = !this.clicked.like;
+            // setTimeout(() => {
+            //     this.clicked.like = false;
+            // }, 500);
         }
     },
     computed:{
@@ -61,17 +85,23 @@ export default{
     display: flex;
     justify-content: space-between;
     position: absolute;
-    width: 100px;
-    height: 20px;
+    width: 120px;
+    height: 25px;
     transform-origin: 100% 0%;
 
     .item{
-        width: 40px;
+        width: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+
+    .item svg{
+        position: relative;
+        height: 100%;
+        flex-shrink: 0;
     }
 
     .i{
@@ -80,7 +110,7 @@ export default{
     }
 
     .t{
-        font-size: 8px;
+        font-size: 10px;
         color: #808080;
     }
 }

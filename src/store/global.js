@@ -4,6 +4,7 @@ import { getImgUrl } from "../js/utils";
 export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
+            logged: false,
             userInfo: {
                 realName: 'aaa',
                 phone: '12344',

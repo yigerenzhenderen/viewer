@@ -567,7 +567,7 @@ function Canvas() {
   function changeMani(sprite){
     const pos = sprite.getGlobalPosition();
     const box = sprite.getBounds();
-    detailStore.x = pos.x + box.width / 2;
+    detailStore.x = pos.x - box.width / 2;
     detailStore.y = pos.y + box.height / 2;
   }
 
@@ -676,7 +676,7 @@ function Canvas() {
       showAllImages();
       clearBigImages();
       detailStore.maniShow = false;
-      changeMani(sprite)
+      changeMani(selectedImage.sprite)
       // d3.select(".sidebar").classed("hide", true);
       detailStore.hide = true;
     }
