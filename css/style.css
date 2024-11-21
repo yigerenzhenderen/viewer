@@ -984,6 +984,7 @@ svg {
   width: 200px;
   text-align: center;
   transform: translate(0px, 20px);
+  height: 100%;
 }
 
 .title span{
