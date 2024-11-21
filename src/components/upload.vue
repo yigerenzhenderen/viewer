@@ -1,7 +1,10 @@
 <template>
     <div class="u-div">
         <div class="u-header">
-            <div class="title-container"><span class="title">湖南影像档案馆</span></div>
+            <div class="title">
+                <span>湖南影像档案馆</span>
+                <router-link to="/" class="link" style="position: absolute;"></router-link>
+            </div>
             <Avatar style="margin-right: 10px;"></Avatar>
         </div>
         <div class="u-container">

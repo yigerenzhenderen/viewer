@@ -137,7 +137,7 @@ export function init() {
       .append("div")
       .classed("button", true)
       .classed("space", (d) => d.space)
-      .text((d) => d.title)
+      .text((d) => d.label)
       .on("click", function (e, d) {
         canvas.setMode(d.title);
         d3.selectAll(".navi .button").classed(
