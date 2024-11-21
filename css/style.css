@@ -719,8 +719,8 @@ svg {
 .detail .inner {
   /*height: 100%;
   overflow-y: scroll;*/
-  float: left;
-  padding: 60px;
+  /* float: left; */
+  padding: 27px;
   /* padding-left: 60px; */
 }
 
@@ -1052,4 +1052,6 @@ textarea:focus, input:focus{
 *:focus {
     outline: none;
 }
+
+
 
