@@ -43,7 +43,7 @@
             <div class="u-content" style="flex-direction: column; margin-top: 10px;">
                 <div class="content-h">
                     <div>上传图片及信息</div>
-                    <div class="submit" @click="submit">提交</div>
+                    <div class="submit" @click="submit" style="margin-right: 100px;">提交</div>
                 </div>
                 <div class="content-b">
                     <div class="content-img">
