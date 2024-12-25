@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import fetch from '../js/fetch';
 
 export const useDetailStore = defineStore('detail', {
     state: () => {
@@ -20,8 +21,21 @@ export const useDetailStore = defineStore('detail', {
             hide: true,
             sneak: false,
             x: 100,
-            y: 100,
-            maniShow: false,
+            y: 100
         }
+    },
+    actions: {
+        // async refreshImg(imgId){
+        //     // const result = await fetch.getImg(imgId);
+        //     // this.img = (!!result) ? result : {
+        //     //     browseCount: 0,
+        //     //     forwardCount: 0,
+        //     //     likeCount: 0,
+        //     //     imageEntryFileInfos: []
+        //     // }
+        //     // this.globalStore.view(267);
+        //     // console.log('aaaa',this.img);
+        //     // this.detailStore.comment = result.memberCommentLogsList;
+        // },
     }
 })

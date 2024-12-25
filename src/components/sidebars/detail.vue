@@ -44,7 +44,7 @@
             <img :src="editUrl" alt="" style="height: 100%; width: 100%; margin-top: -1px; margin-left: 10px;">
           </template>
         </el-button>
-        <span style="margin-left: auto; margin-top: 10px; font-size: 10px; color: #6D6D6D;">登录后可使用此功能</span>
+        <span v-if="!globalStore.logged" style="margin-left: auto; margin-top: 10px; font-size: 10px; color: #6D6D6D;">登录后可使用此功能</span>
       </div>
       <div class="inner">
         <Discussion />
@@ -75,6 +75,7 @@ import Discussion from "./discuss.vue";
 import Input from "./input.vue";
 import edit from "/src/assets/edit.svg";
 import editInfo from '../utils/editInfo.vue';
+import fetch from '../../js/fetch';
 
 export default {
   data() {
@@ -84,11 +85,14 @@ export default {
   },
   components: { Discussion, Input, editInfo },
   computed: {
-    ...mapStores(useDetailStore, useGlobalStore)
+    ...mapStores(useDetailStore, useGlobalStore),
+    hide(){
+      return this.detailStore.hide;
+    }
   },
   methods: {
     displayPage(page) {
-      canvas.changePage(detailStore.id, page)
+      canvas.changePage(this.detailStore.id, page)
     },
     hasData(_entry) {
       return this.getContent(_entry) !== ''
@@ -124,10 +128,15 @@ export default {
     // console.log(this.item, this.detailStore.detail_test, 'hahahahhah')
   },
   watch:{
+    // async hide(bool){
+    //   if(bool) return;
+    //   const imgData = await fetch.getImg("");
+    //   console.log('showing !!!!',imgData)
+    // }
     // detailStore: {
     //   deep: true,
     //   handler(newVal, oldVal) {
-    //     console.log('detailStore changed', newVal.form)
+    //     console.log('detailStore changed', newVal.comment)
     //   }
     // }
   }

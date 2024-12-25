@@ -6,8 +6,8 @@
                 <div v-for="img in imgs" class="img-container" 
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false">
-                    <img :src="tempSrc" alt="" style="width: 100%; height: 200px; object-fit: cover;">
-                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
+                    <img :src="img.entryimgThumurl" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.entryimgName }}</div>
                     <div v-if="img.hoverImg" class="delete" 
                         @mouseover="img.hoverRemove=true"
                         @mouseout="img.hoverRemove=false"
@@ -38,6 +38,8 @@ import Avatar from "../utils/avatar.vue";
 import Remove from "../utils/remove.vue";
 import Checkbox3  from "../utils/checkbox3.vue";
 import tempSrc from "/src/assets/temp.jpg"
+import { useGlobalStore } from '/src/store/global';
+import { mapStores } from 'pinia';
 
 export default{
     data(){
@@ -51,6 +53,7 @@ export default{
         Checkbox, Avatar, Remove, Checkbox3
     },
     computed:{
+        ...mapStores(useGlobalStore),
     },
     methods: {
         remove(time, img){
@@ -58,7 +61,11 @@ export default{
             this.selectAll = false;
         },
     },
-    mounted() {
+    async mounted() {
+        const likeHistory = await this.globalStore.getLikeHistory();
+        console.log(likeHistory)
+        this.imgs = likeHistory.rows;
+
     }
 }
 </script>

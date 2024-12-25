@@ -6,24 +6,24 @@
 
     <div class="info-container">
       <div class="icon">
-        <Avatar :size="300"></Avatar>
+        <Avatar :size="300" :url="globalStore.userInfo.memberImgurl"</Avatar>
       </div>
       <div class="info">
-        <el-form :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
+        <el-form :disabled="!editing" :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
           <el-form-item label="真实姓名">
-            <el-input v-model="globalStore.userInfo.realName" />
+            <el-input v-model="globalStore.userInfo.memberName" />
           </el-form-item>
           <el-form-item label="手机号码">
-            <el-input v-model="globalStore.userInfo.phone" />
+            <el-input v-model="globalStore.userInfo.memberPhone" />
           </el-form-item>
           <el-form-item label="单位名称">
             <el-input v-model="globalStore.userInfo.danwei" />
           </el-form-item>
           <el-form-item label="电子邮件">
-            <el-input v-model="globalStore.userInfo.email" />
+            <el-input v-model="globalStore.userInfo.memberEmail" />
           </el-form-item>
           <el-form-item label="用户名">
-            <el-input v-model="globalStore.userInfo.userName" />
+            <el-input v-model="globalStore.userInfo.wechatNickname" />
           </el-form-item>
           <el-form-item label="微信号">
             <el-input v-model="globalStore.userInfo.wx" />
@@ -31,7 +31,7 @@
         </el-form>
         
         <div style="width: 600px; display: flex; margin-top: 30px;">
-          <button class="button" style="margin-left: auto;">修改个人资料</button>
+          <button class="button" style="margin-left: auto;" @click="editingChange">{{ this.editing ? "保存" : "修改个人资料" }}</button>
         </div>
       </div>
     </div>
@@ -43,8 +43,14 @@
 import { useGlobalStore } from '../../store/global.js';
 import { mapState, mapStores } from 'pinia';
 import Avatar from '../utils/avatar.vue';
+import fetch from '../../js/fetch.js'
 
 export default{
+  data(){
+    return {
+      editing: false,
+    }
+  },
   computed:{
     ...mapStores(useGlobalStore)
   },
@@ -52,6 +58,13 @@ export default{
     Avatar
   },
   methods: {
+    async editingChange(){
+      this.editing =!this.editing;
+      if (!this.editing) {
+        const res = await this.globalStore.updateInfo()
+        console.log(res)
+      }
+    }
   },
   mounted() {
   }

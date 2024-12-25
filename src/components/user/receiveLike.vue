@@ -9,16 +9,18 @@
                         <Avatar :size="80" />
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
-                                <span class="name-font">{{ like.name }}</span>&emsp;
+                                <span class="name-font">{{ like.memberName }}</span>&emsp;
                                 <span class="gray-font">点赞了&thinsp;你上传的图片&thinsp;</span>
-                                <span class="gray-font" style="text-decoration: underline;;">{{ like.imgName }}</span>
+                                <span class="gray-font" style="text-decoration: underline;;">{{ like.originalFileName }}</span>
                             </div>
                             <div style="margin-top: 10px;">
-                                <span class="time-font">{{ like.time }}</span>
+                                <span class="time-font">{{ like.actionTime }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="right"></div>
+                    <div class="right">
+                        <img :src="like.submitimgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -43,30 +45,31 @@
 
 
 <script>
-// import { useInfoStore } from '../../store/info.js';
-// import { mapState, mapStores } from 'pinia';
+import { mapState, mapStores } from 'pinia';
+import fetch from "../../js/fetch";
 import Checkbox from "../upload/checkbox.vue";
 import Avatar from "../utils/avatar.vue";
 import Remove from "../utils/remove.vue";
 import Checkbox3  from "../utils/checkbox3.vue";
+import { useGlobalStore } from '../../store/global.js';
 
 export default{
     data(){
         return {
             selectAll: false,
             receiveLikeList: [
-                {choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00"},
-                {choose:false, id: 2, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 3, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 4, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 5, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 6, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00"},
+                // {choose:false, id: 2, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 3, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 4, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 5, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 6, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
+                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
             ]
         }
     },
@@ -74,7 +77,7 @@ export default{
         Checkbox, Avatar, Remove, Checkbox3
     },
     computed:{
-        // ...mapStores(useInfoStore),
+        ...mapStores(useGlobalStore),
         numChoose(){
             return this.receiveLikeList.filter(item => item.choose).length;
         }
@@ -94,7 +97,10 @@ export default{
             console.log(currentPage, pageSize)
         }
     },
-    mounted() {
+    async mounted() {
+        const data = await fetch.getOthersLiksLogs(this.globalStore.userInfo.memberId);
+        this.receiveLikeList = data.rows;
+        console.log(data)
     }
 }
 </script>

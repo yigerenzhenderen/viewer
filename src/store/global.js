@@ -1,22 +1,65 @@
 import { defineStore } from 'pinia'
 import { getImgUrl } from "../js/utils";
+import fetch from '../js/fetch.js'
 
 export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
             logged: false,
             userInfo: {
-                realName: 'aaa',
-                phone: '12344',
+                wechatNickname: 'kegemo',
+                memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',
+                memberName: "xxx",
+                // realName: 'aaa',
+                memberPhone: '12344',
                 danwei: 'bbbb',
-                email: 'aadsafa',
-                userName: 'asdf',
+                memberEmail: 'aadsafa',
+                memberId: '1',
                 wx: '1234',
                 avatar: getImgUrl("https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg"),
             },
-
+            likeList: [],
+            naviList: [],
+            commentList: [],
+            currentImg: {},
+            uploadList: [],
         }
     },
     actions: {
-    }
+        // async logIn(){
+        //     this.logged = true;
+        //     this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
+        //     this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+        //     console.log(this.likeList, this.naviList)
+        // },
+        async updateInfo(){
+            const res = await fetch.editUserInfo(this.userInfo);
+            return res;
+        },
+        async getLikeHistory(){
+            const res = await fetch.getUserLikeLogs(this.userInfo.memberId);
+            return res;
+        },
+        async getNaviHistory(){
+            const res = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+            return res.data;
+        },
+        async getCommentHistory(){
+            const res = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+            return res.data;
+        },
+        async like(imgId, likeBool){
+            const res = await fetch.userLike(imgId, this.userInfo.memberId, likeBool);
+            return res;
+        },
+        async view(imgId){
+            const res = await fetch.userView(imgId, this.userInfo.memberId);
+            return res;
+        },
+        async forward(imgId){
+            const res = await fetch.userForward(imgId, this.userInfo.memberId);
+            return res;
+        }
+    },
 })
+

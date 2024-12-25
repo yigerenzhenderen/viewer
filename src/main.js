@@ -7,6 +7,7 @@ import { useInfoStore } from './store/info.js'
 import { useGlobalStore } from './store/global.js'
 import { useDiscussStore } from './store/discuss.js'
 import ElementPlus from 'element-plus'
+import _ from "lodash"
 import './style.css'
 import App from './App.vue'
 import 'element-plus/theme-chalk/src/index.scss';
@@ -24,3 +25,4 @@ window.infoStore = useInfoStore();
 window.globalStore = useGlobalStore();
 window.discussStore = useDiscussStore();
 
+// window.globalStore.logIn();

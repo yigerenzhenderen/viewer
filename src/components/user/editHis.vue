@@ -61,6 +61,9 @@ import forwardSvg from "/src/assets/forward.svg"
 import likeSvg from "/src/assets/like.svg"
 import commentSvg from "/src/assets/comment.svg"
 import tempSrc from "/src/assets/temp.jpg"
+import fetch from "../../js/fetch";
+import { useGlobalStore } from '../../store/global.js';
+import { mapStores } from 'pinia';
 
 export default{
     data(){
@@ -89,6 +92,7 @@ export default{
         Checkbox, Avatar, Remove, Checkbox3
     },
     computed:{
+        ...mapStores(useGlobalStore),
     },
     methods: {
         // remove(img){
@@ -97,16 +101,18 @@ export default{
     },
     watch:{
         type(newVal){
-            if(newVal===0){
+            if(newVal===9){
                 console.log("上传成功的");
             }else if(newVal===1){
-                console.log("审核中的");
+                console.log("待审核");
             }else if(newVal===2){
-                console.log("审核不通过的");
+                console.log("被驳回");
             }
         }
     },
-    mounted() {
+   async mounted() {
+        const data = await fetch.getUserUploadRevision(this.globalStore.userInfo.memberId, 1, 50)
+        console.log("editHis", data)
     }
 }
 </script>

@@ -169,7 +169,7 @@ export default{
             if(tag.choose){
                 this.form.kws.push(tag);
             }else{
-                this.form.kws = this.form.kws.filter(t=>t.label !== tag.label);
+                this.form.kws = this.form.kws.filter(t=>t.label!== tag.label);
             }
             this.often_tags.forEach(t => {
                 if(t.label === tag.label){
@@ -179,7 +179,7 @@ export default{
         },
         refreshFocusImg(newForm){
             // tag被display: none的要还原
-            const newKwsSet = new Set(newForm.kws.map(d=>d.label));
+            const newKwsSet = new Set(newForm.kws.map(t=>t.label));
             this.often_tags.forEach( tag => {
                 tag.choose = newKwsSet.has(tag.label);
             });

@@ -6,38 +6,40 @@
                 <div v-for="comment in dataList" class="like-item">
                     <div v-if="comment.type=='comment'" class="left">
                         <Checkbox v-model:choose="comment.choose" style="margin-right: 20px;"/>
-                        <Avatar :size="80" style="min-width: 80px;"/>
+                        <Avatar :size="80" style="min-width: 80px;" :url="comment.memberImgUrl"/>
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
-                                <span class="name-font">{{ comment.name }}</span>&emsp;
+                                <span class="name-font">{{ comment.memberName }}</span>&emsp;
                                 <span class="gray-font">评论了&thinsp;你上传的图片&thinsp;</span>
-                                <span class="gray-font" style="text-decoration: underline;;">{{ comment.imgName }}</span>
+                                <span class="gray-font" style="text-decoration: underline;;">{{ comment.originalFileName }}</span>
                             </div>
                             <div style="display: flex; align-items: center; margin-top: 10px; max-height: 80px; max-width: 95%; overflow-y: scroll;">
-                                <span class="comment-font">{{ comment.content }}</span>
+                                <span class="comment-font">{{ comment.commentText }}</span>
                             </div>
                             <div style="margin-top: 10px;">
-                                <span class="time-font">{{ comment.time }}</span>
+                                <span class="time-font">{{ comment.actionTime }}</span>
                             </div>
                         </div>
                     </div>
                     <div v-else-if="comment.type=='reply'" class="left">
                         <Checkbox v-model:choose="comment.choose" style="margin-right: 20px;"/>
-                        <Avatar :size="80" style="min-width: 80px;"/>
+                        <Avatar :size="80" style="min-width: 80px;" :url="comment.memberImgUrl"/>
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
-                                <span class="name-font">{{ comment.name }}</span>&emsp;
+                                <span class="name-font">{{ comment.memberName }}</span>&emsp;
                                 <span class="gray-font">回复了&thinsp;你的评论&thinsp;</span>
                             </div>
                             <div style="display: flex; align-items: center; margin-top: 10px; max-height: 80px; max-width: 95%; overflow-y: scroll;">
-                                <span class="comment-font">{{ comment.content }}</span>
+                                <span class="comment-font">{{ comment.commentText }}</span>
                             </div>
                             <div style="margin-top: 10px;">
-                                <span class="time-font">{{ comment.time }}</span>
+                                <span class="time-font">{{ comment.actionTime }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="right"></div>
+                    <div class="right">
+                        <img :src="comment.imgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,10 +53,11 @@
                 </div>
             </div>
             <el-pagination 
+                v-model:current-page="currentPage"
                 style="margin-right: 20px;" 
                 background layout="prev, pager, next" 
-                :page-size="10"
-                :total="dataList.length" 
+                :page-size="pageSize"
+                :total="totalSize" 
                 @change="changPage"/>
         </div>
     </div>
@@ -62,8 +65,9 @@
 
 
 <script>
-// import { useInfoStore } from '../../store/info.js';
-// import { mapState, mapStores } from 'pinia';
+import { useGlobalStore } from '../../store/global.js';
+import { mapStores } from 'pinia';
+import fetch from "../../js/fetch.js"
 import Checkbox from "../upload/checkbox.vue";
 import Avatar from "../utils/avatar.vue";
 import Remove from "../utils/remove.vue";
@@ -73,19 +77,22 @@ export default{
     data(){
         return {
             selectAll: false,
+            currentPage: 1,
+            pageSize: 10,
+            totalSize: 0,
             dataList: [
-                {type: "comment", choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00", content: "很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回"},
-                {type: "comment", choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00", content: ""},
-                {type: "reply", choose:false, id: 2, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 3, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 4, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "reply", choose:false, id: 5, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "reply", choose:false, id: 6, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "reply", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
-                {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00", content: "很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回"},
+                // {type: "comment", choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00", content: ""},
+                // {type: "reply", choose:false, id: 2, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 3, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 4, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "reply", choose:false, id: 5, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "reply", choose:false, id: 6, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "reply", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
+                // {type: "comment", choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00",content: ""},
             ]
         }
     },
@@ -93,9 +100,12 @@ export default{
         Checkbox, Avatar, Remove, Checkbox3
     },
     computed:{
-        // ...mapStores(useInfoStore),
+        ...mapStores(useGlobalStore),
         numChoose(){
             return this.dataList.filter(item => item.choose).length;
+        },
+        totalPages(){
+            return this.totalSize / 50;
         }
     },
     methods: {
@@ -109,11 +119,38 @@ export default{
             this.dataList = this.dataList.filter(item =>!item.choose);
             this.selectAll = false;
         },
-        changPage(currentPage, pageSize){
-            console.log(currentPage, pageSize)
+        async refresh(){
+            const data = await fetch.getOthersCommentReplyLogs( this.globalStore.userInfo.memberId, this.currentPage, this.pageSize);
+            data.rows.forEach(item => {
+                item.type = (!!item.originalFileName) ? "comment" : "reply";
+                item.choose = false;
+            });
+            this.dataList = data.rows;
+        },
+        async changPage(){
+            await this.refresh();
+        },
+        async remove(){
+            // this.dataList.filter(item => !item.choose)
+            const groups = _.groupBy(this.dataList, item => item.choose)
+            // const toRemove = groups[true];
+            // const remain = groups[false];
+            // console.log(groups[true].map(d=>d.commentId))
+            const deletePromises = groups[true].map(item =>fetch.removeComment(this.globalStore.userInfo.memberId, item.commentId));
+            // console.log(deletePromises)
+            const results = await Promise.all(deletePromises);
+            console.log(results)
+            this.dataList = groups[false];
         }
     },
-    mounted() {
+    async mounted(){
+        const data = await fetch.getOthersCommentReplyLogs( this.globalStore.userInfo.memberId, this.currentPage, this.pageSize);
+        this.totalSize = data.total;
+        data.rows.forEach(item => {
+            item.type = (!!item.originalFileName) ? "comment" : "reply";
+            item.choose = false;
+        });
+        this.dataList = data.rows;
     }
 }
 </script>

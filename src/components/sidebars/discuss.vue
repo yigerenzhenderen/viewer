@@ -5,7 +5,7 @@
         <div v-else style="font-size: 16px; color: #8F8F8F; ">暂无评论</div>
         <div class="discuss-content">
             <div v-for="root in discussStore.discussList" class="root-discuss">
-                <div class="root">
+                <div class="root" :id="`c${root.commentId}`">
                     <Avatar :size="40" style="margin-top: 5px;"/>
                     <div class="root-reply">
                         <div style="display: flex; align-items: center;">
@@ -15,23 +15,23 @@
                         </div>
                         <div style="display: flex; margin-top: 5px;">
                             <span class="comment-font">{{ root.commentText }}</span>&emsp;
-                            <span class="reply-font">回复</span>
+                            <span class="reply-font" @click="replyComment(root)">回复</span>
                         </div>
                     </div>
                 </div>
-                <div v-for="child in root.replies" class="reply">
+                <div v-for="child in root.replies" class="reply" :id="`c${child.commentId}`">
                     <Avatar :size="40" style="margin-left: 10px;"/>
                     <div class="reply-content">
                         <div style="display: flex; align-items: center;">
                             <span class="name-font">{{ child.wechatNickname }}</span>&thinsp;
                             <span class="gray-font">回复了</span>&thinsp;
-                            <span class="name-font">{{ child.replyWho }}</span>
+                            <span class="name-font">{{ child.parentWechatNickName }}</span>
                             &emsp;
                             <span class="time-font">{{ child.place }} {{ child.actionTime }}</span>
                         </div>
                         <div style="display: flex; margin-top: 5px;">
                             <span class="comment-font">{{ child.commentText }}</span>&emsp;
-                            <span class="reply-font">回复</span>
+                            <span class="reply-font" @click="replyComment(child)">回复</span>
                         </div>
                     </div>
                 </div>
@@ -60,18 +60,30 @@ export default{
         }
     },
     methods:{
-        // fetchDiscuss(){
-        //     this.$store.dispatch('fetchDiscuss');
-        // }
-    },
-    mounted(){
-        console.log(this.discussStore.discussList)
+        focusComment(commentId){
+            console.log(commentId)
+            d3.select(".discuss-content").select(`#c${commentId}`).classed("focused", true).style("background-color", "#E2E2E2");
+        },
+        replyComment(receiver){
+            this.focusComment(receiver.commentId);
+            this.discussStore.inputIng = true;
+            // console.log(receiver.commentId)
+            this.discussStore.replyCommentId = receiver.commentId;
+            setTimeout(()=>{
+                d3.select(".discuss-content").select(".focused").classed("focused", null).transition(1000).style("background-color", "transparent");
+            }, 2000)
+        }
     }
 }
 </script>
 
 
 <style scoped lang="scss">
+
+// .focused{
+//     background-color: #515151 !important;
+//     transition: 0.5s linear;
+// }
 
 .discussion-container{
     /* width: 100%; */

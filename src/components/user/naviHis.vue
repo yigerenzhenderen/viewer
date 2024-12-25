@@ -1,5 +1,5 @@
 <template>
-    <div class="receive-like-container">
+    <div class="receive-like-container" v-loading="loading">
         <div style="font-size: 24px; font-weight: bold; margin-top: 28px; margin-bottom: 10px;">历史记录</div>
         <div class="div-container">
             <div class="wrapper">
@@ -12,7 +12,19 @@
                         <div v-for="img in data.imgs" class="img-container" 
                             @mouseenter="img.hoverImg=true"
                             @mouseleave="img.hoverImg=false">
-                            <img :src="cat" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+                            <el-image :src="img.url" style="width: 100%; height: 200px; object-fit: cover;">
+                                <template #placeholder>
+                                    <div>
+                                        <img src="/src/assets/cat.jpeg" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+                                    </div>
+                                </template>
+                                <template #error>
+                                    <div>
+                                        <!-- <img src="/src/assets/cat.jpeg" alt="" style="width: 100%; height: 200px; object-fit: cover;"> -->
+                                    </div>
+                                </template>
+                            </el-image>
+                            <!-- <img class="thumb" :src="img.url" alt="" style="width: 100%; height: 200px; object-fit: cover;"> -->
                             <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                             <div v-if="img.hoverImg" class="delete" 
                                 @mouseover="img.hoverRemove=true"
@@ -46,20 +58,27 @@ import Checkbox from "../upload/checkbox.vue";
 import Remove from "../utils/remove.vue";
 import Checkbox3  from "../utils/checkbox3.vue";
 import cat from "/src/assets/temp.jpg";
+import fetch from '../../js/fetch.js';
+import { mapStores } from 'pinia';
+import { useGlobalStore } from '../../store/global.js';
+import { groupBy } from "lodash";
+import { formatDate } from "../../js/utils.js";
 
 export default{
     data(){
         return {
             cat: cat,
             selectAll: false,
+            totalNum: 0,
+            loading: false,
             dataList: [
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
-                {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
+                // {hoverRemove: false, time: "2020年10月15日12:00", imgs: [{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""},{name:"图片名称", url: ""}]},
             ]
         }
     },
@@ -67,6 +86,7 @@ export default{
         Checkbox, Remove, Checkbox3
     },
     computed:{
+        ...mapStores(useGlobalStore)
     },
     methods: {
         remove(time, img){
@@ -74,7 +94,23 @@ export default{
             this.selectAll = false;
         },
     },
-    mounted() {
+    async mounted() {
+        this.loading = true;
+        const data = await fetch.getUserBrowseLogs(this.globalStore.userInfo.memberId);
+        this.totalNum = data.total;
+        // console.log(data)
+        const rows = data.rows.map(d=>{return {name: d.entryimgName, url: d.entryimgThumurl, time: d.actionTime.split(" ")[0]}});
+        this.dataList = Object.entries(groupBy(rows, item => item.time)).map( (item) => {
+            return {
+                hoverRemove: false,
+                time: formatDate(item[0]),
+                imgs: item[1]
+            }
+        })
+        this.$nextTick(()=>{
+            this.loading = false;
+        })
+
     }
 }
 </script>

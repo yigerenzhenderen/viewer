@@ -5,7 +5,7 @@
                 <span>湖南影像档案馆</span>
                 <router-link to="/" class="link" style="position: absolute;"></router-link>
             </div>
-            <Avatar style="margin-right: 10px;"></Avatar>
+            <Avatar style="margin-right: 10px;" :url="globalStore.userInfo.memberImgurl"></Avatar>
         </div>
         <div class="u-container">
             <div class="u-controll">
@@ -118,6 +118,8 @@ import Checkbox3  from "./utils/checkbox3.vue";
 import editInfo  from "./utils/editInfo.vue";
 import fetch from "../js/fetch";
 import { ElMessage } from 'element-plus';
+import { useGlobalStore } from '../store/global.js';
+import { mapState, mapStores } from 'pinia';
 
 export default{
     data(){
@@ -161,6 +163,7 @@ export default{
         }
     },
     computed: {
+        ...mapStores(useGlobalStore),
         numChoose(){
             return this.imgs.filter(i=>i.choose).length;
         },
@@ -175,19 +178,6 @@ export default{
         Checkbox, Avatar, Checkbox3, Remove, editInfo
     },
     methods: {
-        checkTag(event, tag){
-            tag.choose = !tag.choose;
-            if(tag.choose){
-                this.focusImg.form.kws.push(tag);
-            }else{
-                this.focusImg.form.kws = this.focusImg.form.kws.filter(t=>t.label !== tag.label);
-            }
-            this.often_tags.forEach(t => {
-                if(t.label === tag.label){
-                    t.choose = tag.choose;
-                }
-            });
-        },
         selectAllChange(){
             this.selectAll = !this.selectAll;
             this.imgs.forEach(i => {
@@ -210,7 +200,6 @@ export default{
         },
         submit(){
             const toSubmit = this.imgs.filter(i=>i.choose);
-            console.log(toSubmit);
             toSubmit.forEach(img => {
                 this.$refs.uploader.submit(img);
             })
@@ -248,19 +237,26 @@ export default{
         },
         handleSuccess(response, uploadedFile, uploadedFiles){
             const successImg = this.imgs.find(img => img.id == uploadedFile.uid);
-            console.log('success',response, uploadedFile, uploadedFiles)
+            console.log(successImg, 'success',response, uploadedFile, uploadedFiles)
             const extras = {
+                "memberId": this.globalStore.userInfo.memberId,
+                "originalFileName": uploadedFile.name,
+                "ossFileName": response.data.ossFileName,
+
+                "submitimgName": successImg.form.name,
                 "submitimgTime": successImg.form.showTime,
                 "submitimgPosition": successImg.form.place,
                 "submitimgIntro": successImg.form.desc,
                 "submitimgHolder": successImg.form.shoter,
+                "tagsIds": successImg.form.kws.map(d=>d.label).join(','),
+
                 "submitimgUrl": response.data.submitimgUrl,
-                "memberId": "1",
                 "fileSize": uploadedFile.size,
-                "tagsIds": successImg.form.kws.join(',')
             }
             console.log(extras)
-            // fetch.addUserUploadLog(1, uploadedFile.uid, uploadedFile.name, extras)
+            fetch.addUserUploadLog(extras);
+            this.$refs.uploader.handleRemove(successImg.file.raw); // 删除前端图像
+            this.imgs = this.imgs.filter(i=>!i.choose); // 删除显示图像
         },
         buttonUpload(){
             d3.select(".el-upload__input").node().click();
@@ -279,12 +275,6 @@ export default{
                 this.refreshFocusImg(this.imgs[0]);
             }
         }
-        // imgs:{
-        //     deep: true,
-        //     handler(v){
-        //         console.log(v)
-        //     }
-        // }
     },
     mounted(){ 
         

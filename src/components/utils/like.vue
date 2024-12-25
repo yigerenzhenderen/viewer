@@ -8,6 +8,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia';
+import { useGlobalStore } from '../../store/global.js';
+import fetch from "/src/js/fetch.js";
 export default {
     props: {
         activeColor: {
@@ -19,6 +22,14 @@ export default {
             type: Boolean,
             default: false,
             required: true
+        }
+    },
+    computed:{
+        ...mapStores(useGlobalStore)
+    },
+    watch:{
+        async clicked(newState){
+            await this.globalStore.like(1,newState)
         }
     }
 }

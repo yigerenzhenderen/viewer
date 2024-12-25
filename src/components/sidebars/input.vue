@@ -5,13 +5,15 @@
         <Avatar :size="avatarSize" style="margin-bottom: auto"/>
         <div class="input-comment">
             <textarea 
+                v-model="comment"
                 type="text" 
                 class="input" 
                 :rows="rows"
                 placeholder="写评论"
                 @click="startInput" 
-                @blur="endInput"/>
-            <el-button @mousedown="(e)=>e.preventDefault()" v-if="inputIng" type="primary" class="submit">发送</el-button>
+                @blur="endInput"
+            />
+            <el-button @mousedown="submitComment" v-if="discussStore.inputIng" type="primary" class="submit" >发送</el-button>
         </div>
     </div>  
     <div v-else class="comment-container" style="justify-content: center;">
@@ -26,14 +28,15 @@
 <script>
 import { useDiscussStore } from '../../store/discuss';
 import { useGlobalStore } from '../../store/global';
-import { mapState, mapStores } from 'pinia';
+import { mapStores, mapState } from 'pinia';
+import fetch from '../../js/fetch';
 import Avatar from '../utils/avatar.vue';
 
 export default{
     computed:{
         ...mapStores(useDiscussStore, useGlobalStore),
+        ...mapState(useDiscussStore, ['inputIng']),
         inputMarginTop(){
-            
             return this.avatarSize / 2 + 5;
         }
     },
@@ -42,36 +45,52 @@ export default{
     },
     data(){
         return {
-            inputIng : false,
+            // inputIng : false,
             rows: 1,
             avatarSize : 40,
+            comment : '',
         }
     },
     methods:{
         startInput(){
-            this.inputIng = true;
-            this.rows = 6;
-            this.$nextTick(() => {
-                const outer_div = d3.select(".outer").node();
-                outer_div.scrollTop = outer_div.scrollHeight;
-            })
-
+            this.discussStore.inputIng = true;
         },
-        endInput(e){
-            this.inputIng = false;
-            this.rows = 1;
+        endInput(){
+            this.discussStore.inputIng = false;
         },
         logIn(){
             this.globalStore.logged = true;
+        },
+        async submitComment(e){
+            e.preventDefault();
+            await fetch.userComment(267, this.globalStore.userInfo.memberId, this.comment, this.discussStore.replyCommentId);
+            this.comment = '';
+            this.endInput();
+            const newImg = await fetch.getImg(267);
+            this.discussStore.discussList = newImg.memberCommentLogsList;
         }
-        // submitComment(){
-
-        // fetchDiscuss(){
-        //     this.$store.dispatch('fetchDiscuss');
-        // }
     },
-    mounted(){
-        console.log(this.discussStore.discussList)
+    watch: {
+        inputIng(v){
+            if(v){
+                this.rows = 6;
+                this.$nextTick(() => {
+                    const outer_div = d3.select(".outer").node();
+                    outer_div.scrollTop = outer_div.scrollHeight;
+                })
+            }else{
+                this.rows = 1;
+                this.discussStore.replyCommentId = 0;
+            }
+        },
+        discussStore:{
+            deep: true,
+            handler(newVal, oldVal){
+                console.log(newVal.replyCommentId)
+                // const result = await fetch.getImg(267);
+                // this.discussStore.discussList = result.memberCommentLogsList;
+            }
+        }
     }
 }
 </script>

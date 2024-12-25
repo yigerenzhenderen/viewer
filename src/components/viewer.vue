@@ -67,7 +67,7 @@ import InfoView from "./sidebars/info.vue";
 import DetailView from "./sidebars/detail.vue";
 import ManiIcon from "./utils/mani.vue";
 import { init } from "../js/viz.js";
-
+import fetch from "../js/fetch.js";
 
 export default{
     data(){
@@ -85,7 +85,9 @@ export default{
     watch:{
 
     },
-    mounted(){
+    async mounted(){
+      // const data = await fetch.getAllImgData()
+      // console.log("all img data",data)
       if (Modernizr.webgl && !utils.isMobile()) {
         init();
       }
