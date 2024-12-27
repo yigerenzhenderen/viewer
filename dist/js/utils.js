@@ -170,7 +170,6 @@ utils.simulateLargeDatasets = function (data) {
 
 
 utils.transformData = function (data) {
-
 	return data.map(item => {
 		return {
 			id: item.imgentryId,
