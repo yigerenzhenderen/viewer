@@ -77,15 +77,15 @@ export default{
             selectAll: false,
             allImgs: [],
             dataList: [
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称1", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称2", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称3", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称4", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称5", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称6", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称7", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称8", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称9", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false}
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称1", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称2", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称3", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称4", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称5", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称6", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称7", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称8", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
+                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称9", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false}
             ]
         }
     },
