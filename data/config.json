@@ -5,8 +5,8 @@
  },
   "loader": {
     "info": "data/info.md",
-    "timeline": "data/timeline.csv",
-    "items": "data/data.csv",
+    "timeline": "data/timeline_real.csv",
+    "items": "data/all.json",
     "map": "data/geo.json",
     "layouts": [
         {

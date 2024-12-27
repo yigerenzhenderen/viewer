@@ -712,9 +712,11 @@ svg {
     /* overflow-y: scroll; */
 }
 .detail .outer {
- height: 100%;
- overflow-y: auto;
- overflow-x: hidden;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail .inner {
@@ -723,6 +725,9 @@ svg {
   /* float: left; */
   padding: 27px;
   /* padding-left: 60px; */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail2 {
