@@ -73,7 +73,7 @@ export default{
             forward_url: forwardSvg,
             like_url: likeSvg,
             comment_url: commentSvg,
-            type: 0,
+            type: 8,
             selectAll: false,
             allImgs: [],
             dataList: [
@@ -102,7 +102,7 @@ export default{
     },
     watch:{
         type(newVal){
-            if(newVal===9){
+            if(newVal===8){
                 this.dataList = this.allImg.filter(item => item.status === "8")
             }else if(newVal===1){
                 this.dataList = this.allImg.filter(item => item.status === "1")
