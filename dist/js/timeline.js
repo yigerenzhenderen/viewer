@@ -45,7 +45,7 @@ function Timeline(canvas) {
 
   timeline.update = function (x1, x2, scale, translate) {
     if (disabled) return;
-
+    // console.log(timeDomain)
     timeDomain.forEach(function (d) {
       d.pos = (d.x - x1) * scale;
       d.visible =

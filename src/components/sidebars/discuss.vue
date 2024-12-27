@@ -1,10 +1,10 @@
 <template>
 
     <div class="discussion-container">
-        <div v-if="discussStore.discussList.length" style="font-size: 16px; color: #8F8F8F;">评论 {{ this.discussStore.numDiscuss }}</div>
+        <div v-if="discussList.length" style="font-size: 16px; color: #8F8F8F;">评论 {{ this.discussList.length }}</div>
         <div v-else style="font-size: 16px; color: #8F8F8F; ">暂无评论</div>
         <div class="discuss-content">
-            <div v-for="root in discussStore.discussList" class="root-discuss">
+            <div v-for="root in discussList" class="root-discuss">
                 <div class="root" :id="`c${root.commentId}`">
                     <Avatar :size="40" style="margin-top: 5px;"/>
                     <div class="root-reply">
@@ -44,24 +44,22 @@
 
 <script>
 import { useDiscussStore } from '../../store/discuss';
+import { useDetailStore } from '../../store/detail';
 import { mapState, mapStores } from 'pinia';
 import Avatar from '../utils/avatar.vue';
 
 export default{
     computed:{
         ...mapStores(useDiscussStore),
+        ...mapState(useDetailStore, ['discussList'])
+        
     },
     components:{
         Avatar,
     },
-    data(){
-        return {
-
-        }
-    },
     methods:{
         focusComment(commentId){
-            console.log(commentId)
+            // console.log(commentId)
             d3.select(".discuss-content").select(`#c${commentId}`).classed("focused", true).style("background-color", "#E2E2E2");
         },
         replyComment(receiver){
@@ -87,6 +85,7 @@ export default{
 
 .discussion-container{
     /* width: 100%; */
+    flex: 1;
     border-top: 1px solid #A9A7A7;
     padding: 10px;
     height: fit-content;

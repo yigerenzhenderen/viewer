@@ -129,7 +129,7 @@ utils.clean = function (data, separator) {
 	data.forEach(function (d, i) {
 		d.search = Object.keys(d).map(function (e) { return d[e] }).join(' - ').toUpperCase()
 		d.i = i;
-		d.keywords = _(d.keywords || "None")
+		d.keywords = _(d.keywords || "")
 			.chain()
 			.split(separator || ",")
 			.map(_.trim)
@@ -141,6 +141,8 @@ utils.clean = function (data, separator) {
 		d.keywords = d.keywords.map(function (d) {
 			return d.charAt(0).toUpperCase() + d.slice(1);
 		});
+
+		d.keywordsId = d.keywordsId ? d.keywordsId.split(",") : [];
 
 		d._year = d.year
 		d._keywords = d.keywords
@@ -165,3 +167,27 @@ utils.simulateLargeDatasets = function (data) {
 	Array.prototype.push.apply(data, _.clone(data, true).slice(0, 1036))
 }
 
+
+
+utils.transformData = function (data) {
+
+	return data.map(item => {
+		return {
+			id: item.imgentryId,
+			keywords: item.tagsTitles,
+			keywordsId: item.tagsIds,
+			year: item.tagstimeTitle ? item.tagstimeTitle : '未知', // timeline上对应的string
+			_description: item.entryimgIntro,
+			_location: item.locationName,
+			_format: "jpg",
+			_background: "",
+			_title: item.entryimgName,
+			_size: "12寸",
+			_date: item.tagstimeTitle, // TODO 应该有个具体的日期？
+			_thumbUrl: item.entryimgThumurl,
+			_middleUrl: item.entryimgCommonurl,
+			_largeUrl: item.entryimgPrimalurl,
+			// _largeUrl: item.entryimgPrimalurl,
+		}
+	})
+}

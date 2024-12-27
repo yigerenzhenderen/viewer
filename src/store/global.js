@@ -5,10 +5,10 @@ import fetch from '../js/fetch.js'
 export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
-            logged: false,
+            logged: true,
             userInfo: {
                 wechatNickname: 'kegemo',
-                memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',
+                // memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',
                 memberName: "xxx",
                 // realName: 'aaa',
                 memberPhone: '12344',
@@ -16,13 +16,14 @@ export const useGlobalStore = defineStore('global', {
                 memberEmail: 'aadsafa',
                 memberId: '1',
                 wx: '1234',
-                avatar: getImgUrl("https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg"),
+                avatar: "https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg",
             },
-            likeList: [],
-            naviList: [],
-            commentList: [],
-            currentImg: {},
-            uploadList: [],
+            tagList: []
+            // likeList: [],
+            // naviList: [],
+            // commentList: [],
+            // currentImg: {},
+            // uploadList: [],
         }
     },
     actions: {

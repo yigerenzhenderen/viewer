@@ -38,13 +38,15 @@
             </div>
           </div>
         </div>
-        <el-button :disabled="!globalStore.logged" @click="detailStore.editing = true" type="primary" class="editButtion">
+        <el-button :disabled="!globalStore.logged" @click="detailStore.editing = true" type="primary"
+          class="editButtion">
           <template #default>
             <span>修订信息</span>
             <img :src="editUrl" alt="" style="height: 100%; width: 100%; margin-top: -1px; margin-left: 10px;">
           </template>
         </el-button>
-        <span v-if="!globalStore.logged" style="margin-left: auto; margin-top: 10px; font-size: 10px; color: #6D6D6D;">登录后可使用此功能</span>
+        <span v-if="!globalStore.logged"
+          style="margin-left: auto; margin-top: 10px; font-size: 10px; color: #6D6D6D;">登录后可使用此功能</span>
       </div>
       <div class="inner">
         <Discussion />
@@ -59,7 +61,7 @@
           </div>
           <div class="submit" style="margin: 0; width: 146px;" @click="submit">提交</div>
         </div>
-        <editInfo :form-data="detailStore.form" style="max-width: 100%; padding: 20px;"></editInfo>
+        <editInfo v-model:form-data="detailStore.form" style="max-width: 100%; padding: 20px;"></editInfo>
       </div>
     </div>
   </div>
@@ -76,17 +78,19 @@ import Input from "./input.vue";
 import edit from "/src/assets/edit.svg";
 import editInfo from '../utils/editInfo.vue';
 import fetch from '../../js/fetch';
+import { toRaw } from 'vue';
 
 export default {
   data() {
     return {
-      editUrl: edit,
+      editUrl: edit
     }
   },
   components: { Discussion, Input, editInfo },
   computed: {
     ...mapStores(useDetailStore, useGlobalStore),
-    hide(){
+    ...mapState(useDetailStore, ['form']),
+    hide() {
       return this.detailStore.hide;
     }
   },
@@ -99,19 +103,19 @@ export default {
     },
     getContent(_entry) {
       if (_entry.type === 'text') {
-        return detailStore.item[_entry.source]
+        return this.detailStore.item[_entry.source]
       }
       if (_entry.type === 'array') {
-        return detailStore.item[_entry.source].join(', ')
+        return this.detailStore.item[_entry.source].join(', ')
       }
       if (_entry.type === 'keywords') {
-        return detailStore.item[_entry.source].join(', ')
+        return this.detailStore.item[_entry.source].join(', ')
       }
       if (_entry.type === 'markdown') {
-        return marked(detailStore.item[_entry.source], { breaks: true })
+        return marked(this.detailStore.item[_entry.source], { breaks: true })
       }
       if (_entry.type === 'function') {
-        const column = detailStore.item;
+        const column = this.detailStore.item;
         const func = _entry.source
         try {
           return eval(func)
@@ -120,25 +124,75 @@ export default {
         }
       }
     },
-    submit(){
-
+    getModifiedFields(currentData, initialData) {
+      const modifiedFields = {};
+      for (const key in currentData) {
+        // 比较当前数据与初始数据
+        if (currentData[key] !== initialData[key]) {
+          modifiedFields[key] = currentData[key];
+        }
+      }
+      return modifiedFields;
+    },
+    async submit() {
+      const newData = {
+        newEntryimgName: this.detailStore.form.name,
+        newEntryimgTime: this.detailStore.form.shotTime,
+        newSubmitimgPosition: this.detailStore.form.place,
+        newSubmitimgNewintro: this.detailStore.form.desc,
+        newSubmitimgNewholder: this.detailStore.form.shoter,
+      }
+      const oldData = {
+        newEntryimgName: this.detailStore.storeForm.name,
+        newEntryimgTime: this.detailStore.storeForm.shotTime,
+        newSubmitimgPosition: this.detailStore.storeForm.place,
+        newSubmitimgNewintro: this.detailStore.storeForm.desc,
+        newSubmitimgNewholder: this.detailStore.storeForm.shoter,
+      }
+      const oldKws = this.detailStore.storeForm.kws.map(d=>d.id).join(',');
+      const newKws = this.detailStore.form.kws.map(d=>d.id).join(',');
+      // console.log(oldKws, newKws)
+      const diff = this.getModifiedFields(newData, oldData);
+      const flagDict = {
+        newEntryimgName: "entryimgNameFlag",
+        newEntryimgTime: "entryimgTimeFlag",
+        newSubmitimgPosition: "entryimgPositionFlag",
+        newSubmitimgNewintro: "submitimgNewintroFlag",
+        newSubmitimgNewholder: "submitimgNewholderFlag",
+      }
+      for (let i in diff) {
+        diff[flagDict[i]] = 1;
+      }
+      if ((Object.keys(diff).length == 0) && (oldKws === newKws)) {
+        this.detailStore.editing = false;
+        return;
+      }
+      diff.memberId = this.globalStore.userInfo.memberId;
+      diff.imgentryId = this.detailStore.storeForm.id;
+      const res1 = await fetch.addRevisionLog(diff);
+      if(oldKws !== newKws){
+        // console.log(newKws)
+        var res2 = await fetch.addTagRevision(this.globalStore.userInfo.memberId, this.detailStore.imageId, newKws)
+      }
+      console.log(res1, res2)
+      this.popup();
+    },
+    popup() {
+      this.detailStore.editing = false;
     }
   },
   mounted() {
     // console.log(this.item, this.detailStore.detail_test, 'hahahahhah')
   },
-  watch:{
-    // async hide(bool){
-    //   if(bool) return;
-    //   const imgData = await fetch.getImg("");
-    //   console.log('showing !!!!',imgData)
-    // }
-    // detailStore: {
-    //   deep: true,
-    //   handler(newVal, oldVal) {
-    //     console.log('detailStore changed', newVal.comment)
-    //   }
-    // }
+  watch: {
+    async hide(bool) {
+      if (bool) return;
+      const newImg = await fetch.getImg(this.detailStore.imageId);
+      console.log("newImg", newImg)
+      this.detailStore.currentImg = newImg;
+      this.detailStore.form = Object.assign({}, this.detailStore.storeForm);
+    },
+
   }
 }
 
@@ -147,7 +201,7 @@ export default {
 
 
 <style scoped>
-#detail{
+#detail {
   display: flex;
   flex-direction: column;
 }
@@ -169,7 +223,7 @@ export default {
   border: none !important;
 }
 
-:deep(.el-button--primary){
+:deep(.el-button--primary) {
   --el-button-disabled-bg-color: #DCDCDC;
   --el-button-disabled-text-color: #272727
 }

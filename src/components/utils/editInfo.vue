@@ -42,18 +42,21 @@
                 />
             </el-form-item>
         </el-col>
-        <el-form-item label="关键词（选填）" style="width: 100%;">
+        <el-form-item label="关键词（选填）" style="width: 100%;" class="kw-c">
             <div style="display: flex; flex-direction: column; width: 100%;">
-                <el-select
-                    v-model="form.kws"
-                    filterable
-                    placeholder="Select"
-                    style="width: 100%; margin-bottom: 10px;"
+                <el-input
+                    class="input"
+                    v-model="select"
+                    style="width: 100%"
+                    placeholder="筛选标签"
                 >
-                </el-select>
+                    <template #prefix>
+                        <el-icon class="el-input__icon"><Search /></el-icon>
+                    </template>
+                </el-input>
                 <div class="tag-container1">
                     <el-check-tag 
-                        v-for="tag in form.kws" 
+                        v-for="tag in tags.yes" 
                             :key="tag.label"
                             :checked="tag.choose" 
                             type="primary" 
@@ -75,12 +78,12 @@
                         </template>
                     </el-check-tag>
                 </div>
-                <div v-if="form.kws.length" style="width: 100%; height: 0.5px; background-color: #949494; margin-top: 16px; margin-bottom: 16px;"></div>
+                <div v-if="form.kws.length" class="segmentLine"></div>
                 <div class="tag-container2">
                     <el-check-tag 
-                        v-for="tag in often_tags" 
+                        v-for="tag in tags.no" 
                             :checked="tag.choose"
-                            :style="{'display': tag.choose ? 'none' : ''}"
+                            :style="{'display': (tag.choose || !tag.show) ? 'none' : ''}"
                             type="primary" 
                             @change="checkTag($event, tag)"
                             class="tags"
@@ -97,47 +100,23 @@
 
 
 <script>
-// import Checkbox from "./upload/checkbox.vue"
-// import Avatar  from "./utils/avatar.vue";
-// import Remove  from "./utils/remove.vue";
-// import Checkbox3  from "./utils/checkbox3.vue";
 import fetch from "/src/js/fetch";
-// import { ElMessage } from 'element-plus';
 import hunan_district from '/src/assets/hunan.json';
+import { mapStores } from "pinia";
+import { useGlobalStore } from "../../store/global";
+import { Search } from '@element-plus/icons-vue'
 
 export default{
     data(){
         return {
             hunan_district: hunan_district,
-            defaultForm: {
-                id: "",
-                name: '',
-                desc: '',
-                shotTime: '',
-                shoter: '',
-                place: '',
-                kws: [],
-            },
-            often_tags:[
-                {
-                    label: 'Tag 1',
-                    value: 'tag1',
-                    choose: false,
-                },
-                {
-                    label: 'Tag 2',
-                    value: 'tag2',
-                    choose: false,
-                },
-                {
-                    label: 'Tag 3',
-                    value: 'tag1',
-                    choose: false,
-                }
-            ],
+            select: "",
         }
     },
     emits: ['update:formData'],
+    components: {
+        Search
+    },
     props:{
         formData: {
             type: Object,
@@ -153,6 +132,14 @@ export default{
         }
     },
     computed:{
+        ...mapStores(useGlobalStore),
+        tags(){
+            const currentTagLabelsSet = new Set(this.form.kws.map(d=>d.label));
+            this.globalStore.tagList.forEach(tag => {
+                tag.choose = currentTagLabelsSet.has(tag.label)
+            })
+            return _.groupBy(this.globalStore.tagList, tag => tag.choose ? 'yes': 'no');
+        },
         form: {
             deep: true,
             get() {
@@ -165,41 +152,32 @@ export default{
     },
     methods: {
         checkTag(event, tag){
-            tag.choose = !tag.choose;
-            if(tag.choose){
+            if(!tag.choose){
                 this.form.kws.push(tag);
             }else{
-                this.form.kws = this.form.kws.filter(t=>t.label!== tag.label);
+                this.form.kws = this.form.kws.filter(t=>t.label !== tag.label);
             }
-            this.often_tags.forEach(t => {
-                if(t.label === tag.label){
-                    t.choose = tag.choose;
-                }
-            });
         },
-        refreshFocusImg(newForm){
-            // tag被display: none的要还原
-            const newKwsSet = new Set(newForm.kws.map(t=>t.label));
-            this.often_tags.forEach( tag => {
-                tag.choose = newKwsSet.has(tag.label);
-            });
-        }
     },
     watch:{
-        form:{
-            deep: true,
-            handler(newForm, oldForm){
-                if(newForm.id !== oldForm.id) {
-                    this.refreshFocusImg(newForm);
-                }
-            }
-        }
+        select(query){
+            this.globalStore.tagList.forEach(tag => {
+                if(tag.choose) return;
+                tag.show = tag.label.includes(query);
+            })
+        },
+        // form:{
+        //     deep: true,
+        //     handler(newForm, oldForm){
+        //         console.log(1, newForm)
+        //     }
+        // }
     }
 }
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
 
 :deep(.el-form-item__label){
     color: #000;
@@ -257,13 +235,38 @@ export default{
 
 .tag-container2{
     width: 90%;
-    height: 100px;
+    height: 150px;
     overflow-y: scroll;
     margin-left: -5px;
 }
 
-.tags{
-    margin: 5px;
+
+.kw-c{
+    --line-interval: 10px;
+    --tag-margin: 5px;
+
+    .tags{
+        margin: var(--tag-margin);
+    }
+
+    .segmentLine{
+        width: 100%; 
+        height: 0.5px; 
+        background-color: #949494; 
+        margin-top: calc(var(--line-interval) - var(--tag-margin)); 
+        margin-bottom: calc(var(--line-interval) - var(--tag-margin));
+    }
+
+    .input{
+        margin-bottom: calc(var(--line-interval) - var(--tag-margin));;
+    }
 }
 
+// .segentLine{
+//     width: 100%; 
+//     height: 0.5px; 
+//     background-color: #949494; 
+//     margin-top: 16px; 
+//     margin-bottom: 16px;
+// }
 </style>

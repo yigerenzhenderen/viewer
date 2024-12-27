@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-let baseurl = "https://vaip.arts-press.com/rasterInterface"
+// let baseurl = "https://vaip.arts-press.com/rasterInterface"
+let baseurl = "https://photo-hn.cn/rasterInterface"
 
 const api = axios.create({
     baseURL: baseurl
@@ -96,7 +97,7 @@ export default {
             pageNum: pageNum,
             pageSize: pageSize
         }
-        const response = await api.post("/interface/imageEntryTagsRevision/selectImageEntryTagsRevisionByMemberId", json_data);
+        const response = await api.post("/interface/imageEntryRevision/selectImageEntryRevisionByMemberId", json_data);
         return response.data;
     },
     async getTagList() {
@@ -196,23 +197,6 @@ export default {
         const response = await api.post("/interface/imageEntrySubmit/addImageEntrySubmit", json_data);
         return response.data;
     },
-    // async addRevisionLog(userId, imgId) {
-    //     const str_info = JSON.stringify({
-    //         "memberId": userId,
-    //         "imgentryId": imgId,
-    //     })
-    //     const response = await api.post("/interface/imageEntryRevision/addImageEntryRevision", str_info);
-    //     return response.data;
-    // },
-    async addRevisionLog(userId, tagsId, remark = "") {
-        let inputData = {
-            "tagsIds": tagsId,
-            "memberId": userId,
-        }
-        if (remark) { Object.assign(inputData, { "remark": remark }) }
-        const response = await api.post("/interface/imageEntryTagsRevision/addImageEntryTagsRevision", JSON.stringify(inputData));
-        return response.data;
-    },
     async getOthersLiksLogs(userId){
         const json_data = {
             memberId: userId, // 空即为游客
@@ -240,6 +224,20 @@ export default {
         const response = await api.post("/interface/memberCommentLogs/deleteMemberCommentLogsByCommentByCommentId", json_data);
         return response.data;
         
+    },
+    async addRevisionLog(diff){
+        const response = await api.post("/interface/imageEntryRevision/addImageEntryRevision", diff);
+        return response.data;
+    },
+    async addTagRevision(userId, imgentryId, tagsId){
+        const json_data = {
+            memberId: userId,
+            imgentryId: imgentryId,
+            tagsId: tagsId,
+        }
+        console.log(json_data)
+        const response = await api.post("/interface/imageEntryTagsRevision/addImageEntryTagsRevision",json_data);
+        return response.data;
     }
 
 }

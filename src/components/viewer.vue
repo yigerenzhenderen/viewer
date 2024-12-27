@@ -62,7 +62,8 @@
 
 
 <script>
-import { marked } from "marked"
+import { useGlobalStore } from "../store/global.js";
+import { mapStores } from "pinia";
 import InfoView from "./sidebars/info.vue";
 import DetailView from "./sidebars/detail.vue";
 import ManiIcon from "./utils/mani.vue";
@@ -70,25 +71,25 @@ import { init } from "../js/viz.js";
 import fetch from "../js/fetch.js";
 
 export default{
-    data(){
-        return {
-
-        }
+    computed: {
+      ...mapStores(useGlobalStore)
     },
     components: {
         InfoView,
         DetailView,
         ManiIcon
     },
-    methods: {
-    },
-    watch:{
-
-    },
     async mounted(){
-      // const data = await fetch.getAllImgData()
-      // console.log("all img data",data)
       if (Modernizr.webgl && !utils.isMobile()) {
+        const tags = await fetch.getTagList();
+        this.globalStore.tagList = tags.data.map(d=>{return {
+          id: d.tagsId,
+          label: d.tagsTitle,
+          value: d.tagsTitle,
+          choose: false,
+          show: true,
+        }})
+        // console.log(this.globalStore.tagList)
         init();
       }
     }

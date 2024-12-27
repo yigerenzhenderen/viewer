@@ -4,17 +4,13 @@
 
 
 <script>
-import fetch from "./js/fetch.js"
-export default{
-  data(){
-    return {
+// import fetch from "./js/fetch.js"
+// import { useGlobalStore } from "./store/global.js";
+// import { mapStores } from 'pinia';
 
-    }
-  },
-  async mounted(){
-    // console.log("hahahahha")
-    // const data = await fetch.getAllImgData()
-    // console.log("all img data",data)
+export default{
+  mounted(){
+
   }
 }
 </script>

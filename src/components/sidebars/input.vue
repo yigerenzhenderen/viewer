@@ -28,14 +28,16 @@
 <script>
 import { useDiscussStore } from '../../store/discuss';
 import { useGlobalStore } from '../../store/global';
+import { useDetailStore } from '../../store/detail';
 import { mapStores, mapState } from 'pinia';
 import fetch from '../../js/fetch';
 import Avatar from '../utils/avatar.vue';
 
 export default{
     computed:{
-        ...mapStores(useDiscussStore, useGlobalStore),
+        ...mapStores(useDiscussStore, useGlobalStore, useDetailStore),
         ...mapState(useDiscussStore, ['inputIng']),
+        ...mapState(useDetailStore, ['imageId']),
         inputMarginTop(){
             return this.avatarSize / 2 + 5;
         }
@@ -61,13 +63,18 @@ export default{
         logIn(){
             this.globalStore.logged = true;
         },
+        async refreshComment(){
+            const newImg = await fetch.getImg(this.imageId);
+            this.detailStore.currentImg.memberCommentLogsList = newImg.memberCommentLogsList;
+        },
         async submitComment(e){
             e.preventDefault();
-            await fetch.userComment(267, this.globalStore.userInfo.memberId, this.comment, this.discussStore.replyCommentId);
+            await fetch.userComment(this.imageId, this.globalStore.userInfo.memberId, this.comment, this.discussStore.replyCommentId);
             this.comment = '';
             this.endInput();
-            const newImg = await fetch.getImg(267);
-            this.discussStore.discussList = newImg.memberCommentLogsList;
+            await this.refreshComment();
+            // const newImg = await fetch.getImg(this.imageId);
+            // this.detailStore.memberCommentLogsList = newImg.memberCommentLogsList;
         }
     },
     watch: {
@@ -83,14 +90,14 @@ export default{
                 this.discussStore.replyCommentId = 0;
             }
         },
-        discussStore:{
-            deep: true,
-            handler(newVal, oldVal){
-                console.log(newVal.replyCommentId)
-                // const result = await fetch.getImg(267);
-                // this.discussStore.discussList = result.memberCommentLogsList;
-            }
-        }
+        // discussStore:{
+        //     deep: true,
+        //     handler(newVal, oldVal){
+        //         console.log(newVal.replyCommentId)
+        //         // const result = await fetch.getImg(267);
+        //         // this.discussStore.discussList = result.memberCommentLogsList;
+        //     }
+        // }
     }
 }
 </script>

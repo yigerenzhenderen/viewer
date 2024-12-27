@@ -6,7 +6,7 @@
 
     <div class="info-container">
       <div class="icon">
-        <Avatar :size="300" :url="globalStore.userInfo.memberImgurl"</Avatar>
+        <Avatar :size="300" :url="globalStore.userInfo.avatar"</Avatar>
       </div>
       <div class="info">
         <el-form :disabled="!editing" :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
@@ -62,7 +62,7 @@ export default{
       this.editing =!this.editing;
       if (!this.editing) {
         const res = await this.globalStore.updateInfo()
-        console.log(res)
+        // console.log(res)
       }
     }
   },

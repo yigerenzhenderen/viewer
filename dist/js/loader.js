@@ -108,7 +108,9 @@ function LoaderSprites() {
   };
 
   loader.load = function (url) {
-    pixiloader.add(url).load(function (r) {
+    // console.log(url)
+    // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/159913.jpg"
+    pixiloader.add(url, {crossOrigin: ''}).load(function (r) {
       container.selectAll("div").remove();
     });
   };

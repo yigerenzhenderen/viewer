@@ -1,5 +1,7 @@
 // utils.welcome();
 
+import { Canvas } from './canvas';
+
 var data;
 var tags;
 var canvas;
@@ -46,6 +48,7 @@ export function init() {
     let _timeline = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.timeline));
     let _mapData = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.map));
     data = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.items));
+    data = utils.transformData(data);
 
     utils.clean(data, config.delimiter);
     tags.init(data, config);
@@ -71,7 +74,8 @@ export function init() {
         canvas.wakeup();
       })
       //.finished() recalculate sizes
-      .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
+      // .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
+      .load("https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg");
   });
 
 

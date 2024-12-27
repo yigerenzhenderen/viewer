@@ -3,17 +3,17 @@
         <div class="item" @mouseenter="active.view = true" @mouseleave="active.view = false">
             <!-- <img class="i" :src="view" alt="" /> -->
             <viewIcon :active-color="'#2A2A2A'" :active="active.view"></viewIcon>
-            <span class="t">{{ this.img.browseCount }}</span>
+            <span class="t">{{ this.detailStore.currentImg.browseCount }}</span>
         </div>
         <div class="item" @click="forwardClick" @mouseenter="active.forward = true" @mouseleave="active.forward = false">
             <!-- <img class="i" :src="forward" alt=""/> -->
             <forwardIcon :active-color="'#2A2A2A'" :active="active.forward"></forwardIcon>
-            <span class="t">{{ this.img.forwardCount }}</span>
+            <span class="t">{{ this.detailStore.currentImg.forwardCount }}</span>
         </div>
         <div class="item" @click="likeClick" @mouseenter="active.like = true" @mouseleave="active.like = false">
             <!-- <img class="i" :src="like" alt="like"/> -->
             <likeIcon :active-color="'#F34C4F'" :active="active.like" :clicked="clicked.like"></likeIcon>
-            <span class="t" :style="{color : clicked.like ? '#F34C4F' : '#808080'}">{{ clicked.like ? this.img.likeCount : "点赞"}}</span>
+            <span class="t" :style="{color : clicked.like ? '#F34C4F' : '#808080'}">{{ clicked.like ? this.detailStore.currentImg.likeCount : "点赞"}}</span>
         </div>
     </div>
 </template>
@@ -38,6 +38,7 @@ export default{
     },
     data(){
         return {
+            forwarded: false,
             active:{
                 forward: false,
                 like: false,
@@ -48,27 +49,33 @@ export default{
                 like: false,
                 view: false
             },
-            img: {
-                browseCount: 0,
-                forwardCount: 0,
-                likeCount: 0,
-                imageEntryFileInfos: []
-            },
+            // img: {
+            //     browseCount: 0,
+            //     forwardCount: 0,
+            //     likeCount: 0,
+            //     imageEntryFileInfos: []
+            // },
         }
     },
     methods:{
         async likeClick(e){
             e.preventDefault();
             this.clicked.like = !this.clicked.like;
-            this.img.likeCount += (this.clicked.like ? 1 : -1)
-            this.globalStore.like(267, this.clicked.like);
+            this.detailStore.currentImg.likeCount += (this.clicked.like ? 1 : -1)
+            this.globalStore.like(this.detailStore.imageId, this.clicked.like);
             // const likeHistory = await this.globalStore.getLikeHistory();
             // console.log(likeHistory)
         },
         async forwardClick(e){
             e.preventDefault();
-            this.globalStore.forward(267);
-            await navigator.clipboard.writeText("[湖南影像档案] 向你分享了一张图片 " + this.img.imageEntryFileInfos[0].filePath);
+            if(this.forwarded) {
+                await navigator.clipboard.writeText("[湖南影像档案] 向你分享了一张图片 " + this.detailStore.currentImg.imageEntryFileInfos[0].filePath);
+                return
+            };
+            this.forwarded = true;
+            this.detailStore.currentImg.forwardCount += 1;
+            this.globalStore.forward(this.detailStore.imageId);
+            await navigator.clipboard.writeText("[湖南影像档案] 向你分享了一张图片 " + this.detailStore.currentImg.imageEntryFileInfos[0].filePath);
         }
     },
     computed:{
@@ -78,11 +85,13 @@ export default{
     watch:{
         async maniShow(show){
             if(show){
-                const result = await fetch.getImg(267);
-                this.img = (!!result) ? result : this.$options.data().img;
-                this.globalStore.view(267);
-                this.discussStore.discussList = this.img.memberCommentLogsList;
+                // const result = await fetch.getImg(this.detailStore.imageId);
+                // this.img = (!!result) ? result : this.$options.data().img;
+                this.globalStore.view(this.detailStore.imageId);
+                // this.discussStore.discussList = this.img.memberCommentLogsList;
                 
+            }else{
+                this.forwarded = false;
             }
         }
     }

@@ -111,7 +111,7 @@ export default{
             }else if(newVal===9){ // 已通过
                 this.dataList = this.allImg.filter(item => item.status === "9")
             }
-            console.log(this.allImg, this.dataList,newVal)
+            // console.log(this.allImg, this.dataList,newVal)
         }
     },
     async mounted() {

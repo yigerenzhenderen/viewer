@@ -139,7 +139,7 @@ export default{
             const deletePromises = groups[true].map(item =>fetch.removeComment(this.globalStore.userInfo.memberId, item.commentId));
             // console.log(deletePromises)
             const results = await Promise.all(deletePromises);
-            console.log(results)
+            // console.log(results)
             this.dataList = groups[false];
         }
     },

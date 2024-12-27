@@ -13,7 +13,7 @@ function Tags(canvas) {
   var keywords = [];
   var wordBackground;
   var keywordsNestGlobal;
-  var sortKeywords = "count";
+  var sortKeywords = "alphabetical";
   // var sortKeywords = "count";
 
   // var filterWords = ["Potsdam"];
@@ -33,9 +33,8 @@ function Tags(canvas) {
 
   tags.state = state
 
-  tags.init = function(_data, config) {
+  tags.init = function(_data, config, tagList) {
     data = _data;
-
     container = d3.select(".page").select(".tagcloud")
       .style("width", width + margin.left + margin.right)
       .style("height", height + margin.top + margin.bottom)
@@ -93,6 +92,7 @@ function Tags(canvas) {
         })
       }
     });
+    // console.log(keywords, 'keywords')
 
 
   keywordsNestGlobal =  d3.groups(keywords,d => d.keyword)
@@ -102,10 +102,10 @@ function Tags(canvas) {
   var sliceNum = parseInt(sliceScale(width));
 
   // c("num",sliceNum)
-  // console.log(keywordsNestGlobal)
+  // console.log("keywordsNestGlobal", keywordsNestGlobal, sliceNum)
    var keywordsNest = keywordsNestGlobal
-      .slice(0,sliceNum);
-
+      // .slice(0,sliceNum);
+    console.log(keywordsNest)
     if (sortKeywords == "alphabetical") {
       keywordsNest = keywordsNest.sort(function(a,b){
         return d3.ascending(a.key[0], b.key[0]);
@@ -134,7 +134,7 @@ function Tags(canvas) {
 
     // c("keywordsNest", keywordsNest);
 
-    var keywordsExtent = d3.extent(keywordsNest, function (d) {
+    var keywordsExtent = d3.extent(keywordsNestGlobal, function (d) {
       return d.values.length;
     });
 
@@ -150,8 +150,8 @@ function Tags(canvas) {
       .domain(keywordsExtent)
       .range([0.2,1]);
 
-    layout(keywordsNest);
-    tags.draw(keywordsNest);
+    layout(keywordsNestGlobal);
+    tags.draw(keywordsNestGlobal);
    
   }
 
@@ -297,7 +297,6 @@ function Tags(canvas) {
   
     var tempFilterWords = _.clone(filterWords);
     tempFilterWords.push(d1.key)
-
     tags.highlightWords(tempFilterWords);
   }
 
@@ -316,7 +315,7 @@ function Tags(canvas) {
 
   tags.highlightWords = function(words){
     
-    tags.filter(words,1);
+    tags.filter(words, 1);
 
     container
       .selectAll(".tag")

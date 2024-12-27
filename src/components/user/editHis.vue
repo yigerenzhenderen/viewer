@@ -2,7 +2,7 @@
     <div class="receive-like-container">
         <div style="font-size: 24px; font-weight: bold; margin-top: 28px; margin-bottom: 20px;">修订记录</div>
         <div style="margin-bottom: 20px; display: flex; width: 260px; justify-content: space-between;">
-            <span class="type" :style="{'text-decoration': type == 0 ? 'underline': 'none'}" @click="type = 0">已发布</span>
+            <span class="type" :style="{'text-decoration': type == 9 ? 'underline': 'none'}" @click="type = 9">已发布</span>
             <span class="type" :style="{'text-decoration': type == 1 ? 'underline': 'none'}" @click="type = 1">审核中</span>
             <span class="type" :style="{'text-decoration': type == 2 ? 'underline': 'none'}" @click="type = 2">未通过</span>
         </div>
@@ -75,6 +75,7 @@ export default{
             comment_url: commentSvg,
             type: 0,
             selectAll: false,
+            allImgs: [],
             dataList: [
                 {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称1", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
                 {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称2", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
@@ -102,17 +103,20 @@ export default{
     watch:{
         type(newVal){
             if(newVal===9){
-                console.log("上传成功的");
+                this.dataList = this.allImg.filter(item => item.status === "8")
             }else if(newVal===1){
-                console.log("待审核");
+                this.dataList = this.allImg.filter(item => item.status === "1")
             }else if(newVal===2){
-                console.log("被驳回");
+                this.dataList = this.allImg.filter(item => item.status === "2")
             }
         }
     },
    async mounted() {
         const data = await fetch.getUserUploadRevision(this.globalStore.userInfo.memberId, 1, 50)
-        console.log("editHis", data)
+        this.allImg = data.rows;
+        console.log('aa',this.allImg)
+        this.dataList = this.allImg.filter(item => item.status === "8");
+        console.log(this.dataList)
     }
 }
 </script>
