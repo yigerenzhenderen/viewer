@@ -47,7 +47,8 @@ export function init() {
 
     let _timeline = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.timeline));
     let _mapData = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.map));
-    data = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.items));
+    const res = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.items));
+    data = res;
     data = utils.transformData(data);
 
     utils.clean(data, config.delimiter);
