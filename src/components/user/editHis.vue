@@ -2,9 +2,9 @@
     <div class="receive-like-container">
         <div style="font-size: 24px; font-weight: bold; margin-top: 28px; margin-bottom: 20px;">修订记录</div>
         <div style="margin-bottom: 20px; display: flex; width: 260px; justify-content: space-between;">
-            <span class="type" :style="{'text-decoration': type == 9 ? 'underline': 'none'}" @click="type = 9">已发布</span>
-            <span class="type" :style="{'text-decoration': type == 1 ? 'underline': 'none'}" @click="type = 1">审核中</span>
-            <span class="type" :style="{'text-decoration': type == 2 ? 'underline': 'none'}" @click="type = 2">未通过</span>
+            <span :class="{'type': true, 'type2': type == 8 ? true : false}" @click="type = 9">已发布</span>
+            <span :class="{'type': true, 'type2': type == 1 ? true : false}" @click="type = 1">审核中</span>
+            <span :class="{'type': true, 'type2': type == 2 ? true : false}" @click="type = 2">未通过</span>
         </div>
         <div class="div-container">
             <div class="wrapper">
@@ -133,6 +133,13 @@ export default{
         font-size: 15px;
         cursor: pointer;
         // font-weight: bold;
+    }
+    .type2::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 1px;
+        background: black;
     }
     .div-container{
         height: 0;
