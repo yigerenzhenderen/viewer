@@ -29,7 +29,9 @@
                     </div>
                 </div>
                 <div class="submit-container">   
-                    <div v-if="numChoose" class="submit" style="margin-left: 0; margin-right: 0; margin-bottom: 10px;" @click="submit">提交</div>
+                    <div v-if="numChoose" class="submit" style="margin-left: 0; margin-right: 0;" @click="submit">
+                        提交 {{ `${this.numChoose} / ${this.imgs.length}`}}
+                    </div>
                 </div>
                 <div v-if="imgs.length" class="bottom">
                     <Checkbox3 :total="imgs.length" :selected="numChoose" @selectAllChange="selectAllChange"></Checkbox3>
@@ -40,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div class="u-content" style="flex-direction: column; margin-top: 10px;">
+            <div class="u-content">
                 <div class="content-h">
                     <div>上传图片及信息</div>
                     <div class="submit" @click="submit" style="margin-right: 100px;">提交</div>
@@ -80,6 +82,7 @@
                         <editInfo ref="form" v-model:form-data="focusImg.form" />
                     </div>
                 </div>
+                <div :class="{'u-content-overlay': numChoose > 0}"></div>
             </div>
         </div>
         <el-dialog
@@ -274,10 +277,15 @@ export default{
             if(newLength){
                 this.refreshFocusImg(this.imgs[0]);
             }
+        },
+        numChoose(newChooseNum){
+            if(newChooseNum === 0){
+                this.selectAll = false;
+            }
         }
     },
     mounted(){ 
-        
+        d3.select("body").style("background-color", "white")
     }
 }
 </script>
@@ -351,11 +359,10 @@ export default{
 
 .border{
     /* box-sizing: border-box; */
-    border-width: 1px 0px 1px 0px;
-    border-style: solid;
-    border-color: transparent;
+    border: 1px solid transparent;
+    // border-style: solid;
+    // border-color: transparent;
     /* position: relative; */
-    background-color: white;
     /* overflow: visible; */
 }
 .upload-info{
@@ -372,10 +379,21 @@ export default{
 .showborder{
     overflow: visible;
     border-color: #757575;
-    margin-right: -2px;
     border-right-width: 2px;
     border-right-style: solid;
     border-right-color: white;
+}
+
+.u-content-overlay{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    // z-index: 100;
+    background-color: #ffffff;
+    opacity: 0.8;
+    // pointer-events: none;
+    cursor: not-allowed;
+    top: 0;
 }
 
 // .tag-container1{

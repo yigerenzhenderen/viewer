@@ -89,6 +89,7 @@ export default{
         Avatar
     },
     mounted(){
+        d3.select("body").style("background-color", "white")
         const currentPage = this.$route.fullPath.split('/').at(-1);
         d3.select(".u-controll").select(`#${currentPage}`).classed("selected", true);
         d3.selectAll(".enter").on("click", function(e){

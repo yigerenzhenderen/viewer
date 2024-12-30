@@ -5,7 +5,7 @@ import fetch from '../js/fetch.js'
 export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
-            logged: true,
+            logged: false,
             userInfo: {
                 wechatNickname: 'kegemo',
                 // memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',
@@ -18,12 +18,9 @@ export const useGlobalStore = defineStore('global', {
                 wx: '1234',
                 avatar: "https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg",
             },
-            tagList: []
-            // likeList: [],
-            // naviList: [],
-            // commentList: [],
-            // currentImg: {},
-            // uploadList: [],
+            tagList: [],
+            tagScrollToLeft: true,
+            tagScrollToRight: false,
         }
     },
     actions: {

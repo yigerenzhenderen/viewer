@@ -32,7 +32,7 @@
               <span v-else-if="entry.type === 'function'">
                 <span v-html="getContent(entry)"></span>
               </span>
-              <span v-else>
+              <span :style="entry.style" v-else>
                 {{ getContent(entry) }}
               </span>
             </div>

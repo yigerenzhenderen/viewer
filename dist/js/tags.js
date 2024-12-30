@@ -35,13 +35,20 @@ function Tags(canvas) {
 
   tags.init = function(_data, config, tagList) {
     data = _data;
+    const tagCouldWidth = width + margin.left + margin.right;
+
     container = d3.select(".page").select(".tagcloud")
-      .style("width", width + margin.left + margin.right)
+      .style("width", tagCouldWidth)
       .style("height", height + margin.top + margin.bottom)
       .style("color", config.style.fontColor)
       .append("div")
+      .on("scroll", function(e){
+        console.log(e.target.scrollLeft,  e.target.scrollWidth - tagCouldWidth)
+        globalStore.tagScrollToLeft = e.target.scrollLeft === 0;
+        globalStore.tagScrollToRight = e.target.scrollLeft === (e.target.scrollWidth - tagCouldWidth);
+      })
+
       //.attr("transform", "translate("+ margin.left +","+ margin.top +")")
-      
     if (config.sortKeywords != undefined) {
       sortKeywords = config.sortKeywords;
     }
@@ -105,7 +112,7 @@ function Tags(canvas) {
   // console.log("keywordsNestGlobal", keywordsNestGlobal, sliceNum)
    var keywordsNest = keywordsNestGlobal
       // .slice(0,sliceNum);
-    console.log(keywordsNest)
+    // console.log(keywordsNest)
     if (sortKeywords == "alphabetical") {
       keywordsNest = keywordsNest.sort(function(a,b){
         return d3.ascending(a.key[0], b.key[0]);
@@ -138,7 +145,7 @@ function Tags(canvas) {
       return d.values.length;
     });
 
-
+    
     keywordsScale
       .domain(keywordsExtent)
       .range([10,20]);
@@ -151,25 +158,28 @@ function Tags(canvas) {
       .range([0.2,1]);
 
     layout(keywordsNestGlobal);
+    console.log("keywordsNestGlobal", keywordsNestGlobal)
     tags.draw(keywordsNestGlobal);
    
   }
 
-  function layout(data){
+  function layout(_data){
     var p = 1.8;
     var offsetLeft = 40 / 1.414;
+    var offsetHeight = -8;
     var x0 = 0;
 
-    data.forEach(function(d){
-      // console.log(d, keywordsScale(d.values.length)*p + p2)
-      d.x = x0 + keywordsScale(d.values.length)*p - offsetLeft;
-      x0 += keywordsScale(d.values.length)*p;
+    // keywordsScale 得到font-size 本项目字体line-height约为font-size的1.16倍
+    _data.forEach(function(d){
+      d.x = x0 + keywordsScale(d.values.length) * p - offsetLeft
+      d.y = offsetHeight
+      x0 += (keywordsScale(d.values.length) * p);
     })
   };
 
   function getTranslateForList(data){
     var w = _.last(data).x + 100; // _ 是loadsh.js
-    return width/2 - w/2; // 居中
+    // return width/2 - w/2; // 居中
     // return width - w; //靠右 
     // return w - width //靠左
   }
@@ -184,7 +194,7 @@ function Tags(canvas) {
       .classed("active", function(d){ return filterWords.indexOf(d.key) > -1; })
       // .transition()
       // .duration(1000)
-      .style("transform", function(d,i){ return "translate(" + d.x + "px,0px) rotate(45deg)"; })
+      .style("transform", function(d,i){return `translate( ${d.x}px, ${d.y}px) rotate(45deg)`; })
       .style("font-size", function(d) { return keywordsScale(d.values.length) + "px"; })
       .style("opacity", 1)
       // .filter(function(d){ return filterWords.indexOf(d.key) > -1; })
@@ -203,9 +213,9 @@ function Tags(canvas) {
         .on("mouseenter", tags.mouseenter)
         .on("mouseleave", tags.mouseleave)
         .on("click", tags.mouseclick)
-        .style("transform", function(d,i){ return "translate(" + d.x + "px,0px) rotate(45deg)"; })
+        .style("transform", function(d,i){ return `translate(${d.x}px, ${d.y}px) rotate(45deg)`; })
         .style("font-size", function(d) { return keywordsScale(d.values.length) + "px"; })
-        .style("opacity", 0)
+        .style("opacity", 0);
 
     e.append("span")
         .text(function(d) { return d.key; })
@@ -224,7 +234,7 @@ function Tags(canvas) {
     e.transition()
       .delay(400)
       .duration(0)
-      .style("transform", function(d,i){ return "translate(" + d.x + "px,0px) rotate(45deg)"; })
+      .style("transform", function(d,i){return `translate( ${d.x}px, ${d.y}px) rotate(45deg)`; })
       .style("font-size", function(d) { return keywordsScale(d.values.length) + "px"; })
       .style("opacity", 1)
 

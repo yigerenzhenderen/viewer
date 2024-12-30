@@ -36,8 +36,10 @@
         <div class="title">
           <span>湖南影像档案馆</span>
         </div>
-        <div class="tagcloud"></div>
-        <div class="line"></div>
+        <div class="tagcloud">
+          <div class="line-right" :style="{opacity: globalStore.tagScrollToRight ? 0 : 1}"></div>
+          <div class="line-left" :style="{opacity: globalStore.tagScrollToLeft ? 0 : 1}"></div>
+        </div>
         <div class="icons">
           <div class="openbutton"></div>
           <div class="upload">
@@ -80,6 +82,7 @@ export default{
         ManiIcon
     },
     async mounted(){
+      d3.select("body").style("background-color", "var(--bg-color)")
       if (Modernizr.webgl && !utils.isMobile()) {
         const tags = await fetch.getTagList();
         this.globalStore.tagList = tags.data.map(d=>{return {
@@ -90,7 +93,7 @@ export default{
           show: true,
         }})
         // console.log(this.globalStore.tagList)
-        init();
+        init(); 
       }
     }
 }

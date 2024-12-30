@@ -17,10 +17,10 @@
         </div>
     </div>  
     <div v-else class="comment-container" style="justify-content: center;">
-        <div style="width: 30%; height: 1px; background-color: #A9A7A7; margin-right: 5%"></div>
+        <div style="width: 100%; height: 1px; background-color: #A9A7A7; margin-right: 5%"></div>
         <span class="logIn" @click="logIn">登录</span>
-        <span style="color: #8F8F8F; cursor: default;">写评论</span>
-        <div style="width: 30%; height: 1px; background-color: #A9A7A7; margin-left: 5%"></div>
+        <span style="color: #8F8F8F; cursor: default; white-space: nowrap;">写评论</span>
+        <div style="width: 100%; height: 1px; background-color: #A9A7A7; margin-left: 5%"></div>
     </div>
 </template>
 
@@ -106,12 +106,12 @@ export default{
 .comment-container{
     height: fit-content;
     max-height: 100px;
-    padding: 10px;
+    padding: 10px 0px;
     display: flex;
     align-items: center;
 
     .input-comment{
-        width: 80%;
+        width: 100%;
         height: fit-content;
         margin-left: 20px;
         position: relative;
@@ -138,7 +138,16 @@ export default{
 
 .logIn{
     cursor: pointer;
-    text-decoration: underline;
     color: #6F6F6F;
+    white-space: nowrap;
 }
+
+.logIn::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #6F6F6F;
+}
+
 </style>
