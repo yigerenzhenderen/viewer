@@ -2,7 +2,7 @@
     <div class="receive-like-container">
         <div style="font-size: 24px; font-weight: bold; margin-top: 28px; margin-bottom: 20px;">修订记录</div>
         <div style="margin-bottom: 20px; display: flex; width: 260px; justify-content: space-between;">
-            <span :class="{'type': true, 'type2': type == 8 ? true : false}" @click="type = 9">已发布</span>
+            <span :class="{'type': true, 'type2': type == 8 ? true : false}" @click="type = 8">已发布</span>
             <span :class="{'type': true, 'type2': type == 1 ? true : false}" @click="type = 1">审核中</span>
             <span :class="{'type': true, 'type2': type == 2 ? true : false}" @click="type = 2">未通过</span>
         </div>
@@ -114,9 +114,9 @@ export default{
    async mounted() {
         const data = await fetch.getUserUploadRevision(this.globalStore.userInfo.memberId, 1, 50)
         this.allImg = data.rows;
-        console.log('aa',this.allImg)
+        // console.log(this.allImg)
         this.dataList = this.allImg.filter(item => item.status === "8");
-        console.log(this.dataList)
+        // console.log(this.dataList)
     }
 }
 </script>
