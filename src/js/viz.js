@@ -61,22 +61,34 @@ export function init() {
     } else {
       canvas.setMode("time");
     }
+
     LoaderSprites()
       .progress(function (textures) {
-        Object.keys(textures).forEach(function (id) {
-          data
-            .filter(function (d) {
-              return d.id === id;
-            })
-            .forEach(function (d) {
-              d.sprite.texture = textures[id];
+        // TODO: sprite图像对接
+        // Object.keys(textures).forEach(function (id) {
+        //   data
+        //     .filter(function (d) {
+        //       return d.id === id;
+        //     })
+        //     .forEach(function (d) {
+        //       d.sprite.texture = textures[id];
+        //     });
+        // });
+        // VIKUS图像改的
+        const nT = Object.values(textures);
+        data.forEach(function (d, i) {
+              let randomIndex = Math.floor(Math.random() * nT.length);
+              d.sprite.texture = nT[randomIndex];
             });
-        });
+        // data.forEach(function (d) {
+        //   d.sprite.texture = Object.assign({}, textures);
+        // });
         canvas.wakeup();
       })
       //.finished() recalculate sizes
       // .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
-      .load("https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg");
+      .load(config.loader.textures.medium.url);
+      // .load("https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg");
   });
 
 

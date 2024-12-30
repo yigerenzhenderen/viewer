@@ -246,7 +246,7 @@ export function Canvas() {
     // add preview pics stage3: 所有的preview pics
     data.forEach(function (d, i) {
       var sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-
+      // console.log(sprite)
       sprite.anchor.x = 0.5;
       sprite.anchor.y = 0.5;
 
@@ -255,6 +255,7 @@ export function Canvas() {
 
       sprite._data = d;
       d.sprite = sprite;
+      // console.log(d.sprite)
       stage3.addChild(sprite);
     });
 
@@ -971,12 +972,13 @@ export function Canvas() {
     if (config.loader.textures.detail.csv) {
       url = d[config.loader.textures.detail.csv];
     } else {
-        url = d._middleUrl;
+        // url = d._middleUrl;
+        url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg";
       // 相同图像的load
       // url = config.loader.textures.detail.url + d.id.split("_")[0] + ".jpg";
     }
 
-    var texture = new PIXI.Texture.from(url, {crossOrigin: ''});
+    var texture = new PIXI.Texture.from(url);
     var sprite = new PIXI.Sprite(texture);
 
     var update = function () {
@@ -1013,15 +1015,15 @@ export function Canvas() {
     if (config.loader.textures.big.csv) {
       url = d[config.loader.textures.big.csv];
     } else {
-      url = url = d._largeUrl; // 每个图给定url的方式
+      // url = d._largeUrl; // 每个图给定url的方式
+      url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg"; // 每个图给定url的方式
       // url = config.loader.textures.big.url + d.id + page + ".jpg"; // 统一链接 + 图像id的方式
       // url = config.loader.textures.big.url + d.id.split("_")[0] + page + ".jpg"; // 本地的方式
     }
 
-    var texture = new PIXI.Texture.from(url, {crossOrigin: ''});
+    var texture = new PIXI.Texture.from(url);
     var sprite = new PIXI.Sprite(texture);
     var res = config.loader.textures.big.size;
-
     var updateSize = function (t) {
       var size = Math.max(texture.width, texture.height);
       sprite.scale.x = sprite.scale.y = (imageSize3 / size) * d.scaleFactor;
