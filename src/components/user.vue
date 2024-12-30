@@ -64,7 +64,7 @@
                    
                 </div>
             </div>
-            <div class="u-content">
+            <div class="u-content" style="border: 0px;">
                 <router-view></router-view>
             </div>
         </div>
