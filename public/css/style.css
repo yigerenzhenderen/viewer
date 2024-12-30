@@ -1038,7 +1038,6 @@ svg {
   width: 28px;
   height: 26px;
   cursor: pointer;
-  background-image: url("../img/close.svg");
 }
 
 .searchbar.open .close {
