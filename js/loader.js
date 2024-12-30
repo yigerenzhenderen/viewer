@@ -95,22 +95,30 @@ function LoaderSprites() {
   var progress = function () { };
 
   var pixiloader = new PIXI.Loader();
+
+
+  // TODO: sprite图像对接
   pixiloader.use(pixiPackerParser(PIXI)).on("progress", function (p, r) {
     indicator.style("height", p.progress + "%");
     if (!r.textures) return;
+    // console.log(r.textures)
     progress(r.textures);
   });
 
-  loader.progress = function (value) {
+  // pixiloader.on("progress", function (p, r) {
+  //   indicator.style("height", p.progress + "%");
+  //   if (!r.texture) return;
+  //   progress(r.texture);
+  // });
+
+  loader.progress = function (_func) {
     if (!arguments.length) return progress;
-    progress = value;
+    progress = _func;
     return loader;
   };
 
   loader.load = function (url) {
-    // console.log(url)
-    // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/159913.jpg"
-    pixiloader.add(url, {crossOrigin: ''}).load(function (r) {
+    pixiloader.add(url).load(function (r) {
       container.selectAll("div").remove();
     });
   };
