@@ -292,7 +292,7 @@ export function Canvas() {
         if (selectedImage && !selectedImage.active) return;
         if (timelineHover) return;
         // selectedImage.id
-        detailStore.imageId = selectedImage.id;
+        // detailStore.imageId = selectedImage.id;
         // TODO: /interface/imageEntry/selectImageEntryDetails 加上tagIds后删除这里
         detailStore.keywordsId = selectedImage.keywordsId;
         // console.log(detailStore.imageId, selectedImage._title)
@@ -521,6 +521,7 @@ export function Canvas() {
   function zoomToImage(d, duration) {
     state.zoomingToImage = true;
     loadMiddleImage(d);
+    detailStore.imageId = selectedImage.id;
 
     // console.log(root.getGlobalPosition(), thisSprite.getGlobalPosition());
     // d3.select(".tagcloud").classed("hide", true);
@@ -613,6 +614,7 @@ export function Canvas() {
   };
 
   function hideTheRest(d) {
+    // console.log("hideTheRest");
     data.forEach(function (d2) {
       if (d2.id !== d.id) {
         d2.alpha = 0;
@@ -972,8 +974,8 @@ export function Canvas() {
     if (config.loader.textures.detail.csv) {
       url = d[config.loader.textures.detail.csv];
     } else {
-        // url = d._middleUrl;
-        url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg";
+        url = d._middleUrl;
+        // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg";
       // 相同图像的load
       // url = config.loader.textures.detail.url + d.id.split("_")[0] + ".jpg";
     }
@@ -1015,8 +1017,9 @@ export function Canvas() {
     if (config.loader.textures.big.csv) {
       url = d[config.loader.textures.big.csv];
     } else {
-      // url = d._largeUrl; // 每个图给定url的方式
-      url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg"; // 每个图给定url的方式
+      // console.log(d._largeUrl)
+      url = d._largeUrl; // 每个图给定url的方式
+      // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg"; // 每个图给定url的方式
       // url = config.loader.textures.big.url + d.id + page + ".jpg"; // 统一链接 + 图像id的方式
       // url = config.loader.textures.big.url + d.id.split("_")[0] + page + ".jpg"; // 本地的方式
     }

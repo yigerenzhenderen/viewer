@@ -98,18 +98,20 @@ function LoaderSprites() {
 
 
   // TODO: sprite图像对接
-  pixiloader.use(pixiPackerParser(PIXI)).on("progress", function (p, r) {
-    indicator.style("height", p.progress + "%");
-    if (!r.textures) return;
-    // console.log(r.textures)
-    progress(r.textures);
-  });
-
-  // pixiloader.on("progress", function (p, r) {
+  // pixiloader.use(pixiPackerParser(PIXI)).on("progress", function (p, r) {
+  //   console.log("on progress")
+  //   console.log("progress", p, r)
   //   indicator.style("height", p.progress + "%");
-  //   if (!r.texture) return;
-  //   progress(r.texture);
+  //   if (!r.textures) return;
+
+  //   progress(r.textures);
   // });
+
+  pixiloader.on("progress", function (p, r) {
+    indicator.style("height", p.progress + "%");
+    if (!r.texture) return;
+    progress(r.name, r.texture);
+  });
 
   loader.progress = function (_func) {
     if (!arguments.length) return progress;
@@ -117,8 +119,19 @@ function LoaderSprites() {
     return loader;
   };
 
-  loader.load = function (url) {
-    pixiloader.add(url).load(function (r) {
+  // 原始
+  // loader.load = function (url) {
+  //   console.log("load fuction")
+  //   pixiloader.add(url).load(function (r) {
+  //     container.selectAll("div").remove();
+  //   });
+  // };
+
+  loader.load = function (urls) {
+    urls.forEach((d)=>{
+      pixiloader.add(String(d.id), d.url);
+    })
+    pixiloader.load(function (r) {
       container.selectAll("div").remove();
     });
   };
