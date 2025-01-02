@@ -64,29 +64,29 @@ export function init() {
 
     
     LoaderSprites()
-      .progress(function (id, textures) {
-        // console.log(id, textures)
+      .progress(function (textures) {
         // TODO: sprite图像对接
-        // Object.keys(textures).forEach(function (id) {
-        //   data
-        //     .filter(function (d) {
-        //       return d.id === id;
-        //     })
-        //     .forEach(function (d) {
-        //       d.sprite.texture = textures[id];
-        //     });
-        // });
+        Object.keys(textures).forEach(function (id) {
+          data
+            .filter(function (d) {
+              return d.id == id;
+            })
+            .forEach(function (d) {
+              d.sprite.texture = textures[id];
+            });
+        });
         // VIKUS图像改的
         // const nT = Object.values(textures);
         // data.forEach(function (d, i) {
         //       let randomIndex = Math.floor(Math.random() * nT.length);
         //       d.sprite.texture = nT[randomIndex];
         //     });
-        data.find(img => img.id == id).sprite.texture = textures;
+        // 单张图像_thumbUrl 获取
+        // data.find(img => img.id == id).sprite.texture = textures;
         canvas.wakeup();
       })
       //.finished() recalculate sizes
-      // .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
+      .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
       // .load(config.loader.textures.medium.url);
       // .load('https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg');
       // .load([
@@ -94,12 +94,12 @@ export function init() {
       //   {id: "2", url :"https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/3546fcb0-e64f-48ea-9fbf-b5de1dbe6ea4.jpg"}, 
       //   {id: "3", url: "https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/77c656f8-aa5a-4e43-b966-6e250415d50d.jpg"}
       // ]);
-      .load(data.map(img => {
-        return {
-          id: img.id,
-          url: img._thumbUrl
-        }
-      }))
+      // .load(data.map(img => {
+      //   return {
+      //     id: img.id,
+      //     url: img._thumbUrl
+      //   }
+      // }))
   });
 
 

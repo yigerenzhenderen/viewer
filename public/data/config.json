@@ -28,8 +28,8 @@
     ],
     "textures": {
       "medium": {
-        "size": 100,
-        "url": "https://vikusviewer.fh-potsdam.de/data/vangogh/sprites/web_web_full.json"
+        "size": 128,
+        "url": "data/sprites/spritesheet.json"
       },
       "detail": {
         "size": 300,
