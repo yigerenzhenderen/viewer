@@ -6,6 +6,7 @@ export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
             logged: false,
+            urlSearchParams: {},
             userInfo: {
                 wechatNickname: 'kegemo',
                 // memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',

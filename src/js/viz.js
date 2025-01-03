@@ -87,6 +87,10 @@ export function init() {
       })
       //.finished() recalculate sizes
       .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
+
+    if(Object.keys(globalStore.urlSearchParams).length > 0) {
+      canvas.emitClickImage(globalStore.urlSearchParams.id, globalStore.urlSearchParams.title)
+    }
   });
 
 
@@ -117,6 +121,8 @@ export function init() {
       return that === this;
     });
   });
+
+
 
   function initLayouts(config) {
     d3.select(".navi").classed("hide", false);
@@ -169,6 +175,8 @@ export function init() {
     );
   }
 }
+
+
 
 
 

@@ -311,9 +311,8 @@ export function Canvas() {
           spriteClick = false;
           return;
         }
-        
-        // console.log('aaaaa',selectedImage)
-        if (selectedImage && !selectedImage.id) return;
+        if (selectedImage && !selectedImage.id) {
+          return};
         if (drag) return;
         if (selectedImageDistance > cursorCutoff) return;
         if (selectedImage && !selectedImage.active) return;
@@ -1155,6 +1154,19 @@ export function Canvas() {
         loadMiddleImage(d);
       }
     }
+  }
+
+  canvas.emitClickImage = function(imgId=null, title=null) {
+    if(imgId){
+      imgId = +imgId
+      selectedImage = data.find(img => img.id === imgId)
+    }
+    else if(title){
+      selectedImage = data.find(img => img._title === title);
+      console.log(selectedImage)
+    }
+    detailStore.imageId = selectedImage.id;
+    zoomToImage(selectedImage, 1400 / Math.sqrt(Math.sqrt(scale)));
   }
 
   // function nearest(x, y, best, node) {

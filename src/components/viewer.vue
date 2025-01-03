@@ -82,7 +82,8 @@ export default{
         ManiIcon
     },
     async mounted(){
-      d3.select("body").style("background-color", "var(--bg-color)")
+      d3.select("body").style("background-color", "var(--bg-color)");
+      this.globalStore.urlSearchParams = this.$route.query;
       if (Modernizr.webgl && !utils.isMobile()) {
         const tags = await fetch.getTagList();
         this.globalStore.tagList = tags.data.map(d=>{return {
@@ -92,9 +93,9 @@ export default{
           choose: false,
           show: true,
         }})
-        // console.log(this.globalStore.tagList)
         init(); 
       }
+
     }
 }
 </script>
