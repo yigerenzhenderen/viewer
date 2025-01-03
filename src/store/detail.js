@@ -98,7 +98,22 @@ export const useDetailStore = defineStore('detail', {
                     }
                 })
             };
-        }
+        },
+        // item(state){
+        //     var detailData = {};
+        //     for (let field in state.currentImg) {
+        //       if (field[0] === "_") detailData[field] = state.currentImg[field];
+        //     }
+        //     detailData["_id"] = state.currentImg.id;
+        //     detailData["_keywords"] = state.currentImg.tagsTitleList;
+        //     detailData["_year"] = state.currentImg.year;
+        //     detailData["_imagenum"] = state.currentImg.imagenum || 1;
+
+        //     // state.id = state.currentImg.id;
+        //     // state.page = state.currentImg.page;
+        //     console.log('inside detailStore',state.currentImg)
+        //     return detailData; //item是显示右侧信息的
+        // }
     },
     actions: {
         finishEdit() {

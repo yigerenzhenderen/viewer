@@ -66,7 +66,7 @@ canvas {
    /* box-shadow: 0 0px 56px rgba(0, 0, 0, 0.66), 0 0px 6px rgba(0, 0, 0, 0.23); */
    opacity: 1;
    /* color: #CCCBC8; */
-   z-index: 100;
+   z-index: 1;
    position: absolute;
    right: 0;
    top: 0;
@@ -76,7 +76,9 @@ canvas {
    /* background: rgb(55, 55, 55); */
 }
 .detailLoader .indicator{
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(0, 0, 0);
+  /* background: rgba(255, 255, 255, 0.761); */
+  /* background: ; */
   width: 100%;
   position: relative;
   transition: height 1s;
@@ -84,7 +86,8 @@ canvas {
 }
 .detailLoader .label {
     width: 220px;
-    color: rgba(255, 255, 255, 0.71);
+    color: rgba(255, 255, 255, 1);
+    /* color: rgba(171,57,59, 1); */
     font-size: 11px;
     text-transform: uppercase;
     position: absolute;
@@ -110,7 +113,8 @@ canvas {
    /* background: rgb(55, 55, 55); */
 }
 .sideLoader .indicator{
-  background: rgba(0, 0, 0, 0.24);
+  /* background: rgba(0, 0, 0, 0.24); */
+  background: rgba(255, 255, 255, 1);
   /* background: #C1C1C1; */
   width: 100%;
   position: relative;

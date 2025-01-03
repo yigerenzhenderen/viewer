@@ -303,6 +303,7 @@ export function Canvas() {
         if (selectedImage && !selectedImage.id) return;
         if (selectedImage && !selectedImage.active) return;
         if (drag) return;
+        detailStore.imageId = selectedImage.id;
         zoomToImage(selectedImage, 1400 / Math.sqrt(Math.sqrt(scale)));
       })
       .on("click", function () {
@@ -317,12 +318,10 @@ export function Canvas() {
         if (selectedImageDistance > cursorCutoff) return;
         if (selectedImage && !selectedImage.active) return;
         if (timelineHover) return;
-        // selectedImage.id
-        // detailStore.imageId = selectedImage.id;
-        // console.log(detailStore.imageId, selectedImage._title)
         if (Math.abs(zoomedToImageScale - scale) < 0.1) {
           canvas.resetZoom();
         } else {
+          detailStore.imageId = selectedImage.id;
           zoomToImage(selectedImage, 1400 / Math.sqrt(Math.sqrt(scale)));
         }
       });
@@ -567,7 +566,6 @@ export function Canvas() {
   function zoomToImage(d, duration) {
     state.zoomingToImage = true;
     loadMiddleImage(d);
-    detailStore.imageId = selectedImage.id;
 
     // console.log(root.getGlobalPosition(), thisSprite.getGlobalPosition());
     // d3.select(".tagcloud").classed("hide", true);
@@ -615,13 +613,12 @@ export function Canvas() {
     detailStore.y = pos.y + box.height / 2;
   }
 
-  async function showDetail(d) {
+  function showDetail(d) {
     var detailContainer = d3.select(".sidebar");
 
     detailContainer.select(".outer").node().scrollTop = 0;
 
 
-    // detailStore.imageId = 267;
     detailStore.hide = false;
 
     detailStore.sneak = utils.isMobile()
@@ -632,7 +629,7 @@ export function Canvas() {
     for (let field in selectedImage) {
       if (field[0] === "_") detailData[field] = selectedImage[field];
     }
-
+    console.log(detailStore.currentImg)
     detailData["_id"] = selectedImage.id;
     detailData["_keywords"] = selectedImage.keywords;
     detailData["_year"] = selectedImage.year;

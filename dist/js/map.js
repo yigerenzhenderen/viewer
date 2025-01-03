@@ -50,10 +50,10 @@ function MapLayer() {
     map.init = function (_mapData, _size) {
         // 设置stage的大小 和地图的大小
         mapData = _mapData;
-        console.log(mapData)
+        // console.log(mapData)
         let dim = getDimension(_size);
         var marginBottom = -_size[1] / 2.5;
-        console.log(marginBottom)
+        // console.log(marginBottom)
         var center = [_size[0] / 2 + margin.left, marginBottom]
         dx = (_size[0] / 2 + margin.left - _size[0]/2);
         // dx = 0
