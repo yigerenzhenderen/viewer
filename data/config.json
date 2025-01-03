@@ -8,28 +8,23 @@
     "timeline": "data/timeline_real.csv",
     "items": "data/all.json",
     "map": "data/geo.json",
+    "abstract_map": "data/city.csv",
     "layouts": [
         {
             "title": "Time",
             "label": "时间"
         },
         {
-            "title": "Similarity",
-            "label": "相似度",
-            "url": "data/projection.csv",
-            "scale": 0.8
-        },
-        {
           "title": "Location",
           "label": "地理位置",
-          "url": "data/projection.csv",
+          "url": "data/location.csv",
           "scale": 0.8
       }
     ],
     "textures": {
       "medium": {
-        "size": 100,
-        "url": "https://vikusviewer.fh-potsdam.de/data/vangogh/sprites/web_web_full.json"
+        "size": 128,
+        "url": "data/sprites/spritesheet.json"
       },
       "detail": {
         "size": 300,
