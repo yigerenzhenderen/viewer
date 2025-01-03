@@ -90,6 +90,8 @@ export function init() {
 
     if(Object.keys(globalStore.urlSearchParams).length > 0) {
       canvas.emitClickImage(globalStore.urlSearchParams.id, globalStore.urlSearchParams.title)
+    }else{
+      canvas.resetZoom()
     }
   });
 
@@ -175,6 +177,8 @@ export function init() {
     );
   }
 }
+
+export { canvas };
 
 
 

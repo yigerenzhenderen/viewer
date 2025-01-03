@@ -69,7 +69,7 @@ import { mapStores } from "pinia";
 import InfoView from "./sidebars/info.vue";
 import DetailView from "./sidebars/detail.vue";
 import ManiIcon from "./utils/mani.vue";
-import { init } from "../js/viz.js";
+import { init, canvas } from "../js/viz.js";
 import fetch from "../js/fetch.js";
 
 export default{
@@ -95,7 +95,18 @@ export default{
         }})
         init(); 
       }
-
+    },
+    watch: {
+      '$route.query': {
+        handler(newQuery, oldQuery) {
+          if(Object.keys(newQuery).length > 0) {
+            canvas.emitClickImage(newQuery.id, newQuery.title)
+          }else{
+            canvas.resetZoom();
+          }
+        },
+        deep: true // 如果需要监听深层对象的变化，可以设置为 true
+      }
     }
 }
 </script>

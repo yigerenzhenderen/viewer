@@ -1163,7 +1163,6 @@ export function Canvas() {
     }
     else if(title){
       selectedImage = data.find(img => img._title === title);
-      console.log(selectedImage)
     }
     detailStore.imageId = selectedImage.id;
     zoomToImage(selectedImage, 1400 / Math.sqrt(Math.sqrt(scale)));
