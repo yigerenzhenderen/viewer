@@ -73,8 +73,6 @@ export default{
             this.comment = '';
             this.endInput();
             await this.refreshComment();
-            // const newImg = await fetch.getImg(this.imageId);
-            // this.detailStore.memberCommentLogsList = newImg.memberCommentLogsList;
         }
     },
     watch: {

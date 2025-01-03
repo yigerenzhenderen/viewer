@@ -60,6 +60,7 @@ export function Canvas() {
   var entries;
   var years;
   var data;
+  var mapData;
   var rangeBand = 0;
   var rangeBandImage = 0;
   var imageSize = 256;
@@ -173,7 +174,8 @@ export function Canvas() {
   canvas.init = function (_data, _timeline, _map, _config) {
     data = _data;
     config = _config;
-    map.init(_map, [width, height])
+    mapData = _map;
+    // map.init(_map, [width, height])
     container = d3.select(".page")
       .select(".viz")
       .style("width", `${width}px`)
@@ -213,15 +215,18 @@ export function Canvas() {
 
     root = new PIXI.Container();
     imageStage = new PIXI.Container(); // 图片stage
-    stage3 = new PIXI.Container();
-    stage4 = new PIXI.Container();
-    stage5 = new PIXI.Container();
-    mapContainer = map.container();
+    stage3 = new PIXI.Container(); // sprites
+    stage4 = new PIXI.Container(); // middleImage
+    stage5 = new PIXI.Container(); // largeImage
+    mapContainer = new PIXI.Container();
 
     imageStage.addChild(stage3);
     imageStage.addChild(stage4);
     imageStage.addChild(stage5);
+
     root.addChild(imageStage);
+    root.addChild(mapContainer);
+
     globalThis.__PIXI_STAGE__ = root;
     _timeline.forEach(function (d) {
       d.type = "timeline";
@@ -243,6 +248,7 @@ export function Canvas() {
     x.domain(canvasDomain); //设置时间轴定义域为ime domain, (x为d3.scaleBand)
 
 
+
     // add preview pics stage3: 所有的preview pics
     data.forEach(function (d, i) {
       var sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -258,6 +264,26 @@ export function Canvas() {
       // console.log(d.sprite)
       stage3.addChild(sprite);
     });
+
+    // add map bounding boxes
+    mapData.forEach(function (d, i) {
+      // var boundingBox = new PIXI.Sprite(PIXI.Texture.WHITE);
+      var boundingBox =  new PIXI.Graphics();
+      boundingBox.lineStyle(5, 0x00ff00, 1); // Set border width, color, and alpha
+      // boundingBox.drawRect(0, 0, d.width, d.height); // Draw rectangle outline
+      boundingBox.endFill(); // No fill
+      // console.log(sprite)
+      boundingBox.pivot.x = 0.5;
+      boundingBox.pivot.y = 0.5;
+
+      // boundingBox.scale.x = d.scaleFactor;
+      // boundingBox.scale.y = d.scaleFactor;
+      boundingBox.scale.set(d.scaleFactor, d.scaleFactor); 
+      boundingBox._data = d;
+      d.boundingBox = boundingBox;
+      mapContainer.addChild(boundingBox);
+    });
+    console.log(mapData)
 
     vizContainer = d3.select(".viz");
 
@@ -293,8 +319,6 @@ export function Canvas() {
         if (timelineHover) return;
         // selectedImage.id
         // detailStore.imageId = selectedImage.id;
-        // TODO: /interface/imageEntry/selectImageEntryDetails 加上tagIds后删除这里
-        detailStore.keywordsId = selectedImage.keywordsId;
         // console.log(detailStore.imageId, selectedImage._title)
         if (Math.abs(zoomedToImageScale - scale) < 0.1) {
           canvas.resetZoom();
@@ -340,12 +364,10 @@ export function Canvas() {
     tsneIndex[name] = {};
     tsneScale[name] = scale;
     var clean = d.map(function (d) {
-      let _pos = map._projection(parseFloat(d.x), parseFloat(d.y))
-      // console.log(d, _pos)
       return {
         id: d.id,
-        x: _pos[0],
-        y: _pos[1],
+        x: parseFloat(d.x),
+        y: parseFloat(d.y),
       };
     });
     var xExtent = d3.extent(clean, function (d) {
@@ -358,9 +380,35 @@ export function Canvas() {
     var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
     var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
 
-    clean.forEach(function (d) {
+    d.forEach(function (d) {
       tsneIndex[name][d.id] = [x(d.x), y(d.y)];
     });
+  };
+
+  canvas.addBoundingBoxData = function (name, scale) {
+    tsneIndex[name] = {};
+    tsneScale[name] = scale;
+    var clean = mapData.map(function (d) {
+      return {
+        id: d.id,
+        x: parseFloat(d.x),
+        y: parseFloat(d.y),
+      };
+    });
+    var xExtent = d3.extent(clean, function (d) {
+      return d.x;
+    });
+    var yExtent = d3.extent(clean, function (d) {
+      return d.y;
+    });
+
+    var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
+    var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
+
+    mapData.forEach(function (d) {
+      tsneIndex[name][d.name] = [x(d.x), y(d.y)];
+    });
+    // console.log(tsneIndex)
   };
 
   function mousemove(event, d) {
@@ -386,8 +434,6 @@ export function Canvas() {
         ? "pointer"
         : "default";
     });
-    // console.log(translate)
-    // }
   }
 
   function stackLayout(data, invert) {
@@ -488,7 +534,7 @@ export function Canvas() {
   canvas.setMode = function (mode) {
     state.mode = mode;
     timeline.setDisabled(mode !== "time"); // 不为timeline情况下就不显示时间轴
-    mode === "location" ? root.addChildAt(mapContainer, 0) : root.removeChild(mapContainer);
+    // console.log(mode, mapContainer)
     canvas.makeScales();
     canvas.project();
   };
@@ -569,16 +615,9 @@ export function Canvas() {
     detailStore.y = pos.y + box.height / 2;
   }
 
-  // function hideMani(){
-  //   detailStore.maniShow = false;
-  // }
-
-  
-
   async function showDetail(d) {
     var detailContainer = d3.select(".sidebar");
-    // console.log("show detail", d)
-    // console.log(detailContainer)
+
     detailContainer.select(".outer").node().scrollTop = 0;
 
 
@@ -614,7 +653,6 @@ export function Canvas() {
   };
 
   function hideTheRest(d) {
-    // console.log("hideTheRest");
     data.forEach(function (d2) {
       if (d2.id !== d.id) {
         d2.alpha = 0;
@@ -678,8 +716,9 @@ export function Canvas() {
       showAllImages();
       clearBigImages();
       // detailStore.maniShow = false; // 隐藏mani icon
-      detailStore.editing = false; // 结束修改
-      // changeMani(selectedImage.sprite)
+      // detailStore.editing = false; // 结束修改
+      detailStore.finishEdit(); 
+      changeMani(selectedImage.sprite)
       // d3.select(".sidebar").classed("hide", true);
       detailStore.hide = true; // 隐藏右侧detail
     }
@@ -738,8 +777,9 @@ export function Canvas() {
 
   canvas.project = function () {
     sleep = false;
+    // state.mode === "location" ? root.addChildAt(mapContainer, 0) : root.removeChild(mapContainer);
     var scaleFactor = state.mode == "time" ? 0.9 : tsneScale[state.mode] || 0.5;
-    if (state.mode == "location") scaleFactor = 1
+    // if (state.mode == "location") scaleFactor = 1
     data.forEach(function (d) {
       d.scaleFactor = scaleFactor;
       d.sprite.scale.x = d.scaleFactor;
@@ -757,7 +797,7 @@ export function Canvas() {
       canvas.projectTSNE();
       cursorCutoff = (1 / scale1) * imageSize * 1;
     } else if (state.mode == "location") {
-      canvas.projectTSNE();
+      canvas.projectLocation();
       cursorCutoff = (1 / scale1) * imageSize * 1;
     }
 
@@ -796,8 +836,8 @@ export function Canvas() {
       var factor = height / 2;
       var tsneEntry = tsneIndex[state.mode][d.id];
       if (tsneEntry) {
-        d.x = tsneEntry[0] * dimension - dimension / 2 + width / 2 + margin.left;
-        d.y = tsneEntry[1] * dimension - dimension / 2 + marginBottom;
+        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;;
+        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;;
       } else {
         // console.log("not found", d)
         d.alpha = 0;
@@ -847,19 +887,16 @@ export function Canvas() {
     inactive.forEach(function (d, i) {
       var r = dimension / 1.9 + Math.random() * 40;
       var a = -Math.PI / 2 + (i / inactiveSize) * 2 * Math.PI;
-
       d.x = r * Math.cos(a) + width / 2 + margin.left;
       d.y = r * Math.sin(a) + marginBottom;
     });
 
     active.forEach(function (d) {
       var tsneEntry = tsneIndex[state.mode][d.id];
-      // console.log(tsneEntry)
       if (tsneEntry) {
-        _ = map._projection(...tsneEntry)
-        d.x = _[0];
-        d.y = _[1];
-        // d.y = map._projection(tsneEntry[1])
+        // console.log(tsneEntry)
+        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
+        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
       } else {
         // console.log("not found", d)
         d.alpha = 0;
@@ -868,11 +905,11 @@ export function Canvas() {
       //     return t.id == d.id
       // })
     });
-    // console.log(scale1)
+
     data.forEach(function (d) {
       d.x1 = d.x * scale1 + imageSize / 2;
       d.y1 = d.y * scale1 + imageSize / 2;
-      // console.log(scale1, imageSize)
+
       if (d.sprite.position.x == 0) {
         d.sprite.position.x = d.x1;
         d.sprite.position.y = d.y1;
@@ -886,6 +923,34 @@ export function Canvas() {
 
       // console.log(d.sprite.position, d.sprite.position2)
     });
+
+
+    mapData.forEach(function (d) {
+      var tsneEntry = tsneIndex["bbox"][d.name];
+      console.log(d, tsneEntry)
+      if (tsneEntry) {
+        // console.log(tsneEntry)
+        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
+        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
+      } else {
+        // console.log("not found", d)
+        d.alpha = 0;
+      }
+    });
+
+    mapData.forEach(function (d) {
+      d.x1 = d.x * scale1 + imageSize / 2;
+      d.y1 = d.y * scale1 + imageSize / 2;
+      // TODO:
+      // d.boundingBox.position.set(d.x1, d.y1);
+      d.boundingBox.drawRect(d.x1, d.y1, 100, 200);
+      console.log(d.boundingBox)
+      if (d.boundingBox.position.x == 0) {
+        d.boundingBox.position.set(d.x1, d.y1)
+      }
+    });
+
+
 
 
     quadtree = Quadtree.addAll(data);

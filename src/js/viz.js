@@ -1,7 +1,7 @@
 // utils.welcome();
 
 import { Canvas } from './canvas';
-
+import { Tags } from './tags';
 var data;
 var tags;
 var canvas;
@@ -31,7 +31,7 @@ export function init() {
   canvas = Canvas();
   tags = Tags(canvas);
   search = Search(tags);
-  map = MapLayer();
+  // map = MapLayer();
 
   ping = utils.ping();
 
@@ -47,6 +47,7 @@ export function init() {
 
     let _timeline = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.timeline));
     let _mapData = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.map));
+    let _abstractMapData = await d3.csv(makeUrl(baseUrl.path, config.loader.abstract_map));
     const res = await LoaderByPromise(makeUrl(baseUrl.path, config.loader.items));
     data = res;
     data = utils.transformData(data);
@@ -54,7 +55,7 @@ export function init() {
     utils.clean(data, config.delimiter);
     tags.init(data, config);
     search.init();
-    canvas.init(data, _timeline, _mapData, config);
+    canvas.init(data, _timeline, _abstractMapData, config);
 
     if (config.loader.layouts) {
       initLayouts(config);
@@ -65,7 +66,6 @@ export function init() {
     
     LoaderSprites()
       .progress(function (textures) {
-        // TODO: sprite图像对接
         Object.keys(textures).forEach(function (id) {
           data
             .filter(function (d) {
@@ -75,31 +75,18 @@ export function init() {
               d.sprite.texture = textures[id];
             });
         });
-        // VIKUS图像改的
+        // Option: VIKUS图像改的
         // const nT = Object.values(textures);
         // data.forEach(function (d, i) {
         //       let randomIndex = Math.floor(Math.random() * nT.length);
         //       d.sprite.texture = nT[randomIndex];
         //     });
-        // 单张图像_thumbUrl 获取
+        // Option: 单张图像_thumbUrl 获取
         // data.find(img => img.id == id).sprite.texture = textures;
         canvas.wakeup();
       })
       //.finished() recalculate sizes
       .load(makeUrl(baseUrl.path, config.loader.textures.medium.url));
-      // .load(config.loader.textures.medium.url);
-      // .load('https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg');
-      // .load([
-      //   {id: "1", url:"https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/ddc03255-4645-49fe-b933-6227c0da5af1.jpg"}, 
-      //   {id: "2", url :"https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/3546fcb0-e64f-48ea-9fbf-b5de1dbe6ea4.jpg"}, 
-      //   {id: "3", url: "https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/77c656f8-aa5a-4e43-b966-6e250415d50d.jpg"}
-      // ]);
-      // .load(data.map(img => {
-      //   return {
-      //     id: img.id,
-      //     url: img._thumbUrl
-      //   }
-      // }))
   });
 
 
@@ -148,9 +135,11 @@ export function init() {
           if (i == 0) canvas.setMode(d.title);
         });
       } else if(d.title === "location") {
-        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (tsne)  => {
-          canvas.addLocationData(d.title, tsne, d.scale);
-          // canvas.addTsneData(d.title, tsne, d.scale);
+        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (mapedLocation)  => {
+
+          canvas.addLocationData(d.title, mapedLocation, d.scale);
+          canvas.addBoundingBoxData("bbox", d.scale);
+
           if (i == 0) canvas.setMode(d.title);
         });
       }

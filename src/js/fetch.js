@@ -233,7 +233,7 @@ export default {
         const json_data = {
             memberId: userId,
             imgentryId: imgentryId,
-            tagsId: tagsId,
+            tagsIds: tagsId,
         }
         console.log(json_data)
         const response = await api.post("/interface/imageEntryTagsRevision/addImageEntryTagsRevision",json_data);

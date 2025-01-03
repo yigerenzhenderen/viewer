@@ -6,7 +6,6 @@ export const useDetailStore = defineStore('detail', {
         return { 
             editing: false,
             imageId: 0,
-            keywordsId: [], // TODO: 接上getImg正常后端后删除这一行
             currentImg: {
                 "createBy": null,
                 "createTime": null,
@@ -81,6 +80,7 @@ export const useDetailStore = defineStore('detail', {
             return state.currentImg.memberCommentLogsList;
         },
         storeForm(state){
+            const keywordsIdList = state.currentImg.tagsIds ? state.currentImg.tagsIds.split(","): [];
             return {
                 id: state.currentImg.imgentryId,
                 name: state.currentImg.entryimgName,
@@ -90,9 +90,7 @@ export const useDetailStore = defineStore('detail', {
                 place: state.currentImg.locationName,
                 kws: state.currentImg.tagsTitleList.map( (label, i) => {
                     return {
-                        id: state.keywordsId[i],
-                        // TODO: 接上更改后的后端后改为这一行
-                        // id: state.currentImg.keywordsId[i],
+                        id: keywordsIdList[i],
                         label: label,
                         value: label,
                         choose: true,
@@ -103,5 +101,10 @@ export const useDetailStore = defineStore('detail', {
         }
     },
     actions: {
+        finishEdit() {
+            this.editing = false;
+            // 复原form到原始的storeForm
+            this.form = _.cloneDeep(this.storeForm);
+        }
     }
 })

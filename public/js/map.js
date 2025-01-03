@@ -1,14 +1,14 @@
 function MapLayer() {
-    var outerMargin = { //same as canvas
-        top: 20,
-        bottom: 50,
-        left: 50,
-        right: 50,
-    }
+    // var outerMargin = { //same as canvas
+    //     top: 20,
+    //     bottom: 50,
+    //     left: 50,
+    //     right: 50,
+    // }
     var margin = {
         top: 0,
         bottom: 0,
-        left: 50,
+        left: 0,
         right: 0,
     }
     var disabled = false;
@@ -36,7 +36,7 @@ function MapLayer() {
 
     // projection settings
     var projectMethod = ""
-    var fitExtent = [[0,0], [1000, 800]]; // by default
+    var fitExtent = [[0,0], [800, 600]]; // by default
 
     var projection; // preojection method
     var pathGenerator; // d3 geoPath method
@@ -50,57 +50,55 @@ function MapLayer() {
     map.init = function (_mapData, _size) {
         // 设置stage的大小 和地图的大小
         mapData = _mapData;
+        console.log(mapData)
         let dim = getDimension(_size);
         var marginBottom = -_size[1] / 2.5;
+        console.log(marginBottom)
         var center = [_size[0] / 2 + margin.left, marginBottom]
-        // fitExtent = [
-        //     [_size[0] * margin.left, _size[1] * margin.top], 
-        //     [_size[0] * (1 - margin.right), _size[1] * (1 - margin.bottom)]
-        // ]
-        fitExtent = ([
-            [0, 0], 
-            [dim, dim]
-        ]).map(d=> [d[0]+center[0], d[1] + center[1]])
-        // fitExtent = [
-        //     [outerMargin.left + (w - dim) / 2,  h - dim - outerMargin.bottom], 
-        //     [outerMargin.left + w / 2 + dim / 2, h - outerMargin.bottom]
-        // ]
-        projection = d3.geoMercator().fitExtent(fitExtent, _mapData);
-        pathGenerator = d3.geoPath(projection, mapPath);    
+        dx = (_size[0] / 2 + margin.left - _size[0]/2);
+        // dx = 0
+        dy =  _size[1]/2 + marginBottom;
+        // dy = 0
+
+        fitExtent = [[dx, dy], [dx + _size[0], dy + _size[1]]];
+        // console.log(fitExtent)
+        // projection = d3.geoMercator().fitExtent(fitExtent, _mapData);
+        // pathGenerator = d3.geoPath(projection, mapPath);    
+        // pathGenerator = d3.geoPath(projection, mapPath);  
     };
 
-    map._projection = function(x , y){
-        let _x = x, _y = y;
-        if(x<=1 && y<= 1){ // input relative position
-            _x = fitExtent[0][0] + (fitExtent[1][0]- fitExtent[0][0]) * x;
-            _y = fitExtent[0][1] + (fitExtent[1][1] - fitExtent[0][1]) * y;
-        }
-        // console.log(projection())
-        return projection([_x, _y]);
-    };
+    // map._projection = function(x , y){
+    //     let _x = x, _y = y;
+    //     if(x <=1 && y <= 1){ // input relative position
+    //         _x = fitExtent[0][0] + (fitExtent[1][0]- fitExtent[0][0]) * x;
+    //         _y = fitExtent[0][1] + (fitExtent[1][1] - fitExtent[0][1]) * y;
+    //     }
+    //     // console.log(projection())
+    //     return projection([_x, _y]);
+    // };
 
 
     map.container = function(){
         // iterate data, for each city, draw line and city name
-        for (let i = 0; i < mapData.features.length; i++) {
-            const d = mapData.features[i];
-            addText(d.properties.name, projection(d.properties[textLocation]))
-            addMapLine(d)
-        }
+        // for (let i = 0; i < mapData.features.length; i++) {
+        //     const d = mapData.features[i];
+        //     addText(d.properties.name, projection(d.properties[textLocation]))
+        //     addMapLine(d)
+        // }
 
         stage.addChild(mapPath);
-        stage.addChild(mapTextContainer);
+        // stage.addChild(mapTextContainer);
         
         return stage;
     }
 
     var addText = function(t, t_pos){
-        let _ = new PIXI.Text(t, textSyle)
-        _.x = t_pos[0];
-        _.y = t_pos[1];
-        _.anchor.set(0.5);
-        _.resolution = 7;
-        mapTextContainer.addChild(_);
+        let _t = new PIXI.Text(t, textSyle)
+        _t.x = t_pos[0];
+        _t.y = t_pos[1];
+        _t.anchor.set(0.5);
+        _t.resolution = 7;
+        mapTextContainer.addChild(_t);
     }
 
     var addMapLine = (_d) => {

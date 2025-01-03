@@ -97,14 +97,13 @@ function LoaderSprites() {
   var pixiloader = new PIXI.Loader();
 
 
-  // TODO: sprite图像对接
   pixiloader.use(pixiPackerParser(PIXI)).on("progress", function (p, r) {
     indicator.style("height", p.progress + "%");
     if (!r.textures) return;
     progress(r.textures);
   });
 
-  // 单张url获取
+  // Option: 单张url获取
   // pixiloader.on("progress", function (p, r) {
   //   indicator.style("height", p.progress + "%");
   //   if (!r.texture) return;

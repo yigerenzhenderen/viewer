@@ -151,7 +151,6 @@ export default {
       }
       const oldKws = this.detailStore.storeForm.kws.map(d=>d.id).join(',');
       const newKws = this.detailStore.form.kws.map(d=>d.id).join(',');
-      // console.log(oldKws, newKws)
       const diff = this.getModifiedFields(newData, oldData);
       const flagDict = {
         newEntryimgName: "entryimgNameFlag",
@@ -163,26 +162,23 @@ export default {
       for (let i in diff) {
         diff[flagDict[i]] = 1;
       }
-      if ((Object.keys(diff).length == 0) && (oldKws === newKws)) {
-        this.detailStore.editing = false;
-        return;
+      if (Object.keys(diff).length !== 0) {
+        diff.memberId = this.globalStore.userInfo.memberId;
+        diff.imgentryId = this.detailStore.storeForm.id;
+        var res1 = await fetch.addRevisionLog(diff);
       }
-      diff.memberId = this.globalStore.userInfo.memberId;
-      diff.imgentryId = this.detailStore.storeForm.id;
-      const res1 = await fetch.addRevisionLog(diff);
       if(oldKws !== newKws){
-        // console.log(newKws)
         var res2 = await fetch.addTagRevision(this.globalStore.userInfo.memberId, this.detailStore.imageId, newKws)
       }
-      console.log(res1, res2)
-      this.popup();
+      // console.log(diff, res1, res2)
+      // this.finishedEdit();
+      this.detailStore.finishEdit();
     },
-    popup() {
-      this.detailStore.editing = false;
-    }
-  },
-  mounted() {
-    // console.log(this.item, this.detailStore.detail_test, 'hahahahhah')
+    // finishedEdit() {
+    //   this.detailStore.editing = false;
+    //   // 复原form到原始的storeForm
+    //   this.detailStore.form = _.cloneDeep(this.detailStore.storeForm);
+    // }
   },
   watch: {
     async hide(bool) {
@@ -190,7 +186,7 @@ export default {
       const newImg = await fetch.getImg(this.detailStore.imageId);
       console.log("newImg", newImg)
       this.detailStore.currentImg = newImg;
-      this.detailStore.form = Object.assign({}, this.detailStore.storeForm);
+      this.detailStore.form = _.cloneDeep(this.detailStore.storeForm);
     },
 
   }
