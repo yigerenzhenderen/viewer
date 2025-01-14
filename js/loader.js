@@ -87,7 +87,7 @@ function LoaderSprites() {
   container = d3.select(".detailLoader");
   container.selectAll("div").remove();
 
-  container.append("div").classed("label", true).text("loading");
+  container.append("div").classed("label", true).text("加载中");
 
   indicator = container.append("div").classed("indicator", true);
 
@@ -214,7 +214,6 @@ function LoaderBlob(url) {
       .on("load", function (req) {
         var blobUrl = window.URL.createObjectURL(req.response);
         finished(blobUrl);
-        console.log('finished loading!!!!')
         container.selectAll("div").remove();
       })
       .get();
@@ -283,7 +282,7 @@ function LoaderMultiple(url) {
     container = d3.select(".detailLoader");
     container.selectAll("div").remove();
 
-    label = container.append("div").classed("label", true).text("loading");
+    label = container.append("div").classed("label", true).text("laoding");
     indicator = container.append("div").classed("indicator", true);
 
     loader.load(urls[index]);

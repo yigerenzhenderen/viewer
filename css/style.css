@@ -944,16 +944,6 @@ svg {
   text-transform: uppercase;
 }
 
-.icons .openbutton {
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  width: 28px;
-  height: 26px;
-  /* opacity: 0.5; */
-  background-image: url("../img/search.svg");
-  /* opacity: 0.33; */
-  cursor: pointer;
-}
 
 .icons.open .openbutton {
   background-image: url("../img/close.svg");
@@ -964,8 +954,9 @@ svg {
   background-repeat: no-repeat;
   width: 28px;
   height: 26px;
+  position: relative;
   /* opacity: 0.5; */
-  background-image: url("../img/search.svg");
+  /* background-image: url("../img/search.svg"); */
   /* opacity: 0.33; */
   cursor: pointer;
 }
