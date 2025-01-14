@@ -12,8 +12,8 @@
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false"
                 >
-                    <img :src="img.submitimgUrl" alt="" style="width: 100%; height: 200px;">
-                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
+                    <img :src="img.submitimgUrl" alt="" style="width: 100%; height: 200px; cursor: pointer;" @click="jump(img)">
+                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.submitimgName }}</div>
                     <div v-if="type===9" class="icon-group">
                         <div class="icon">
                             <img :src="view_url" alt="">
@@ -77,17 +77,7 @@ export default{
             selectAll: false,
             allImg: [],
             dataList: [
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称1", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称2", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称3", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称4", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称5", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称6", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称7", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称8", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false},
-                // {view: 10, like: 10, forward: 10, comment: 1, name:"图像名称9", time:"2024年12月2日12:00", hoverRemove: false, hoverImg:false}
             ],
-            // currentTypeList: []
 
         }
     },
@@ -101,6 +91,10 @@ export default{
         remove(img){
             this.dataList = this.dataList.filter(item =>item.name !== img.name);
         },
+        jump(img){
+            if(this.type !== 9) return; // 非已发布的情况下不能跳转
+            this.$router.push({path: '/', query: { id: img.imgentryId } })
+        }
     },
     watch:{
         type(newVal){
@@ -117,10 +111,10 @@ export default{
     async mounted() {
         const data = await fetch.getUserUploadLogs(this.globalStore.userInfo.memberId);
         this.allImg = data.rows;
-        // console.log(this.allImg)
+        console.log(this.allImg)
         this.dataList = this.allImg.filter(item => item.status === "9");
         // console.log(this.dataList)
-    }
+    },
 }
 </script>
 

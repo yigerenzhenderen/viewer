@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="right">
-                        <img :src="like.submitimgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill;">
+                        <img :src="like.submitimgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill; cursor: pointer;" @click="jump(like)">
                     </div>
                 </div>
             </div>
@@ -57,19 +57,11 @@ export default{
     data(){
         return {
             selectAll: false,
-            receiveLikeList: [
+            receiveLikeList: [                
                 // {choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
                 // {choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00"},
                 // {choose:false, id: 2, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
                 // {choose:false, id: 3, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 4, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 5, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 6, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
-                // {choose:false, id: 7, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
             ]
         }
     },
@@ -95,12 +87,15 @@ export default{
         },
         changPage(currentPage, pageSize){
             console.log(currentPage, pageSize)
+        },
+        jump(img){
+            this.$router.push({path: '/', query: { id: img.imgentryId } })
         }
     },
     async mounted() {
         const data = await fetch.getOthersLiksLogs(this.globalStore.userInfo.memberId);
         this.receiveLikeList = data.rows;
-        console.log(data)
+        // console.log(data)
     }
 }
 </script>

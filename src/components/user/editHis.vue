@@ -12,7 +12,11 @@
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false"
                 >
-                    <img :src="tempSrc" alt="" style="width: 100%; height: 200px;">
+                    <el-image :src="img.url" alt="" style="width: 100%; height: 200px; cursor: pointer;" @click="jump(img)">
+                        <template #placeholder>
+
+                        </template>
+                    </el-image>
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                     <!-- <div v-if="type===0" class="icon-group">
                         <div class="icon">
@@ -99,6 +103,9 @@ export default{
         // remove(img){
         //     this.dataList = this.dataList.filter(item =>item.name !== img.name);
         // },
+        jump(img){
+            this.$router.push({path: '/', query: { id: img.imgentryId } })
+        }
     },
     watch:{
         type(newVal){
@@ -114,7 +121,7 @@ export default{
    async mounted() {
         const data = await fetch.getUserUploadRevision(this.globalStore.userInfo.memberId, 1, 50)
         this.allImg = data.rows;
-        // console.log(this.allImg)
+        console.log(this.allImg)
         this.dataList = this.allImg.filter(item => item.status === "8");
         // console.log(this.dataList)
     }

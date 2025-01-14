@@ -22,6 +22,10 @@ export const useGlobalStore = defineStore('global', {
             tagList: [],
             tagScrollToLeft: true,
             tagScrollToRight: false,
+            reminder: {
+                show: false,
+                content: "test"
+            }
         }
     },
     actions: {
@@ -31,6 +35,10 @@ export const useGlobalStore = defineStore('global', {
         //     this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
         //     console.log(this.likeList, this.naviList)
         // },
+        showReminder(content){
+            this.reminder.show = true;
+            this.reminder.content = content;
+        },
         async updateInfo(){
             const res = await fetch.editUserInfo(this.userInfo);
             return res;

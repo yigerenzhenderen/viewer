@@ -12,19 +12,8 @@
                         <div v-for="img in data.imgs" class="img-container" 
                             @mouseenter="img.hoverImg=true"
                             @mouseleave="img.hoverImg=false">
-                            <el-image :src="img.url" style="width: 100%; height: 200px; object-fit: cover;">
-                                <template #placeholder>
-                                    <div>
-                                        <img src="/src/assets/cat.jpeg" alt="" style="width: 100%; height: 200px; object-fit: cover;">
-                                    </div>
-                                </template>
-                                <template #error>
-                                    <div>
-                                        <!-- <img src="/src/assets/cat.jpeg" alt="" style="width: 100%; height: 200px; object-fit: cover;"> -->
-                                    </div>
-                                </template>
+                            <el-image :src="img.url" style="width: 100%; height: 200px; object-fit: cover; cursor: pointer;" @click="jump(img)">
                             </el-image>
-                            <!-- <img class="thumb" :src="img.url" alt="" style="width: 100%; height: 200px; object-fit: cover;"> -->
                             <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
                             <div v-if="img.hoverImg" class="delete" 
                                 @mouseover="img.hoverRemove=true"
@@ -93,20 +82,27 @@ export default{
             this.dataList = this.dataList.filter(item =>!item.choose);
             this.selectAll = false;
         },
+        jump(img){
+            this.$router.push({path: '/', query: { id: img.id } })
+        }
     },
     async mounted() {
         this.loading = true;
         const data = await fetch.getUserBrowseLogs(this.globalStore.userInfo.memberId);
         this.totalNum = data.total;
-        // console.log(data)
-        const rows = data.rows.map(d=>{return {name: d.entryimgName, url: d.entryimgThumurl, time: d.actionTime.split(" ")[0]}});
-        this.dataList = Object.entries(groupBy(rows, item => item.time)).map( (item) => {
-            return {
-                hoverRemove: false,
-                time: formatDate(item[0]),
-                imgs: item[1]
-            }
-        })
+        const rows = data.rows.map(d=>{return {id: d.imgentryId, name: d.entryimgName, url: d.entryimgThumurl, time: d.actionTime.split(" ")[0]}});
+        this.dataList = Object.entries(groupBy(rows, item => item.time))
+                        .sort((a, b) =>{
+                            return a[0] < b[0] ? 1 : -1
+                        })
+                        .map( (item) => {
+                            return {
+                                hoverRemove: false,
+                                time: formatDate(item[0]),
+                                imgs: item[1],
+                                id: item.id
+                            }
+                        })
         this.$nextTick(()=>{
             this.loading = false;
         })

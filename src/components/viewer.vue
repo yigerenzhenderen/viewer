@@ -41,12 +41,19 @@
           <div class="line-left" :style="{opacity: globalStore.tagScrollToLeft ? 0 : 1}"></div>
         </div>
         <div class="icons">
-          <div class="openbutton"></div>
-          <div class="upload">
-            <router-link to="/upload" class="link"></router-link>
+          <div class="openbutton" @mouseover="searchHover = true"  @mouseout="searchHover = false">
+            <searchIcon :active="searchHover"></searchIcon>
+            <span class="text" :style="{color: searchHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': searchHover ? 1 : 0}">搜索</span>
           </div>
-          <div class="user">
-            <router-link to="/user/info" class="link"></router-link>
+          <div class="upload" style="position: relative;" @mouseenter="uploadHover = true"  @mouseout="uploadHover = false">
+            <router-link to="/upload" class="link"></router-link>
+            <uploadIcon :active="uploadHover" style="pointer-events: none;"></uploadIcon>
+            <span class="text" :style="{color: uploadHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': uploadHover ? 1 : 0}">上传</span>
+          </div>
+          <div class="user" style="position: relative;" @mouseenter="userHover = true"  @mouseout="userHover = false">
+            <router-link to="/user/likeListory" class="link"></router-link>
+            <userIcon :active="userHover" style="pointer-events: none;"></userIcon>
+            <span class="text" style="left: -.5em; text-wrap-mode: nowrap;" :style="{color: userHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': userHover ? 1 : 0}">用户中心</span>
           </div>
         </div>
       </div>
@@ -57,7 +64,8 @@
         </div>
       </div>
     </div>
-  
+    
+    <Reminder />
 </div>
 </template>
 
@@ -72,44 +80,60 @@ import DetailView from "./sidebars/detail.vue";
 import ManiIcon from "./utils/mani.vue";
 import { init, canvas } from "../js/viz.js";
 import fetch from "../js/fetch.js";
+import searchIcon from "./icons/searchIcon.vue";
+import uploadIcon from "./icons/uploadIcon.vue";
+import userIcon from "./icons/userIcon.vue";
+import UserIcon from "./icons/userIcon.vue";
+import Reminder from "./utils/reminder.vue";
 
 export default{
-    computed: {
-      ...mapStores(useGlobalStore, useDetailStore)
-    },
-    components: {
-        InfoView,
-        DetailView,
-        ManiIcon
-    },
-    async mounted(){
-      d3.select("body").style("background-color", "var(--bg-color)");
-      this.globalStore.urlSearchParams = this.$route.query;
-      if (Modernizr.webgl && !utils.isMobile()) {
-        const tags = await fetch.getTagList();
-        this.globalStore.tagList = tags.data.map(d=>{return {
-          id: d.tagsId,
-          label: d.tagsTitle,
-          value: d.tagsTitle,
-          choose: false,
-          show: true,
-        }})
-        init(); 
-      }
-    },
-    watch: {
-      '$route.query': {
-        handler(newQuery, oldQuery) {
-          if(Object.keys(newQuery).length > 0) {
-            canvas.emitClickImage(newQuery.id, newQuery.title)
-          }else{
-            canvas.resetZoom();
-            this.detailStore.hide = true;
-          }
-        },
-        deep: true // 如果需要监听深层对象的变化，可以设置为 true
-      }
+  data(){
+    return {
+      uploadHover: false,
+      searchHover: false,
+      userHover: false,
     }
+  },
+  computed: {
+    ...mapStores(useGlobalStore, useDetailStore)
+  },
+  components: {
+      InfoView,
+      DetailView,
+      ManiIcon,
+      searchIcon,
+      uploadIcon,
+      userIcon,
+      Reminder
+  },
+  async mounted(){
+    d3.select("body").style("background-color", "var(--bg-color)");
+    this.globalStore.urlSearchParams = this.$route.query;
+    if (Modernizr.webgl && !utils.isMobile()) {
+      const tags = await fetch.getTagList();
+      this.globalStore.tagList = tags.data.map(d=>{return {
+        id: d.tagsId,
+        label: d.tagsTitle,
+        value: d.tagsTitle,
+        choose: false,
+        show: true,
+      }})
+      init();
+    }
+  },
+  watch: {
+    '$route.query': {
+      handler(newQuery, oldQuery) {
+        if(Object.keys(newQuery).length > 0) {
+          canvas.emitClickImage(newQuery.id, newQuery.title)
+        }else{
+          canvas.resetZoom();
+          this.detailStore.hide = true;
+        }
+      },
+      deep: true // 如果需要监听深层对象的变化，可以设置为 true
+    }
+  }
 }
 </script>
 
@@ -119,7 +143,7 @@ export default{
   width: 100%;
   height: 100%;
   opacity: 0;
-  display: block;
+  position: absolute;
 }
 
 .overlay{
@@ -127,4 +151,12 @@ export default{
   height: 100vh;
   position: absolute;
 }
+
+.text{
+  position: absolute; 
+  top: 2.5em; 
+  font-size: 12px;
+  opacity: 1;
+}
+
 </style>

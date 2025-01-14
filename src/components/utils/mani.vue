@@ -70,12 +70,14 @@ export default{
             e.preventDefault();
             if(this.forwarded) {
                 await navigator.clipboard.writeText("[湖南影像档案] 向你分享了一张图片 " + this.detailStore.currentImg.imageEntryFileInfos[0].filePath);
+                this.globalStore.showReminder("链接复制成功！");
                 return
             };
             this.forwarded = true;
             this.detailStore.currentImg.forwardCount += 1;
             this.globalStore.forward(this.detailStore.imageId);
             await navigator.clipboard.writeText("[湖南影像档案] 向你分享了一张图片 " + this.detailStore.currentImg.imageEntryFileInfos[0].filePath);
+            this.globalStore.showReminder("链接复制成功！");
         }
     },
     computed:{

@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="right">
-                        <img :src="comment.imgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill;">
+                        <img :src="comment.imgUrl" alt="" style="width: 100%; height: 100%; object-fit: fill; cursor: pointer;" @click="jump(comment)">
                     </div>
                 </div>
             </div>
@@ -109,6 +109,9 @@ export default{
         }
     },
     methods: {
+        jump(img){
+            this.$router.push({path: '/', query: { id: img.imgentryId } })
+        },
         selectAllChange(){
             this.selectAll = !this.selectAll;
             this.dataList.forEach(i => {

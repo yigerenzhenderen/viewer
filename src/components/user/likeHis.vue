@@ -6,7 +6,7 @@
                 <div v-for="img in imgs" class="img-container" 
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false">
-                    <img :src="img.entryimgThumurl" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+                    <el-image :src="img.entryimgThumurl" alt="" style="width: 100%; height: 200px; object-fit: cover; cursor: pointer;" @click="jump(img)" />
                     <div style="margin-top: 5px; margin-left: 5px;">{{ img.entryimgName }}</div>
                     <div v-if="img.hoverImg" class="delete" 
                         @mouseover="img.hoverRemove=true"
@@ -60,6 +60,9 @@ export default{
             this.dataList = this.dataList.filter(item =>!item.choose);
             this.selectAll = false;
         },
+        jump(img){
+            this.$router.push({path: '/', query: { id: img.imgentryId } })
+        }
     },
     async mounted() {
         const likeHistory = await this.globalStore.getLikeHistory();
