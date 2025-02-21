@@ -1,10 +1,8 @@
 <template>
     <div class="u-div">
         <div class="u-header">
-            <!-- <div class="title-container"><span class="title">湖南影像档案馆</span></div> -->
             <div class="title">
-                <span>湖南影像档案馆</span>
-                <router-link to="/" class="link" style="position: absolute;"></router-link>
+                <img class="title-img" :src="title" alt="湖南影像档案馆" @click="$router.push({path: '/'})">
             </div>
             <Avatar :size="53" style="margin-right: 10px;" :url="globalStore.userInfo.memberImgurl"/>
         </div>
@@ -76,10 +74,12 @@
 import Avatar from "./utils/avatar.vue";
 import { useGlobalStore } from '../store/global.js';
 import { mapState, mapStores } from 'pinia';
+import title from "../assets/title.svg";
 
 export default{
     data(){
         return {
+            title: title
         }
     },
     computed:{

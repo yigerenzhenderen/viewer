@@ -2,8 +2,7 @@
     <div class="u-div">
         <div class="u-header">
             <div class="title">
-                <span>湖南影像档案馆</span>
-                <router-link to="/" class="link" style="position: absolute;"></router-link>
+                <img class="title-img" :src="title" alt="湖南影像档案馆" @click="$router.push({path: '/'})">
             </div>
             <Avatar style="margin-right: 10px;" :url="globalStore.userInfo.memberImgurl"></Avatar>
         </div>
@@ -123,10 +122,12 @@ import fetch from "../js/fetch";
 import { ElMessage } from 'element-plus';
 import { useGlobalStore } from '../store/global.js';
 import { mapState, mapStores } from 'pinia';
+import title from "../assets/title.svg";
 
 export default{
     data(){
         return {
+            title: title,
             fileList: [],
             selectAll:false,
             defaultFocusImg: {

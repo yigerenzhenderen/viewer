@@ -34,7 +34,8 @@
 
       <div class="header">
         <div class="title">
-          <span>湖南影像档案馆</span>
+          <!-- <span>湖南影像档案馆</span> -->
+          <img :src="title" alt="湖南影像档案馆">
         </div>
         <div class="tagcloud">
           <div class="line-right" :style="{opacity: globalStore.tagScrollToRight ? 0 : 1}"></div>
@@ -85,6 +86,7 @@ import uploadIcon from "./icons/uploadIcon.vue";
 import userIcon from "./icons/userIcon.vue";
 import UserIcon from "./icons/userIcon.vue";
 import Reminder from "./utils/reminder.vue";
+import Title from "../assets/title.svg";
 
 export default{
   data(){
@@ -92,6 +94,7 @@ export default{
       uploadHover: false,
       searchHover: false,
       userHover: false,
+      title: Title
     }
   },
   computed: {
@@ -139,6 +142,7 @@ export default{
 
 
 <style scope>
+
 .link{
   width: 100%;
   height: 100%;
