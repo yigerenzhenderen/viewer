@@ -1,16 +1,16 @@
 <template>
   <router-view></router-view>
+  <Reminder />
 </template>
 
 
 <script>
-// import fetch from "./js/fetch.js"
-// import { useGlobalStore } from "./store/global.js";
-// import { mapStores } from 'pinia';
+
+import Reminder from './components/utils/reminder.vue';
 
 export default{
-  mounted(){
-
+  components: {
+    Reminder
   }
 }
 </script>

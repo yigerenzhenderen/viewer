@@ -78,7 +78,7 @@ export default{
         return {
             selectAll: false,
             currentPage: 1,
-            pageSize: 10,
+            pageSize: 8,
             totalSize: 0,
             dataList: [
                 // {type: "comment", choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00", content: "很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回很久没有回去了，下次一起回"},
@@ -104,9 +104,6 @@ export default{
         numChoose(){
             return this.dataList.filter(item => item.choose).length;
         },
-        totalPages(){
-            return this.totalSize / 50;
-        }
     },
     methods: {
         jump(img){

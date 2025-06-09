@@ -49,12 +49,6 @@ export default{
                 like: false,
                 view: false
             },
-            // img: {
-            //     browseCount: 0,
-            //     forwardCount: 0,
-            //     likeCount: 0,
-            //     imageEntryFileInfos: []
-            // },
         }
     },
     methods:{
@@ -63,8 +57,11 @@ export default{
             this.clicked.like = !this.clicked.like;
             this.detailStore.currentImg.likeCount += (this.clicked.like ? 1 : -1)
             this.globalStore.like(this.detailStore.imageId, this.clicked.like);
-            // const likeHistory = await this.globalStore.getLikeHistory();
-            // console.log(likeHistory)
+            if(this.clicked.like){
+                this.globalStore.likedImageIdList.add(this.detailStore.imageId)
+            }else{
+                this.globalStore.likedImageIdList.delete(this.detailStore.imageId)
+            }
         },
         async forwardClick(e){
             e.preventDefault();
@@ -87,10 +84,12 @@ export default{
     watch:{
         async maniShow(show){
             if(show){
-                // const result = await fetch.getImg(this.detailStore.imageId);
-                // this.img = (!!result) ? result : this.$options.data().img;
+                if(this.globalStore.likedImageIdList.has(this.detailStore.imageId)){
+                    this.clicked.like = true;
+                }else{
+                    this.clicked.like = false;
+                }
                 this.globalStore.view(this.detailStore.imageId);
-                // this.discussStore.discussList = this.img.memberCommentLogsList;
                 
             }else{
                 this.forwarded = false;

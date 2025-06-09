@@ -18,7 +18,7 @@
     </div>  
     <div v-else class="comment-container" style="justify-content: center;">
         <div style="width: 100%; height: 1px; background-color: #A9A7A7; margin-right: 5%"></div>
-        <span class="logIn" @click="logIn">登录</span>
+        <span class="logIn" @click="globalStore.logIn">登录</span>
         <span style="color: #8F8F8F; cursor: default; white-space: nowrap;">写评论</span>
         <div style="width: 100%; height: 1px; background-color: #A9A7A7; margin-left: 5%"></div>
     </div>
@@ -59,9 +59,6 @@ export default{
         },
         endInput(){
             this.discussStore.inputIng = false;
-        },
-        logIn(){
-            this.globalStore.logged = true;
         },
         async refreshComment(){
             const newImg = await fetch.getImg(this.imageId);

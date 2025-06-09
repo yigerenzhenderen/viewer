@@ -35,7 +35,7 @@
                     <div style="font-size: 12px; text-align: center; color: #A3A3A3; margin: 8px 0;">
                         上传时间 &thinsp;{{ img.submitimgTime }}
                     </div>
-                    <div v-if="type===9" style="display: flex; justify-content: end; height: 15px; font-size: 12px; color:#545454; cursor: pointer; margin-right: 5px;"
+                    <!-- <div v-if="type===9" style="display: flex; justify-content: end; height: 15px; font-size: 12px; color:#545454; cursor: pointer; margin-right: 5px;"
                         @mouseover="img.hoverRemove=true"
                         @mouseout="img.hoverRemove=false"
                         @click="remove(img)">
@@ -43,7 +43,7 @@
                         <div style="display:flex; width: 15px; height: 15px; position: relative; margin-left: 0px;">
                             <Remove :selected="img.hoverRemove" :activeColor="'#F93232'"></Remove>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -161,9 +161,9 @@ export default{
                 height: fit-content;
                 padding-bottom: 5px;
             }
-            .img-container:hover{
-                background-color: #F1F1F1;
-            }
+            // .img-container:hover{
+            //     background-color: #F1F1F1;
+            // }
         }
     }
     .bottom{

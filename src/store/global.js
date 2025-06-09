@@ -9,9 +9,7 @@ export const useGlobalStore = defineStore('global', {
             urlSearchParams: {},
             userInfo: {
                 wechatNickname: 'kegemo',
-                // memberImgurl: 'https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg',
                 memberName: "xxx",
-                // realName: 'aaa',
                 memberPhone: '12344',
                 danwei: 'bbbb',
                 memberEmail: 'aadsafa',
@@ -25,16 +23,17 @@ export const useGlobalStore = defineStore('global', {
             reminder: {
                 show: false,
                 content: "test"
-            }
+            },
+            likedImageIdList: new Set(),
         }
     },
     actions: {
-        // async logIn(){
-        //     this.logged = true;
-        //     this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
-        //     this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
-        //     console.log(this.likeList, this.naviList)
-        // },
+        async logIn(){
+            this.logged = true;
+            const likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
+            this.likedImageIdList = new Set(likeList.rows.map(img => img.imgentryId));
+            // this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+        },
         showReminder(content){
             this.reminder.show = true;
             this.reminder.content = content;

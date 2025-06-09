@@ -15,7 +15,7 @@
                             <el-image :src="img.url" style="width: 100%; height: 200px; object-fit: cover; cursor: pointer;" @click="jump(img)">
                             </el-image>
                             <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
-                            <div v-if="img.hoverImg" class="delete" 
+                            <!-- <div v-if="img.hoverImg" class="delete" 
                                 @mouseover="img.hoverRemove=true"
                                 @mouseout="img.hoverRemove=false"
                                 @click="remove(data.time, img)">
@@ -23,7 +23,7 @@
                                 <div style="display:flex; width: 20px; height: 20px; position: relative; margin-left: 0px;">
                                     <Remove :selected="img.hoverRemove" :activeColor="'#F93232'"></Remove>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- </div> -->
                     </div>
@@ -78,10 +78,14 @@ export default{
         ...mapStores(useGlobalStore)
     },
     methods: {
-        remove(time, img){
-            this.dataList = this.dataList.filter(item =>!item.choose);
-            this.selectAll = false;
-        },
+        // remove(time, img){
+        //     let dateItem = this.dataList.find( dateItem => dateItem.time === time);
+        //     dateItem.imgs = dateItem.imgs.filter(item => item.id !== img.id);
+        //     if(dateItem.imgs.length === 0){
+        //         this.dataList = this.dataList.filter( _ => _.time !== dateItem.time);
+        //     }
+        //     // fetch.remove
+        // },
         jump(img){
             this.$router.push({path: '/', query: { id: img.id } })
         }
@@ -100,7 +104,6 @@ export default{
                                 hoverRemove: false,
                                 time: formatDate(item[0]),
                                 imgs: item[1],
-                                id: item.id
                             }
                         })
         this.$nextTick(()=>{
@@ -168,9 +171,9 @@ export default{
             margin: 5px;
             height: 260px;
         }
-        .img-container:hover{
-            background-color: #F1F1F1;
-        }
+        // .img-container:hover{
+        //     background-color: #F1F1F1;
+        // }
         .delete{
             display: flex; 
             align-items: center; 

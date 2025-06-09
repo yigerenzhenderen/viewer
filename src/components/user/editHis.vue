@@ -12,12 +12,12 @@
                     @mouseenter="img.hoverImg=true"
                     @mouseleave="img.hoverImg=false"
                 >
-                    <el-image :src="img.url" alt="" style="width: 100%; height: 200px; cursor: pointer;" @click="jump(img)">
+                    <el-image :src="img.entryimgPrimalurl" alt="" style="width: 100%; height: 200px; cursor: pointer;" @click="jump(img)">
                         <template #placeholder>
 
                         </template>
                     </el-image>
-                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.name }}</div>
+                    <div style="margin-top: 5px; margin-left: 5px;">{{ img.entryimgName }}</div>
                     <!-- <div v-if="type===0" class="icon-group">
                         <div class="icon">
                             <img :src="view_url" alt="">
@@ -37,7 +37,7 @@
                         </div>
                     </div> -->
                     <div style="font-size: 12px; text-align: left; color: #A3A3A3; margin: 8px 5px;">
-                        修订时间 &thinsp;{{ img.time }}
+                        修订时间 &thinsp;{{ img.reviewedTime }}
                     </div>
                     <!-- <div v-if="type===0" style="display: flex; justify-content: end; height: 15px; font-size: 12px; color:#545454; cursor: pointer; margin-right: 5px;"
                         @mouseover="img.hoverRemove=true"

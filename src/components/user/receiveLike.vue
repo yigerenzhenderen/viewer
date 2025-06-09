@@ -5,7 +5,7 @@
             <div class="wrapper">
                 <div v-for="like in receiveLikeList" class="like-item">
                     <div class="left">
-                        <Checkbox v-model:choose="like.choose" style="margin-right: 20px;"/>
+                        <!-- <Checkbox v-model:choose="like.choose" style="margin-right: 20px;"/> -->
                         <Avatar :size="80" />
                         <div style="display: flex; flex-direction: column; margin-left: 20px;">
                             <div style="display: flex; align-items: center;">
@@ -26,18 +26,19 @@
         </div>
         <div class="bottom">
             <div style="width: 200px; display: flex; align-items: center">
-                <Checkbox3 :total="receiveLikeList.length" :selected="numChoose" @selectAllChange="selectAllChange"></Checkbox3>
-                <div style="margin: 8px;"><span>{{!numChoose ? "全选" : `${numChoose} / ${receiveLikeList.length}`}}</span></div>
-                <div style="width: 24px; height: 24px; margin-right: 40px; margin-left: auto; margin-top: 7px; position: relative; cursor: pointer; margin-bottom: 8px;"
+                <!-- <Checkbox3 :total="receiveLikeList.length" :selected="numChoose" @selectAllChange="selectAllChange"></Checkbox3> -->
+                <!-- <div style="margin: 8px;"><span>{{!numChoose ? "全选" : `${numChoose} / ${receiveLikeList.length}`}}</span></div> -->
+                <!-- <div style="width: 24px; height: 24px; margin-right: 40px; margin-left: auto; margin-top: 7px; position: relative; cursor: pointer; margin-bottom: 8px;"
                     @click="remove">
                     <Remove :selected="!!numChoose" active-color="#000"></Remove>
-                </div>
+                </div> -->
             </div>
             <el-pagination 
+                v-model:current-page="currentPage"
                 style="margin-right: 20px;" 
                 background layout="prev, pager, next" 
-                :page-size="10"
-                :total="receiveLikeList.length" 
+                :page-size="pageSize"
+                :total="totalSize" 
                 @change="changPage"/>
         </div>
     </div>
@@ -57,6 +58,9 @@ export default{
     data(){
         return {
             selectAll: false,
+            currentPage: 1,
+            pageSize: 8,
+            totalSize: 0,
             receiveLikeList: [                
                 // {choose:false, id: 0, name: "李晓红", imgName: "杂货铺.jpg", time: "2020年10月15日12:00"},
                 // {choose:false, id: 1, name: "李晓红", imgName: "杂货铺.jpg",time: "2020年10月15日12:00"},
@@ -72,7 +76,7 @@ export default{
         ...mapStores(useGlobalStore),
         numChoose(){
             return this.receiveLikeList.filter(item => item.choose).length;
-        }
+        },
     },
     methods: {
         selectAllChange(){
@@ -85,17 +89,18 @@ export default{
             this.receiveLikeList = this.receiveLikeList.filter(item =>!item.choose);
             this.selectAll = false;
         },
-        changPage(currentPage, pageSize){
-            console.log(currentPage, pageSize)
+        async changPage(currentPage, pageSize){
+            const data = await fetch.getOthersLiksLogs( this.globalStore.userInfo.memberId, this.currentPage, this.pageSize);
+            this.receiveLikeList = data.rows;
         },
         jump(img){
             this.$router.push({path: '/', query: { id: img.imgentryId } })
         }
     },
     async mounted() {
-        const data = await fetch.getOthersLiksLogs(this.globalStore.userInfo.memberId);
+        const data = await fetch.getOthersLiksLogs(this.globalStore.userInfo.memberId, this.currentPage, this.pageSize);
+        this.totalSize = data.total;
         this.receiveLikeList = data.rows;
-        // console.log(data)
     }
 }
 </script>

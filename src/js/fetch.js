@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// let baseurl = "https://vaip.arts-press.com/rasterInterface"
+
 let baseurl = "https://photo-hn.cn/rasterInterface"
 
 const api = axios.create({
@@ -64,13 +64,19 @@ export default {
         const response = await api.get("/interface/memberForwardLogs/selectMemberForwardLogsByMemberId", json_data);
         return response.data;
     },
-    async getUserLikeLogs(userId) {
+    async getUserLikeLogs(userId, pageNum, pageSize) {
         const json_data = {
-            memberId: userId,
-            pageNum: 1,
-            pageSize: 50
+            memberId: userId
         }
-        const response = await api.post("/interface/memberLikeLogs/selectMemberLikeLogsByMemberId", json_data);
+        if(pageNum){
+            json_data.pageNum = pageNum;
+        }
+        if(pageSize){
+            json_data.pageSize = pageSize;
+        }
+        const response = await api.get("/interface/memberLikeLogs/selectMemberLikeLogsByMemberId", {
+            params : json_data
+        });
         return response.data;
     },
     async getUserCommentLogs(userId) {
@@ -197,11 +203,11 @@ export default {
         const response = await api.post("/interface/imageEntrySubmit/addImageEntrySubmit", json_data);
         return response.data;
     },
-    async getOthersLiksLogs(userId){
+    async getOthersLiksLogs(userId, pageNum, pageSize){
         const json_data = {
             memberId: userId, // 空即为游客
-            pageNum: 1,
-            pageSize: 50
+            pageNum: pageNum,
+            pageSize: pageSize
         }
         const response = await api.post("/interface/imageEntrySubmit/selectImageEntrySubmitLike", json_data);
         return response.data;
@@ -235,7 +241,7 @@ export default {
             imgentryId: imgentryId,
             tagsIds: tagsId,
         }
-        console.log(json_data)
+        // console.log(json_data)
         const response = await api.post("/interface/imageEntryTagsRevision/addImageEntryTagsRevision",json_data);
         return response.data;
     }

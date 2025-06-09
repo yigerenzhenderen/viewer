@@ -9,7 +9,7 @@
         :show-close="false"
         style="padding: 30px; text-align: center; border-radius: 10px;"
     >
-        <span style="font-size: 28px; margin-left: auto; color: black;">
+        <span style="font-size: 20px; margin-left: auto; color: black;">
             {{ this.reminder.content}}
         </span>
         <template #header style="height: 0px;">

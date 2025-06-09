@@ -59,7 +59,6 @@ export default{
     },
     methods:{
         focusComment(commentId){
-            // console.log(commentId)
             d3.select(".discuss-content").select(`#c${commentId}`).classed("focused", true).style("background-color", "#E2E2E2");
         },
         replyComment(receiver){

@@ -19,7 +19,7 @@ if(grid==='true'){
 }
 
 if (import.meta.env.MODE === 'production') {
-  configFile = "/viewer" + configFile;
+  // configFile = "/viewer" + configFile;
 }
 
 // if (Modernizr.webgl && !utils.isMobile()) {

@@ -64,8 +64,6 @@
         </div>
       </div>
     </div>
-    
-    <Reminder />
 </div>
 </template>
 
@@ -108,6 +106,8 @@ export default{
   },
   async mounted(){
     d3.select("body").style("background-color", "var(--bg-color)");
+    // const all = await fetch.getAllImgData();
+    // console.log(all, 'aaa')
     this.globalStore.urlSearchParams = this.$route.query;
     if (Modernizr.webgl && !utils.isMobile()) {
       const tags = await fetch.getTagList();
@@ -119,6 +119,7 @@ export default{
         show: true,
       }})
       init();
+      this.globalStore.logIn();
     }
   },
   watch: {
