@@ -4,7 +4,7 @@
             <div class="title">
                 <img class="title-img" :src="title" alt="湖南影像档案馆" @click="$router.push({path: '/'})">
             </div>
-            <Avatar :size="53" style="margin-right: 10px;" :url="globalStore.userInfo.avatar"/>
+            <Avatar :size="53" style="margin-right: 10px;" :url="globalStore.userInfo.memberImgurl"/>
         </div>
         <div class="u-container" style="">
             <div class="u-controll" style="border-right: 10px; margin-top: 50px;">

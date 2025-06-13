@@ -86,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
     if(global.logged){
         next();
     }
-    if(to.path.startsWith('/user') || to.path.startsWith('/upload')){
+    else if(to.path.startsWith('/user') || to.path.startsWith('/upload')){
         global.previousUrl = to.path;
         next({path: '/'})
         global.showLogInWindow = true;

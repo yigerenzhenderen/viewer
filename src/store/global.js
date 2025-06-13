@@ -18,7 +18,7 @@ export const useGlobalStore = defineStore('global', {
                 memberEmail: '',
                 memberId: '',
                 wx: '',
-                avatar: "",
+                memberImgurl: "",
             },
             tagList: [],
             tagScrollToLeft: true,
@@ -35,7 +35,7 @@ export const useGlobalStore = defineStore('global', {
 
             this.userInfo.wechatNickname = userInfo.wechatNickname;
             this.userInfo.memberId = userInfo.memberId;
-            this.userInfo.avatar = userInfo.memberImgurl ? userInfo.memberImgurl : userInfo.avatar;
+            this.userInfo.memberImgurl = userInfo.memberImgurl;
             this.userInfo.memberName = userInfo.memberName;
             this.userInfo.memberPhone = userInfo.memberPhone;
             this.userInfo.memberEmail = userInfo.memberEmail;
