@@ -32,7 +32,21 @@ export const useGlobalStore = defineStore('global', {
             this.logged = true;
             const likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
             this.likedImageIdList = new Set(likeList.rows.map(img => img.imgentryId));
+        },
             // this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+        async loginUpdate(userInfo){
+
+            this.userInfo.wechatNickname = userInfo.wechatNickname;
+            this.userInfo.memberId = userInfo.memberId;
+            this.userInfo.avatar = userInfo.mberImgurl;
+            this.userInfo.memberName = userInfo.memberName;
+            this.userInfo.memberPhone = userInfo.memberPhone;
+            this.userInfo.memberEmail = userInfo.memberEmail;
+
+            this.logged = true;
+            this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
+            this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+            console.log(this.likeList, this.naviList)
         },
         showReminder(content){
             this.reminder.show = true;

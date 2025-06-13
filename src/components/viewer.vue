@@ -34,7 +34,6 @@
 
       <div class="header">
         <div class="title">
-          <!-- <span>湖南影像档案馆</span> -->
           <img :src="title" alt="湖南影像档案馆">
         </div>
         <div class="tagcloud">
@@ -74,8 +73,10 @@
       </div>
     </div>
 
-
-  </div>
+    <LogIn></LogIn>
+    
+    <Reminder />
+</div>
 </template>
 
 
@@ -95,6 +96,7 @@ import userIcon from "./icons/userIcon.vue";
 import UserIcon from "./icons/userIcon.vue";
 import Reminder from "./utils/reminder.vue";
 import Title from "../assets/title.svg";
+import LogIn from '../components/login.vue'
 
 export default {
   data() {
@@ -109,13 +111,14 @@ export default {
     ...mapStores(useGlobalStore, useDetailStore)
   },
   components: {
-    InfoView,
-    DetailView,
-    ManiIcon,
-    searchIcon,
-    uploadIcon,
-    userIcon,
-    Reminder
+      InfoView,
+      DetailView,
+      ManiIcon,
+      searchIcon,
+      uploadIcon,
+      userIcon,
+      Reminder,
+      LogIn
   },
   async mounted() {
     d3.select("body").style("background-color", "var(--bg-color)");
