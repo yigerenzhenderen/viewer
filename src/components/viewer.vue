@@ -1,6 +1,6 @@
 <template>
 
-<div id="viewer">
+  <div id="viewer">
     <div id="hiddenreload"></div>
 
     <div class="browserInfo">
@@ -13,7 +13,7 @@
     </div>
 
     <div class="search"></div>
-    
+
     <div class="page">
       <div class="detailLoader"></div>
       <div class="sideLoader"></div>
@@ -26,7 +26,7 @@
 
 
       <InfoView />
-      
+
       <div class="searchbar">
         <input type="input" name="suche" />
         <!-- <div class="close"></div> -->
@@ -34,37 +34,48 @@
 
       <div class="header">
         <div class="title">
-          <span>湖南影像档案馆</span>
+          <!-- <span>湖南影像档案馆</span> -->
+          <img :src="title" alt="湖南影像档案馆">
         </div>
         <div class="tagcloud">
-          <div class="line-right" :style="{opacity: globalStore.tagScrollToRight ? 0 : 1}"></div>
-          <div class="line-left" :style="{opacity: globalStore.tagScrollToLeft ? 0 : 1}"></div>
+          <div class="line-right" :style="{ opacity: globalStore.tagScrollToRight ? 0 : 1 }"></div>
+          <div class="line-left" :style="{ opacity: globalStore.tagScrollToLeft ? 0 : 1 }"></div>
         </div>
         <div class="icons">
-          <div class="openbutton" @mouseover="searchHover = true"  @mouseout="searchHover = false">
+          <div class="openbutton" @mouseover="searchHover = true" @mouseout="searchHover = false">
             <searchIcon :active="searchHover"></searchIcon>
-            <span class="text" :style="{color: searchHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': searchHover ? 1 : 0}">搜索</span>
+            <span class="text"
+              :style="{ color: searchHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': searchHover ? 1 : 0 }">搜索</span>
           </div>
-          <div class="upload" style="position: relative;" @mouseenter="uploadHover = true"  @mouseout="uploadHover = false">
+          <div class="upload" style="position: relative;" @mouseenter="uploadHover = true"
+            @mouseout="uploadHover = false">
             <router-link to="/upload" class="link"></router-link>
             <uploadIcon :active="uploadHover" style="pointer-events: none;"></uploadIcon>
-            <span class="text" :style="{color: uploadHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': uploadHover ? 1 : 0}">上传</span>
+            <span class="text"
+              :style="{ color: uploadHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': uploadHover ? 1 : 0 }">上传</span>
           </div>
-          <div class="user" style="position: relative;" @mouseenter="userHover = true"  @mouseout="userHover = false">
+          <div class="user" style="position: relative;" @mouseenter="userHover = true" @mouseout="userHover = false">
             <router-link to="/user/likeListory" class="link"></router-link>
             <userIcon :active="userHover" style="pointer-events: none;"></userIcon>
-            <span class="text" style="left: -.5em; text-wrap-mode: nowrap;" :style="{color: userHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': userHover ? 1 : 0}">用户中心</span>
+            <span class="text" style="left: -.5em; text-wrap-mode: nowrap;"
+              :style="{ color: userHover ? 'rgb(171, 57, 59)' : 'black', 'opacity': userHover ? 1 : 0 }">用户中心</span>
           </div>
         </div>
       </div>
 
       <div class="viz">
         <div class="overlay">
-          <ManiIcon/>
+          <ManiIcon />
         </div>
       </div>
+
+      <div class="claim">
+        ICP备案/许可证号：湘ICP备17007120号-5<br>网站域名：photo-hn.cn
+      </div>
     </div>
-</div>
+
+
+  </div>
 </template>
 
 
@@ -83,41 +94,45 @@ import uploadIcon from "./icons/uploadIcon.vue";
 import userIcon from "./icons/userIcon.vue";
 import UserIcon from "./icons/userIcon.vue";
 import Reminder from "./utils/reminder.vue";
+import Title from "../assets/title.svg";
 
-export default{
-  data(){
+export default {
+  data() {
     return {
       uploadHover: false,
       searchHover: false,
       userHover: false,
+      title: Title
     }
   },
   computed: {
     ...mapStores(useGlobalStore, useDetailStore)
   },
   components: {
-      InfoView,
-      DetailView,
-      ManiIcon,
-      searchIcon,
-      uploadIcon,
-      userIcon,
-      Reminder
+    InfoView,
+    DetailView,
+    ManiIcon,
+    searchIcon,
+    uploadIcon,
+    userIcon,
+    Reminder
   },
-  async mounted(){
+  async mounted() {
     d3.select("body").style("background-color", "var(--bg-color)");
     // const all = await fetch.getAllImgData();
     // console.log(all, 'aaa')
     this.globalStore.urlSearchParams = this.$route.query;
     if (Modernizr.webgl && !utils.isMobile()) {
       const tags = await fetch.getTagList();
-      this.globalStore.tagList = tags.data.map(d=>{return {
-        id: d.tagsId,
-        label: d.tagsTitle,
-        value: d.tagsTitle,
-        choose: false,
-        show: true,
-      }})
+      this.globalStore.tagList = tags.data.map(d => {
+        return {
+          id: d.tagsId,
+          label: d.tagsTitle,
+          value: d.tagsTitle,
+          choose: false,
+          show: true,
+        }
+      })
       init();
       this.globalStore.logIn();
     }
@@ -125,9 +140,9 @@ export default{
   watch: {
     '$route.query': {
       handler(newQuery, oldQuery) {
-        if(Object.keys(newQuery).length > 0) {
+        if (Object.keys(newQuery).length > 0) {
           canvas.emitClickImage(newQuery.id, newQuery.title)
-        }else{
+        } else {
           canvas.resetZoom();
           this.detailStore.hide = true;
         }
@@ -140,24 +155,35 @@ export default{
 
 
 <style scope>
-.link{
+.link {
   width: 100%;
   height: 100%;
   opacity: 0;
   position: absolute;
 }
 
-.overlay{
+.overlay {
   width: 100vw;
   height: 100vh;
   position: absolute;
 }
 
-.text{
-  position: absolute; 
-  top: 2.5em; 
+.text {
+  position: absolute;
+  top: 2.5em;
   font-size: 12px;
   opacity: 1;
 }
 
+.claim {
+  width: 100%;
+  position: absolute;
+  bottom: 5px;
+  left: 0px;
+  font-size: 8px;
+  color: gray;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
 </style>
