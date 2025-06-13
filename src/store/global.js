@@ -1,21 +1,24 @@
 import { defineStore } from 'pinia'
 import { getImgUrl } from "../js/utils";
 import fetch from '../js/fetch.js'
+import cookie from '../js/cookie.js';
 
 export const useGlobalStore = defineStore('global', {
     state: () => {
         return { 
             logged: false,
+            showLogInWindow : false, // 控制登录页面的显示和隐藏
+            previousUrl: '', // 未登录时试图访问的链接，登录后自动跳转该链接
             urlSearchParams: {},
             userInfo: {
-                wechatNickname: 'kegemo',
-                memberName: "xxx",
-                memberPhone: '12344',
-                danwei: 'bbbb',
-                memberEmail: 'aadsafa',
-                memberId: '1',
-                wx: '1234',
-                avatar: "https://ww3.sinaimg.cn/mw690/d315af46ly1hnn5btbjr5j20j60j7mzv.jpg",
+                wechatNickname: '',
+                memberName: "",
+                memberPhone: '',
+                danwei: '',
+                memberEmail: '',
+                memberId: '',
+                wx: '',
+                avatar: "",
             },
             tagList: [],
             tagScrollToLeft: true,
@@ -28,25 +31,26 @@ export const useGlobalStore = defineStore('global', {
         }
     },
     actions: {
-        async logIn(){
-            this.logged = true;
-            const likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
-            this.likedImageIdList = new Set(likeList.rows.map(img => img.imgentryId));
-        },
-            // this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
         async loginUpdate(userInfo){
 
             this.userInfo.wechatNickname = userInfo.wechatNickname;
             this.userInfo.memberId = userInfo.memberId;
-            this.userInfo.avatar = userInfo.mberImgurl;
+            this.userInfo.avatar = userInfo.memberImgurl ? userInfo.memberImgurl : userInfo.avatar;
             this.userInfo.memberName = userInfo.memberName;
             this.userInfo.memberPhone = userInfo.memberPhone;
             this.userInfo.memberEmail = userInfo.memberEmail;
-
+            const likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
+            this.likedImageIdList = new Set(likeList.rows.map(img => img.imgentryId));
             this.logged = true;
-            this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
-            this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
-            console.log(this.likeList, this.naviList)
+            let cookieInfo = cookie.getUserInfo();
+            if(!cookieInfo){
+                cookie.storeUserCookie(this.userInfo);
+            };
+            // console.log(this.userInfo)
+            this.showLogInWindow = false;
+            
+            // this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+            // console.log(this.likeList, this.naviList)
         },
         showReminder(content){
             this.reminder.show = true;

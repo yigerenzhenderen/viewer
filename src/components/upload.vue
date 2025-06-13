@@ -397,6 +397,10 @@ export default{
     top: 0;
 }
 
+
+:deep(.el-cascader-panel){
+    --el-cascader-menu-selected-text-color: #000;
+}
 // .tag-container1{
 //     width: 90%;
 //     height: fit-content;

@@ -6,14 +6,20 @@
 
 
 <script>
-import cat from "/src/assets/cat.jpeg";
+// import { useGlobalStore } from '../../store/global.js';
+// import { mapState } from "pinia";
+// import cat from "/src/assets/cat.jpeg";
+
 
 export default{
+    // computed: {
+    //     ...mapState(useGlobalStore, ['userInfo'])
+    // },
     props:{
         url:{
             type:String,
             required: false,
-            default: cat
+            default: ""
         },
         size:{
             type: Number,

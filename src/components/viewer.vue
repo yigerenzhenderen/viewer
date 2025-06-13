@@ -93,7 +93,6 @@ import fetch from "../js/fetch.js";
 import searchIcon from "./icons/searchIcon.vue";
 import uploadIcon from "./icons/uploadIcon.vue";
 import userIcon from "./icons/userIcon.vue";
-import UserIcon from "./icons/userIcon.vue";
 import Reminder from "./utils/reminder.vue";
 import Title from "../assets/title.svg";
 import LogIn from '../components/login.vue'
@@ -137,7 +136,6 @@ export default {
         }
       })
       init();
-      this.globalStore.logIn();
     }
   },
   watch: {
