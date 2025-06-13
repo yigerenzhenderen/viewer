@@ -235,8 +235,23 @@ export default {
             imgentryId: imgentryId,
             tagsIds: tagsId,
         }
-        console.log(json_data)
+        // console.log(json_data)
         const response = await api.post("/interface/imageEntryTagsRevision/addImageEntryTagsRevision",json_data);
+        return response.data;
+    },
+    async getPhoneVerifyCode(phoneNumber){
+        const json_data = {
+            memberPhone: phoneNumber
+        }
+        const response = await api.get("/interface/sms/sendCode",json_data);
+        return response.data;
+    },
+    async loginByPhoneNumber(phoneNumber, smsCode){
+        const json_data = {
+            memberPhone: phoneNumber,
+            smsCode: smsCode
+        }
+        const response = await api.post("/interface/sms/sendCode",json_data);
         return response.data;
     }
 

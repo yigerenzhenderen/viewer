@@ -183,7 +183,7 @@ export default {
   watch: {
     async hide(bool) {
       if (bool) return;
-      console.log("change!", this.detailStore.imageId)
+      // console.log("change!", this.detailStore.imageId)
       const newImg = await fetch.getImg(this.detailStore.imageId);
       this.detailStore.currentImg = newImg;
       this.detailStore.form = _.cloneDeep(this.detailStore.storeForm);

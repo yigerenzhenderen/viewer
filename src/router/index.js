@@ -58,10 +58,30 @@ const routes = [
         ]
     },
 ]
-  
+
 const router = createRouter({
     history: createWebHashHistory(),
     routes: routes,
+})
+
+// const whiteList = ["/login", "/loginpassword"];
+
+
+router.beforeEach((to, from, next) => {
+    // 若只访问gallery，则直接允许
+    if(to.path === "/") {
+        next();
+        return
+    };
+    // 其他页面需要看是否登录
+    const isLogin = !!localStorage.getItem('token');
+    if(isLogin){
+        next();
+        return;
+    }else{
+        next();
+        return;
+    }
 })
 
 export default router;

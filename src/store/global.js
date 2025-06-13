@@ -29,12 +29,20 @@ export const useGlobalStore = defineStore('global', {
         }
     },
     actions: {
-        // async logIn(){
-        //     this.logged = true;
-        //     this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
-        //     this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
-        //     console.log(this.likeList, this.naviList)
-        // },
+        async loginUpdate(userInfo){
+
+            this.userInfo.wechatNickname = userInfo.wechatNickname;
+            this.userInfo.memberId = userInfo.memberId;
+            this.userInfo.avatar = userInfo.mberImgurl;
+            this.userInfo.memberName = userInfo.memberName;
+            this.userInfo.memberPhone = userInfo.memberPhone;
+            this.userInfo.memberEmail = userInfo.memberEmail;
+
+            this.logged = true;
+            this.likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
+            this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
+            console.log(this.likeList, this.naviList)
+        },
         showReminder(content){
             this.reminder.show = true;
             this.reminder.content = content;
