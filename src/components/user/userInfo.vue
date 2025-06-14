@@ -5,8 +5,12 @@
     </div>
 
     <div class="info-container">
-      <div class="icon">
-        <Avatar :size="300" :url="globalStore.userInfo.avatar"</Avatar>
+      <div class="icon" @mouseenter="show_avatar_overlay = true" @mouseleave="show_avatar_overlay = false;">
+        <Avatar :size="300" :url="globalStore.userInfo.memberImgurl"></Avatar>
+        <div v-if="show_avatar_overlay" class="avatar_overlay" @click="change_avatar">
+          点击修改头像
+        </div>
+        <input ref="uploader" type="file" id="fileInput" style="display:none" accept="image/*">
       </div>
       <div class="info">
         <el-form :disabled="!editing" :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
@@ -29,9 +33,10 @@
             <el-input v-model="globalStore.userInfo.wx" />
           </el-form-item>
         </el-form>
-        
+
         <div style="width: 600px; display: flex; margin-top: 30px;">
-          <button class="button" style="margin-left: auto;" @click="editingChange">{{ this.editing ? "保存" : "修改个人资料" }}</button>
+          <button class="button" style="margin-left: auto;" @click="editingChange">{{ this.editing ? "保存" : "修改个人资料"
+          }}</button>
         </div>
       </div>
     </div>
@@ -45,55 +50,106 @@ import { mapState, mapStores } from 'pinia';
 import Avatar from '../utils/avatar.vue';
 import fetch from '../../js/fetch.js'
 
-export default{
-  data(){
+export default {
+  data() {
     return {
       editing: false,
+      show_avatar_overlay: false,
     }
   },
-  computed:{
+  computed: {
     ...mapStores(useGlobalStore)
   },
   components: {
     Avatar
   },
   methods: {
-    async editingChange(){
-      this.editing =!this.editing;
+    async editingChange() {
+      this.editing = !this.editing;
       if (!this.editing) {
         const res = await this.globalStore.updateInfo()
         // console.log(res)
       }
+    },
+    change_avatar() {
+      this.$refs['uploader'].click();
     }
   },
   mounted() {
+    this.$refs['uploader'].addEventListener('change', () => {
+      const file = this.$refs['uploader'].files[0];
+      if (!file) return;
+
+      // 只允许图片类型
+      if(!file.type.startsWith('image/')) {
+        result.textContent = "请选择图片文件！";
+        return;
+      }
+
+      // 构建formdata上传给后端
+      console.log("上传给后端了")
+      // const formData = new FormData();
+      // formData.append('image', file);
+
+      // result.textContent = "正在上传并检测，请稍候...";
+
+      // fetch('/uploadImage', {
+      //   method: 'POST',
+      //   body: formData
+      // })
+      // .then(resp => resp.json())
+      // .then(data => {
+      //   // 根据后端返回自行调整
+      //   result.textContent = "检测结果: " + JSON.stringify(data);
+      // })
+      // .catch(err => {
+      //   result.textContent = "上传或检测失败：" + err;
+      // });
+    });
   }
 }
 </script>
 
 
-<style scoped>
-.info-container{
+<style scoped lang="scss">
+.info-container {
   display: flex;
   margin-top: 100px;
   height: fit-content;
   padding: 50px 100px;
 
-  .icon{
+  .icon {
     width: 100%;
     flex: 2;
     display: flex;
     justify-content: center;
+    position: relative;
+    border-radius: 999px;
+    cursor: pointer;
   }
 
-  .info{
+  .info {
     flex: 3;
     display: flex;
     flex-direction: column;
   }
 }
 
-.button{
+
+.avatar_overlay {
+  width: 300px;
+  height: 300px;
+  background-color: black;
+  opacity: 0.5;
+  position: absolute;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.button {
   width: 100px;
   height: 40px;
   background-color: #3398FF;
@@ -102,5 +158,4 @@ export default{
   color: white;
   font-weight: bolder;
 }
-
 </style>

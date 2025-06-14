@@ -1,6 +1,6 @@
 <template>
     <div v-if="globalStore.logged" class="comment-container">
-        <Avatar :size="avatarSize" :url="globalStore.userInfo.avatar" style="margin-bottom: auto" />
+        <Avatar :size="avatarSize" :url="globalStore.userInfo.memberImgurl" style="margin-bottom: auto" />
         <div class="input-comment">
             <textarea v-model="comment" type="text" class="input" :rows="rows" placeholder="写评论" @click="startInput"
                 @blur="endInput" />

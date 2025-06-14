@@ -125,21 +125,6 @@ const show_success = ref(false);
 watch(verifyCode, async (newValue) => {
     if (newValue.length === 6) {
         const res = await fetch.loginByPhoneNumber(phoneNumber.value, newValue);
-        // const res = {
-        //     data: {
-        //         code: null, createBy: null, createTime: "2025-06-13 23:24:41", delFlag: null,
-        //         memberEmail: null, memberId: null,
-        //         memberImgurl: "https://hnimagearchive.oss-cn-heyuan.aliyuncs.com/hnimagearchive/image/primal/b18744a0-b110-4f3a-b4fd-abd0081e252d.png",
-        //         memberName: "用户9587",
-        //         memberPhone: "17282539587",
-        //         openId: null,
-        //         remark: null,
-        //         updateBy: null,
-        //         updateTime: null,
-        //         wechatNickname: "新用户",
-        //     },
-        //     code: 200,
-        // }
         if (res.code == 200) {
             show_success.value = true;
             setTimeout(async ()=>{
@@ -153,8 +138,6 @@ watch(verifyCode, async (newValue) => {
                 verify_code_is_incorrect.value = false
             }, 1500)
         }
-        // const res = await fetch.loginByPhoneNumber(phoneNumber.value, newValue);
-
     }
 })
 
