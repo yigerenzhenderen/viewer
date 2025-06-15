@@ -60,7 +60,7 @@ export function Canvas() {
   var entries;
   var years;
   var data;
-  var mapData;
+  var mapBboxData;
   var rangeBand = 0;
   var rangeBandImage = 0;
   var imageSize = 256;
@@ -171,10 +171,10 @@ export function Canvas() {
       (state.mode == "time" ? 1 : 0.5);
   };
 
-  canvas.init = function (_data, _timeline, _map, _config) {
+  canvas.init = function (_data, _timeline, _abstract_map, _config) {
     data = _data;
     config = _config;
-    mapData = _map;
+    mapBboxData = _abstract_map;
     // map.init(_map, [width, height])
     container = d3.select(".page")
       .select(".viz")
@@ -223,9 +223,10 @@ export function Canvas() {
     imageStage.addChild(stage3);
     imageStage.addChild(stage4);
     imageStage.addChild(stage5);
+    imageStage.addChild(mapContainer);
 
     root.addChild(imageStage);
-    root.addChild(mapContainer);
+    // root.addChild(mapContainer);
 
     globalThis.__PIXI_STAGE__ = root;
     _timeline.forEach(function (d) {
@@ -245,14 +246,12 @@ export function Canvas() {
 
     timeline = Timeline(canvas);
     timeline.init(timeDomain);
-    x.domain(canvasDomain); //设置时间轴定义域为ime domain, (x为d3.scaleBand)
-
+    x.domain(canvasDomain); //设置时间轴定义域为time domain, (x为d3.scaleBand)
 
 
     // add preview pics stage3: 所有的preview pics
     data.forEach(function (d, i) {
       var sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-      // console.log(sprite)
       sprite.anchor.x = 0.5;
       sprite.anchor.y = 0.5;
 
@@ -261,29 +260,26 @@ export function Canvas() {
 
       sprite._data = d;
       d.sprite = sprite;
-      // console.log(d.sprite)
       stage3.addChild(sprite);
     });
 
     // add map bounding boxes
-    mapData.forEach(function (d, i) {
-      // var boundingBox = new PIXI.Sprite(PIXI.Texture.WHITE);
-      var boundingBox =  new PIXI.Graphics();
-      boundingBox.lineStyle(5, 0x00ff00, 1); // Set border width, color, and alpha
-      // boundingBox.drawRect(0, 0, d.width, d.height); // Draw rectangle outline
+    mapBboxData.forEach(function (d, i) {
+
+      let boundingBox = new PIXI.Graphics();
+      boundingBox.lineStyle(5, 0x000000, 1); // Set border width, color, and alpha
+      boundingBox.drawRect(0, 0, d.width, d.height); // Draw rectangle outline
       boundingBox.endFill(); // No fill
       // console.log(sprite)
       boundingBox.pivot.x = 0.5;
       boundingBox.pivot.y = 0.5;
+      boundingBox.scale.x = d.scaleFactor;
+      boundingBox.scale.y = d.scaleFactor;
 
-      // boundingBox.scale.x = d.scaleFactor;
-      // boundingBox.scale.y = d.scaleFactor;
-      boundingBox.scale.set(d.scaleFactor, d.scaleFactor); 
       boundingBox._data = d;
       d.boundingBox = boundingBox;
       mapContainer.addChild(boundingBox);
     });
-    console.log(mapData)
 
     vizContainer = d3.select(".viz");
 
@@ -312,7 +308,8 @@ export function Canvas() {
           return;
         }
         if (selectedImage && !selectedImage.id) {
-          return};
+          return
+        };
         if (drag) return;
         if (selectedImageDistance > cursorCutoff) return;
         if (selectedImage && !selectedImage.active) return;
@@ -328,8 +325,6 @@ export function Canvas() {
     // canvas.makeScales();
     // canvas.project();
     animate();
-    // selectedImage = data.find(d => d.id == 88413)
-    // showDetail(selectedImage)
     state.init = true;
   };
 
@@ -358,55 +353,81 @@ export function Canvas() {
     });
   };
 
-  canvas.addLocationData = function (name, d, scale) {
+
+  // 归一化城市bbox和城市内图像的坐标
+  // 理论上城市bbox的范围要大于location.csv的范围，因此需要使用bbox计算比例尺，并用该比例尺计算location归一化结果
+  // 这个函数接收所有城市bbox, 返回包围这些rects的最小bbox，该bbox的宽和高作为比例尺的xExtent和yExtent
+  function _getOuterBbox(rects) {
+    if (!rects.length) return null;
+
+    // 计算第一个矩形的边界初始化最小最大值
+    let minX = rects[0].x - rects[0].w / 2;
+    let minY = rects[0].y - rects[0].h / 2;
+    let maxX = rects[0].x + rects[0].w / 2;
+    let maxY = rects[0].y + rects[0].h / 2;
+
+    rects.forEach(rect => {
+      let left = rect.x - rect.w / 2;
+      let top = rect.y - rect.h / 2;
+      let right = rect.x + rect.w / 2;
+      let bottom = rect.y + rect.h / 2;
+
+      if (left < minX) minX = left;
+      if (top < minY) minY = top;
+      if (right > maxX) maxX = right;
+      if (bottom > maxY) maxY = bottom;
+    });
+
+    return {
+      x: minX,
+      y: minY,
+      w: maxX - minX,
+      h: maxY - minY
+    }
+  }
+
+  canvas.addLocationData = function (name, location, scale) {
     tsneIndex[name] = {};
     tsneScale[name] = scale;
-    var clean = d.map(function (d) {
+    tsneIndex["bbox"] = {};
+    tsneScale["bbox"] = scale;
+    // 缩略图未归一化坐标 (x,y为图像中心)
+    var cleanLocation = location.map(function (d) {
       return {
         id: d.id,
         x: parseFloat(d.x),
         y: parseFloat(d.y),
       };
     });
-    var xExtent = d3.extent(clean, function (d) {
-      return d.x;
+    // 城市bbox未归一化坐标 (x,y为矩形中心)
+    var cleanCityBbox = mapBboxData.map(function (d) {
+      return {
+        id: d.id,
+        x: parseFloat(d.x),
+        y: parseFloat(d.y),
+        w: parseFloat(d.width),
+        h: parseFloat(d.height),
+      };
     });
-    var yExtent = d3.extent(clean, function (d) {
-      return d.y;
-    });
+
+    const { x: xStart, y: yStart, w: xWidth, h: yHeight } = _getOuterBbox(cleanCityBbox)
+    const xExtent = [xStart, xStart + xWidth]
+    const yExtent = [yStart, yStart + yHeight]
+
 
     var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
     var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
 
-    d.forEach(function (d) {
+    // tsneIndex.location保存缩略图投影位置
+    cleanLocation.forEach(function (d) {
       tsneIndex[name][d.id] = [x(d.x), y(d.y)];
     });
-  };
-
-  canvas.addBoundingBoxData = function (name, scale) {
-    tsneIndex[name] = {};
-    tsneScale[name] = scale;
-    var clean = mapData.map(function (d) {
-      return {
-        id: d.id,
-        x: parseFloat(d.x),
-        y: parseFloat(d.y),
-      };
-    });
-    var xExtent = d3.extent(clean, function (d) {
-      return d.x;
-    });
-    var yExtent = d3.extent(clean, function (d) {
-      return d.y;
+    // tsneIndex.bbox保存城市bbox投影坐标
+    cleanCityBbox.forEach(function (d) {
+      // console.log([x(d.x), y(d.y), x(d.x + d.w / 2) - x(d.x - d.w / 2), y(d.y + d.h / 2) - y(d.y - d.h / 2)])
+      tsneIndex["bbox"][d.name] = [x(d.x), y(d.y), x(d.x + d.w / 2) - x(d.x - d.w / 2), y(d.y + d.h / 2) - y(d.y - d.h / 2)];
     });
 
-    var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
-    var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
-
-    mapData.forEach(function (d) {
-      tsneIndex[name][d.name] = [x(d.x), y(d.y)];
-    });
-    // console.log(tsneIndex)
   };
 
   function mousemove(event, d) {
@@ -533,7 +554,6 @@ export function Canvas() {
   canvas.setMode = function (mode) {
     state.mode = mode;
     timeline.setDisabled(mode !== "time"); // 不为timeline情况下就不显示时间轴
-    // console.log(mode, mapContainer)
     canvas.makeScales();
     canvas.project();
   };
@@ -606,7 +626,7 @@ export function Canvas() {
   }
 
 
-  function changeMani(sprite){
+  function changeMani(sprite) {
     const pos = sprite.getGlobalPosition();
     const box = sprite.getBounds();
     detailStore.x = pos.x - box.width / 2;
@@ -713,7 +733,7 @@ export function Canvas() {
       clearBigImages();
       // detailStore.maniShow = false; // 隐藏mani icon
       // detailStore.editing = false; // 结束修改
-      detailStore.finishEdit(); 
+      detailStore.finishEdit();
       changeMani(selectedImage.sprite)
       // d3.select(".sidebar").classed("hide", true);
       detailStore.hide = true; // 隐藏右侧detail
@@ -736,7 +756,7 @@ export function Canvas() {
     root.x = translate[0];
     root.y = translate[1];
     sleep = false;
-    if(selectedImage)changeMani(selectedImage.sprite)
+    if (selectedImage) changeMani(selectedImage.sprite)
 
   }
 
@@ -773,7 +793,6 @@ export function Canvas() {
 
   canvas.project = function () {
     sleep = false;
-    // state.mode === "location" ? root.addChildAt(mapContainer, 0) : root.removeChild(mapContainer);
     var scaleFactor = state.mode == "time" ? 0.9 : tsneScale[state.mode] || 0.5;
     // if (state.mode == "location") scaleFactor = 1
     data.forEach(function (d) {
@@ -868,7 +887,7 @@ export function Canvas() {
 
   canvas.projectLocation = function () {
     var marginBottom = -height / 2.5;
-
+    var scaleFactor = state.mode == "time" ? 0.9 : tsneScale[state.mode] || 0.5;
     var inactive = data.filter(function (d) {
       return !d.active;
     });
@@ -890,22 +909,17 @@ export function Canvas() {
     active.forEach(function (d) {
       var tsneEntry = tsneIndex[state.mode][d.id];
       if (tsneEntry) {
-        // console.log(tsneEntry)
         d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
         d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
       } else {
         // console.log("not found", d)
         d.alpha = 0;
       }
-      // var tsneEntry = tsne.find(function (t) {
-      //     return t.id == d.id
-      // })
     });
 
     data.forEach(function (d) {
       d.x1 = d.x * scale1 + imageSize / 2;
       d.y1 = d.y * scale1 + imageSize / 2;
-
       if (d.sprite.position.x == 0) {
         d.sprite.position.x = d.x1;
         d.sprite.position.y = d.y1;
@@ -920,29 +934,34 @@ export function Canvas() {
       // console.log(d.sprite.position, d.sprite.position2)
     });
 
-    mapData.forEach(function (d) {
+    mapBboxData.forEach(function (d) {
+      // console.log(d)
       var tsneEntry = tsneIndex["bbox"][d.name];
-      console.log(d, tsneEntry)
+      // console.log(tsneEntry)
       if (tsneEntry) {
-        // console.log(tsneEntry)
+        d.scaleFactor = scaleFactor;
         d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
         d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
+        d.width = tsneEntry[2] * dimension;
+        d.height = tsneEntry[3] * dimension;
       } else {
         // console.log("not found", d)
         d.alpha = 0;
       }
     });
 
-    mapData.forEach(function (d) {
-      d.x1 = d.x * scale1 + imageSize / 2;
-      d.y1 = d.y * scale1 + imageSize / 2;
-      // TODO:
+    mapBboxData.forEach(function (d) {
+      d.x1 = d.x * scale1;
+      d.y1 = d.y * scale1;
+      d.w1 = d.width * scale1;
+      d.h1 = d.height * scale1;
+
       // d.boundingBox.position.set(d.x1, d.y1);
-      d.boundingBox.drawRect(d.x1, d.y1, 100, 200);
-      console.log(d.boundingBox)
-      if (d.boundingBox.position.x == 0) {
-        d.boundingBox.position.set(d.x1, d.y1)
-      }
+      d.boundingBox.drawRect(d.x1, d.y1, d.w1, d.h1);
+      console.log(d.x1, d.y1, d.w1, d.h1, d.boundingBox)
+      // if (d.boundingBox.position.x == 0) {
+      //   d.boundingBox.position.set(d.x1, d.y1)
+      // }
     });
 
     quadtree = Quadtree.addAll(data);
@@ -1031,8 +1050,8 @@ export function Canvas() {
     if (config.loader.textures.detail.csv) {
       url = d[config.loader.textures.detail.csv];
     } else {
-        url = d._middleUrl;
-        // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg";
+      url = d._middleUrl;
+      // url = "https://vikusviewer.fh-potsdam.de/fw4/vis/data/1024jpg/89100.jpg";
       // 相同图像的load
       // url = config.loader.textures.detail.url + d.id.split("_")[0] + ".jpg";
     }
@@ -1152,12 +1171,12 @@ export function Canvas() {
     }
   }
 
-  canvas.emitClickImage = function(imgId=null, title=null) {
-    if(imgId){
+  canvas.emitClickImage = function (imgId = null, title = null) {
+    if (imgId) {
       imgId = +imgId
       selectedImage = data.find(img => img.id === imgId)
     }
-    else if(title){
+    else if (title) {
       selectedImage = data.find(img => img._title === title);
     }
     detailStore.imageId = selectedImage.id;

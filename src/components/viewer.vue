@@ -73,10 +73,10 @@
       </div>
     </div>
 
-    <LogIn></LogIn>
-    
+    <LogInPanel></LogInPanel>
+
     <Reminder />
-</div>
+  </div>
 </template>
 
 
@@ -95,7 +95,7 @@ import uploadIcon from "./icons/uploadIcon.vue";
 import userIcon from "./icons/userIcon.vue";
 import Reminder from "./utils/reminder.vue";
 import Title from "../assets/title.svg";
-import LogIn from '../components/login.vue'
+import LogInPanel from '../components/login.vue'
 
 export default {
   data() {
@@ -110,14 +110,14 @@ export default {
     ...mapStores(useGlobalStore, useDetailStore)
   },
   components: {
-      InfoView,
-      DetailView,
-      ManiIcon,
-      searchIcon,
-      uploadIcon,
-      userIcon,
-      Reminder,
-      LogIn
+    InfoView,
+    DetailView,
+    ManiIcon,
+    searchIcon,
+    uploadIcon,
+    userIcon,
+    Reminder,
+    LogInPanel
   },
   async mounted() {
     d3.select("body").style("background-color", "var(--bg-color)");

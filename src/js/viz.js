@@ -129,8 +129,6 @@ export function init() {
   function initLayouts(config) {
     d3.select(".navi").classed("hide", false);
 
-    // console.log(config.loader.layouts);
-
     config.loader.layouts.forEach((d, i) => {
         
       d.title = d.title.toLowerCase();
@@ -143,11 +141,8 @@ export function init() {
           if (i == 0) canvas.setMode(d.title);
         });
       } else if(d.title === "location") {
-        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (mapedLocation)  => {
-
-          canvas.addLocationData(d.title, mapedLocation, d.scale);
-          canvas.addBoundingBoxData("bbox", d.scale);
-
+        d3.csv(utils.makeUrl(baseUrl.path, d.url)).then( (location)  => {
+          canvas.addLocationData(d.title, location, d.scale);
           if (i == 0) canvas.setMode(d.title);
         });
       }

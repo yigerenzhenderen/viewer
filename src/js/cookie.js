@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-// 存储
+// 存储用户登录信息
 
 const user_info_key = 'hn_user_info'
 
