@@ -3,6 +3,27 @@
 // 2015-2018
 import fetch from "./fetch";
 
+const basicTextStyle = new PIXI.TextStyle({
+  // fontFamily: 'Lato',        // 字体
+  fontSize: 48,               // 初始文字大小
+  fill: '#E5E5E5',            // 文字颜色 (白色)
+  fontWeight: 'bold',
+  stroke: '#000000',          // 文字描边颜色
+  wordWrap: true,             // 自动换行
+  wordWrapWidth: 440,         // 换行宽度
+  align: 'center',            // 多行文本对齐方式（在wordWrapWidth内）
+  resolution: window.devicePixelRatio || 1, // 另一种设置分辨率的方式，确保与渲染器一致
+});
+
+
+const textAnchorRight = [
+  "益阳",
+  "湘潭",
+  "衡阳",
+  "长沙",
+  "郴州"
+]
+
 export function Canvas() {
   var margin = {
     top: 20,
@@ -197,10 +218,11 @@ export function Canvas() {
       16
     );
     var renderOptions = {
-      resolution: 1,
+      resolution: window.devicePixelRatio || 1,
       antialiasing: true,
       width: width + margin.left + margin.right,
       height: height,
+      autoDensity: true,
       antialias: true
     };
     renderer = new PIXI.Renderer(renderOptions);
@@ -218,12 +240,12 @@ export function Canvas() {
     stage3 = new PIXI.Container(); // sprites
     stage4 = new PIXI.Container(); // middleImage
     stage5 = new PIXI.Container(); // largeImage
-    mapContainer = new PIXI.Container();
+    mapContainer = stage3
 
     imageStage.addChild(stage3);
     imageStage.addChild(stage4);
     imageStage.addChild(stage5);
-    imageStage.addChild(mapContainer);
+    // imageStage.addChild(mapContainer);
 
     root.addChild(imageStage);
     // root.addChild(mapContainer);
@@ -265,20 +287,30 @@ export function Canvas() {
 
     // add map bounding boxes
     mapBboxData.forEach(function (d, i) {
-
-      let boundingBox = new PIXI.Graphics();
-      boundingBox.lineStyle(5, 0x000000, 1); // Set border width, color, and alpha
+      // const scaleFactor = 0.9
+      var boundingBox = new PIXI.Graphics();
+      // console.log(d)
+      boundingBox.lineStyle(1, 0x000000, 1); // Set border width, color, and alpha
       boundingBox.drawRect(0, 0, d.width, d.height); // Draw rectangle outline
+      boundingBox.position.set(d.x - d.width / 2, d.y - d.height / 2)
       boundingBox.endFill(); // No fill
-      // console.log(sprite)
-      boundingBox.pivot.x = 0.5;
-      boundingBox.pivot.y = 0.5;
-      boundingBox.scale.x = d.scaleFactor;
-      boundingBox.scale.y = d.scaleFactor;
+      boundingBox.alpha = 0;
+      boundingBox.visible = false;
 
       boundingBox._data = d;
       d.boundingBox = boundingBox;
       mapContainer.addChild(boundingBox);
+
+      boundingBox.alpha1 = 0; // 设置默认透明度并保存 用于transition
+      const provinceName = new PIXI.Text(d.name, basicTextStyle);
+      if (textAnchorRight.includes(d.name)) {
+        provinceName.anchor.set(1, 1);
+      } else {
+        provinceName.anchor.set(0, 1);
+      }
+      provinceName.visible = false;
+      d.text = provinceName
+      mapContainer.addChild(provinceName)
     });
 
     vizContainer = d3.select(".viz");
@@ -379,10 +411,10 @@ export function Canvas() {
     });
 
     return {
-      x: minX,
-      y: minY,
-      w: maxX - minX,
-      h: maxY - minY
+      minX: minX,
+      minY: minY,
+      maxX: maxX,
+      maxY: maxY
     }
   }
 
@@ -402,7 +434,7 @@ export function Canvas() {
     // 城市bbox未归一化坐标 (x,y为矩形中心)
     var cleanCityBbox = mapBboxData.map(function (d) {
       return {
-        id: d.id,
+        id: d.name,
         x: parseFloat(d.x),
         y: parseFloat(d.y),
         w: parseFloat(d.width),
@@ -410,13 +442,11 @@ export function Canvas() {
       };
     });
 
-    const { x: xStart, y: yStart, w: xWidth, h: yHeight } = _getOuterBbox(cleanCityBbox)
-    const xExtent = [xStart, xStart + xWidth]
-    const yExtent = [yStart, yStart + yHeight]
+    const { minX: minX, minY: minY, maxX: maxX, maxY: maxY } = _getOuterBbox(cleanCityBbox)
+    // console.log({ minX: minX, minY: minY, maxX: maxX, maxY: maxY })
 
-
-    var x = d3.scaleLinear().range([0, 1]).domain(xExtent);
-    var y = d3.scaleLinear().range([0, 1]).domain(yExtent);
+    var x = d3.scaleLinear().range([0, 1]).domain([minX, maxX]);
+    var y = d3.scaleLinear().range([0, 1]).domain([minY, maxY]);
 
     // tsneIndex.location保存缩略图投影位置
     cleanLocation.forEach(function (d) {
@@ -425,7 +455,8 @@ export function Canvas() {
     // tsneIndex.bbox保存城市bbox投影坐标
     cleanCityBbox.forEach(function (d) {
       // console.log([x(d.x), y(d.y), x(d.x + d.w / 2) - x(d.x - d.w / 2), y(d.y + d.h / 2) - y(d.y - d.h / 2)])
-      tsneIndex["bbox"][d.name] = [x(d.x), y(d.y), x(d.x + d.w / 2) - x(d.x - d.w / 2), y(d.y + d.h / 2) - y(d.y - d.h / 2)];
+      tsneIndex["bbox"][d.id] = [x(d.x - d.w / 2), y(d.y - d.w / 2), x(d.x + d.w / 2) - x(d.x - d.w / 2), y(d.y + d.h / 2) - y(d.y - d.h / 2)];
+      // tsneIndex["bbox"][d.id] = [x(d.x), y(d.y), x(d.w), y(d.h)];
     });
 
   };
@@ -505,7 +536,7 @@ export function Canvas() {
     return p2;
   }
 
-  var speed = 0.02;
+  var speed = 0.05;
 
   function imageAnimation() {
     var sleep = true;
@@ -543,9 +574,21 @@ export function Canvas() {
         //else d.sprite2.visible = d.visible;
       }
     });
-
+    // if(state.mode === 'location'){
+    mapBboxData.forEach(function(d,i){
+      const alpha_diff = d.alpha1 - d.boundingBox.alpha;
+      if (Math.abs(alpha_diff) > 0.01) {
+        d.boundingBox.alpha += alpha_diff * speed;
+        sleep = false;
+      }
+      d.boundingBox.visible = d.boundingBox.alpha > 0.99;
+      d.text.visible = d.boundingBox.alpha > 0.99;
+    })
+    // }
     return sleep;
   }
+
+
 
   canvas.wakeup = function () {
     sleep = false;
@@ -823,6 +866,95 @@ export function Canvas() {
       (state.mode == "time" ? 1 : 0.5);
   };
 
+  canvas.projectLocation = function () {
+    var marginBottom = -height / 2.5;
+
+    var inactive = data.filter(function (d) {
+      return !d.active;
+    });
+    var inactiveSize = inactive.length;
+
+    var active = data.filter(function (d) {
+      return d.active;
+    });
+
+    var dimension = Math.min(width, height) * 0.8;
+
+    inactive.forEach(function (d, i) {
+      var r = dimension / 1.55 + Math.random() * 40;
+      var a = -Math.PI / 2 + (i / inactiveSize) * 2 * Math.PI;
+      d.x = r * Math.cos(a) + width / 2 + margin.left;
+      d.y = r * Math.sin(a) + marginBottom;
+    });
+
+    active.forEach(function (d) {
+      var tsneEntry = tsneIndex[state.mode][d.id];
+      if (tsneEntry) {
+        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
+        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
+      } else {
+        // console.log("not found", d)
+        d.alpha = 0;
+      }
+    });
+
+    data.forEach(function (d) {
+      d.x1 = d.x * scale1 + imageSize / 2;
+      d.y1 = d.y * scale1 + imageSize / 2;
+      if (d.sprite.position.x == 0) {
+        d.sprite.position.x = d.x1;
+        d.sprite.position.y = d.y1;
+      }
+
+      if (d.sprite2) {
+        d.sprite2.position.x = d.x * scale2 + imageSize2 / 2;
+        d.sprite2.position.y = d.y * scale2 + imageSize2 / 2;
+      }
+
+      // console.log(d.sprite.position, d.sprite.position2)
+    });
+
+    mapBboxData.forEach(function (d) {
+      var tsneEntry = tsneIndex["bbox"][d.name];
+      if (tsneEntry) {
+        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
+        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
+        d.width = tsneEntry[2] * dimension;
+        d.height = tsneEntry[3] * dimension;
+      } else {
+        d.alpha = 0;
+      }
+    });
+
+    mapBboxData.forEach(function (d) {
+      d.x1 = d.x * scale1 + imageSize / 2;
+      d.y1 = d.y * scale1 + imageSize / 2;
+      d.w1 = d.width * scale1;
+      d.h1 = d.height * scale1;
+
+      d.boundingBox.width = d.w1;
+      d.boundingBox.height = d.h1;
+      d.boundingBox.position.set(d.x1, d.y1);
+      d.alpha1 = 1;
+
+      if (textAnchorRight.includes(d.name)) {
+        d.text.position.set(d.x1 + d.w1, d.y1);
+      } else {
+        d.text.position.set(d.x1, d.y1);
+      }
+      d.text.style = {
+        fontSize: imageSize * 2,
+      }
+      // d.boundingBox.drawRect(d.x1, d.y1, d.w1, d.h1);
+      // console.log(d.boundingBox.scale)
+      // if (d.boundingBox.position.x == 0) {
+      //   d.boundingBox.position.set(d.x1, d.y1)
+      // }
+    });
+
+    quadtree = Quadtree.addAll(data);
+    //chart.resetZoom();
+  };
 
   canvas.projectTSNE = function () {
     var marginBottom = -height / 2.5;
@@ -884,90 +1016,6 @@ export function Canvas() {
     //chart.resetZoom();
   };
 
-
-  canvas.projectLocation = function () {
-    var marginBottom = -height / 2.5;
-    var scaleFactor = state.mode == "time" ? 0.9 : tsneScale[state.mode] || 0.5;
-    var inactive = data.filter(function (d) {
-      return !d.active;
-    });
-    var inactiveSize = inactive.length;
-
-    var active = data.filter(function (d) {
-      return d.active;
-    });
-
-    var dimension = Math.min(width, height) * 0.8;
-
-    inactive.forEach(function (d, i) {
-      var r = dimension / 1.9 + Math.random() * 40;
-      var a = -Math.PI / 2 + (i / inactiveSize) * 2 * Math.PI;
-      d.x = r * Math.cos(a) + width / 2 + margin.left;
-      d.y = r * Math.sin(a) + marginBottom;
-    });
-
-    active.forEach(function (d) {
-      var tsneEntry = tsneIndex[state.mode][d.id];
-      if (tsneEntry) {
-        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
-        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
-      } else {
-        // console.log("not found", d)
-        d.alpha = 0;
-      }
-    });
-
-    data.forEach(function (d) {
-      d.x1 = d.x * scale1 + imageSize / 2;
-      d.y1 = d.y * scale1 + imageSize / 2;
-      if (d.sprite.position.x == 0) {
-        d.sprite.position.x = d.x1;
-        d.sprite.position.y = d.y1;
-      }
-
-      if (d.sprite2) {
-
-        d.sprite2.position.x = d.x * scale2 + imageSize2 / 2;
-        d.sprite2.position.y = d.y * scale2 + imageSize2 / 2;
-      }
-
-      // console.log(d.sprite.position, d.sprite.position2)
-    });
-
-    mapBboxData.forEach(function (d) {
-      // console.log(d)
-      var tsneEntry = tsneIndex["bbox"][d.name];
-      // console.log(tsneEntry)
-      if (tsneEntry) {
-        d.scaleFactor = scaleFactor;
-        d.x = tsneEntry[0] * dimension + width / 2 + margin.left - dimension / 2;
-        d.y = tsneEntry[1] * dimension + marginBottom - dimension / 2;
-        d.width = tsneEntry[2] * dimension;
-        d.height = tsneEntry[3] * dimension;
-      } else {
-        // console.log("not found", d)
-        d.alpha = 0;
-      }
-    });
-
-    mapBboxData.forEach(function (d) {
-      d.x1 = d.x * scale1;
-      d.y1 = d.y * scale1;
-      d.w1 = d.width * scale1;
-      d.h1 = d.height * scale1;
-
-      // d.boundingBox.position.set(d.x1, d.y1);
-      d.boundingBox.drawRect(d.x1, d.y1, d.w1, d.h1);
-      console.log(d.x1, d.y1, d.w1, d.h1, d.boundingBox)
-      // if (d.boundingBox.position.x == 0) {
-      //   d.boundingBox.position.set(d.x1, d.y1)
-      // }
-    });
-
-    quadtree = Quadtree.addAll(data);
-    //chart.resetZoom();
-  };
-
   canvas.resetZoom = function () {
     var duration = 1400;
 
@@ -999,6 +1047,9 @@ export function Canvas() {
       return !d.active;
     });
     stackLayout(inactive, true);
+    mapBboxData.forEach((d,i)=>{
+      d.alpha1 = 0;
+    })
     quadtree = Quadtree.addAll(data);
   };
 
