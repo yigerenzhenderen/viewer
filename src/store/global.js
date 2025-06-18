@@ -17,7 +17,6 @@ export const useGlobalStore = defineStore('global', {
                 danwei: '',
                 memberEmail: '',
                 memberId: '',
-                wx: '',
                 memberImgurl: "",
             },
             tagList: [],
@@ -32,21 +31,20 @@ export const useGlobalStore = defineStore('global', {
     },
     actions: {
         async loginUpdate(userInfo){
-
             this.userInfo.wechatNickname = userInfo.wechatNickname;
             this.userInfo.memberId = userInfo.memberId;
             this.userInfo.memberImgurl = userInfo.memberImgurl;
             this.userInfo.memberName = userInfo.memberName;
             this.userInfo.memberPhone = userInfo.memberPhone;
             this.userInfo.memberEmail = userInfo.memberEmail;
+
             const likeList = await fetch.getUserLikeLogs(this.userInfo.memberId);
             this.likedImageIdList = new Set(likeList.rows.map(img => img.imgentryId));
             this.logged = true;
-            let cookieInfo = cookie.getUserInfo();
-            if(!cookieInfo){
+            let cookieMemberInfo = cookie.getMemberIdFromCookie();
+            if(!cookieMemberInfo){
                 cookie.storeUserCookie(this.userInfo);
-            };
-            // console.log(this.userInfo)
+            }
             this.showLogInWindow = false;
             
             // this.naviList = await fetch.getUserBrowseLogs(this.userInfo.memberId);
@@ -55,10 +53,6 @@ export const useGlobalStore = defineStore('global', {
         showReminder(content){
             this.reminder.show = true;
             this.reminder.content = content;
-        },
-        async updateInfo(){
-            const res = await fetch.editUserInfo(this.userInfo);
-            return res;
         },
         async getLikeHistory(){
             const res = await fetch.getUserLikeLogs(this.userInfo.memberId);

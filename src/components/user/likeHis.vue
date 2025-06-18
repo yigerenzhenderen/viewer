@@ -98,7 +98,7 @@ export default{
         const likeHistory = await fetch.getUserLikeLogs(this.globalStore.userInfo.memberId, this.currentPage, this.pageSize)
         this.totalSize = likeHistory.total;
         this.imgs = likeHistory.rows;
-        console.log(likeHistory)
+        // console.log(likeHistory)
 
     }
 }

@@ -44,7 +44,7 @@ export default {
                 memberId: userId,
             }
         });
-        return response.data;
+        return response.data.data;
     },
     async getUserBrowseLogs(userId) {
         const json_data = {

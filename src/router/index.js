@@ -11,6 +11,7 @@ import uploadHis from "../components/user/uploadHis.vue"
 import userInfo from "../components/user/userInfo.vue"
 import { useGlobalStore } from '../store/global'
 import cookie from '../js/cookie'
+import fetch from '../js/fetch'
 
 const routes = [
     { 
@@ -65,7 +66,6 @@ const router = createRouter({
     routes: routes,
 })
 
-// const whiteList = ["/login", "/loginpassword"];
 
 
 router.beforeEach(async (to, from, next) => {
@@ -78,10 +78,11 @@ router.beforeEach(async (to, from, next) => {
         global.showLogInWindow = false;
     };
     // 其他页面需要看是否登录
-    const userInfoCookie = cookie.getUserInfo();
+    const useIdFromCookie = cookie.getMemberIdFromCookie();
 
-    if(userInfoCookie){
-        await global.loginUpdate(userInfoCookie);
+    if(useIdFromCookie){
+        const userInfo = await fetch.getUserInfo(useIdFromCookie);
+        await global.loginUpdate(userInfo);
     }
     if(global.logged){
         next();

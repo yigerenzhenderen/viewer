@@ -14,7 +14,7 @@
       </div>
       <div class="info">
         <el-form :disabled="!editing" :model="globalStore.userInfo" label-width="auto" style="max-width: 600px">
-          <el-form-item label="真实姓名">
+          <el-form-item label="用户名">
             <el-input v-model="globalStore.userInfo.memberName" />
           </el-form-item>
           <el-form-item label="手机号码">
@@ -26,12 +26,12 @@
           <el-form-item label="电子邮件">
             <el-input v-model="globalStore.userInfo.memberEmail" />
           </el-form-item>
-          <el-form-item label="用户名">
+          <el-form-item label="微信名">
             <el-input v-model="globalStore.userInfo.wechatNickname" />
           </el-form-item>
-          <el-form-item label="微信号">
+          <!-- <el-form-item label="微信号">
             <el-input v-model="globalStore.userInfo.wx" />
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
 
         <div style="width: 600px; display: flex; margin-top: 30px;">
@@ -67,8 +67,7 @@ export default {
     async editingChange() {
       this.editing = !this.editing;
       if (!this.editing) {
-        const res = await this.globalStore.updateInfo()
-        // console.log(res)
+        const res = await fetch.editUserInfo(this.globalStore.userInfo);
       }
     },
     change_avatar() {
